@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'blog/blog.dart';
 
 void main() {
   runApp(const MyApp());
@@ -108,6 +109,12 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Blog()));
+              },
+              child: const Text('Blog'),
             ),
           ],
         ),
