@@ -17,7 +17,8 @@ class BlogDetail extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Blog Detail'),
+        centerTitle: true,
+        title: Text('Blog Detail'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -69,11 +70,27 @@ class BlogDetail extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   // Content
-                  Text(
-                    post.content,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.6,
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.6,
+                        letterSpacing: 0.5,
+                        color: Colors.black, // Make sure text is visible
+                      ),
+                      children: post.content
+                          .split('\n\n')  // Split into paragraphs
+                          .map((paragraph) => TextSpan(
+                                children: [
+                                  WidgetSpan(
+                                    child: SizedBox(width: 24.0), // Indent size
+                                  ),
+                                  TextSpan(text: paragraph.trim()),
+                                  TextSpan(text: '\n\n'), // Add spacing between paragraphs
+                                ],
+                              ))
+                          .toList(),
                     ),
                   ),
                 ],
