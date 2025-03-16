@@ -9,28 +9,35 @@ class Blog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'RNL',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Header with title and description
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              child: Column(
+                children: [
+                  const Text(
+                    'Blog',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Explore the latest insights, trends, and breakthroughs in technology, business, and innovation from industry leaders.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
             // Carousel
             CarouselSlider(
               options: CarouselOptions(
