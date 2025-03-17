@@ -10,6 +10,9 @@ class Kasut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const HomePage());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const HomePage(),
+    );
   }
 }
