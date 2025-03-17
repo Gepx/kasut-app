@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../models/blog_model.dart';
-import '../blog/blog-detail.dart';
+import '../../models/blog_model.dart';
+import 'blog-detail.dart';
 
 class Blog extends StatelessWidget {
   const Blog({super.key});
@@ -19,10 +19,7 @@ class Blog extends StatelessWidget {
                 children: [
                   const Text(
                     'Blog',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -37,7 +34,7 @@ class Blog extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Carousel
             CarouselSlider(
               options: CarouselOptions(
@@ -46,23 +43,24 @@ class Blog extends StatelessWidget {
                 viewportFraction: 1.0,
                 enableInfiniteScroll: true,
               ),
-              items: blogPosts.first.images.map((image) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(image),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+              items:
+                  blogPosts.first.images.map((image) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(image),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
                     );
-                  },
-                );
-              }).toList(),
+                  }).toList(),
             ),
-            
+
             // Blog posts list
             ListView.builder(
               shrinkWrap: true,
@@ -103,7 +101,9 @@ class Blog extends StatelessWidget {
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundImage: AssetImage(post.authorImage),
+                                    backgroundImage: AssetImage(
+                                      post.authorImage,
+                                    ),
                                     radius: 12,
                                   ),
                                   const SizedBox(width: 8),

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/blog_model.dart';
+import '../../models/blog_model.dart';
 
 class BlogDetail extends StatelessWidget {
   final BlogPost post;
-  
-  const BlogDetail({
-    super.key,
-    required this.post,
-  });
+
+  const BlogDetail({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -55,16 +52,12 @@ class BlogDetail extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         post.authorName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(width: 16),
                       Text(
                         '${post.publishTime.day}/${post.publishTime.month}/${post.publishTime.year}',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -79,18 +72,25 @@ class BlogDetail extends StatelessWidget {
                         letterSpacing: 0.5,
                         color: Colors.black, // Make sure text is visible
                       ),
-                      children: post.content
-                          .split('\n\n')  // Split into paragraphs
-                          .map((paragraph) => TextSpan(
-                                children: [
-                                  WidgetSpan(
-                                    child: SizedBox(width: 24.0), // Indent size
-                                  ),
-                                  TextSpan(text: paragraph.trim()),
-                                  TextSpan(text: '\n\n'), // Add spacing between paragraphs
-                                ],
-                              ))
-                          .toList(),
+                      children:
+                          post.content
+                              .split('\n\n') // Split into paragraphs
+                              .map(
+                                (paragraph) => TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      child: SizedBox(
+                                        width: 24.0,
+                                      ), // Indent size
+                                    ),
+                                    TextSpan(text: paragraph.trim()),
+                                    TextSpan(
+                                      text: '\n\n',
+                                    ), // Add spacing between paragraphs
+                                  ],
+                                ),
+                              )
+                              .toList(),
                     ),
                   ),
                 ],
