@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../../models/blog_model.dart';
-import 'blog-detail.dart';
+import 'blog_detail.dart';
 
 class Blog extends StatelessWidget {
   const Blog({super.key});

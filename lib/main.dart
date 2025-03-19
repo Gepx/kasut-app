@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tugasuts/features/home/home-page.dart';
-import 'package:tugasuts/features/home/home-page.dart'; // Import HomeStateProvider
-import 'package:flutter/foundation.dart';
+import 'package:tugasuts/features/home/home_page.dart';
 
 void main() {
   runApp(const Kasut());
@@ -116,7 +114,6 @@ class _CustomBottomNavigationBar extends StatelessWidget {
 class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   late TabController _tabController;
-  static const double _bottomNavBarHeight = 70;
 
   // Use a list of _ScreenData objects instead of Maps
   final List<_ScreenData> _bottomNavScreens = [

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tugasuts/features/blog/blog.dart';
-import 'package:tugasuts/features/home/home-all.dart';
-import 'package:tugasuts/features/home/home-search-bar.dart';
+import 'package:tugasuts/features/home/home_all.dart';
+import 'package:tugasuts/features/home/home_search_bar.dart';
 
 // State provider for shared state between HomeAppBar and HomeBody
 class HomeStateProvider extends InheritedWidget {
