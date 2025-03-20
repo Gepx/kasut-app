@@ -64,6 +64,7 @@ flutter:
     - assets/blog/content2.png
     - assets/blog/profile.png
     - assets/brands/
+    - assets/home/
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
