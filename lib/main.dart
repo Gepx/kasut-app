@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugasuts/features/blog/blog.dart';
 import 'package:tugasuts/features/home/home_page.dart';
 
 void main() {
@@ -126,7 +127,7 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
     ),
     _ScreenData(
       appBar: (context) => const _CustomAppBar(title: 'Blog'),
-      body: (context) => const Center(child: Text('Blog Content')),
+      body: (context) => const Blog(),
       iconData: Icons.article,
       activeIconData: Icons.newspaper_outlined,
       label: 'Blog',
