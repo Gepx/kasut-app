@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:tugasuts/features/single-product/single_product_page.dart';
 
 class BoxData {
   final String title;
@@ -93,6 +94,17 @@ class CategoryAll extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          const SizedBox(height: 50),
+          ElevatedButton(
+            child: const Text('Single Product'),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SingleProductPage(),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 50),
         ],
