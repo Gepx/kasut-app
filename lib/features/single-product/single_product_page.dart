@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/product_model.dart';
+import 'buy_product_page.dart';
 
 class SingleProductPage extends StatefulWidget {
   const SingleProductPage({super.key});
@@ -32,7 +33,11 @@ class _SingleProductPageState extends State<SingleProductPage> {
           child: Container(color: Colors.grey[300], height: 1),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 22),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_outlined,
+            color: Colors.black,
+            size: 22,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -117,12 +122,29 @@ class _SingleProductPageState extends State<SingleProductPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Price
-                      Text(
-                        currencyFormat.format(dummyProduct.price),
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            currencyFormat.format(1480000),
+                            style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text(
+                              currencyFormat.format(1599000),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
 
@@ -379,7 +401,18 @@ class _SingleProductPageState extends State<SingleProductPage> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: _selectedSize == null ? null : () {},
+                      onPressed:
+                          _selectedSize == null
+                              ? null
+                              : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => const BuyProductPage(),
+                                  ),
+                                );
+                              },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[600],
                         foregroundColor: Colors.white,
