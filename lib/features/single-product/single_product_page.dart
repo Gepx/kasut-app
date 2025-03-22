@@ -45,7 +45,11 @@ class _SingleProductPageState extends State<SingleProductPage> {
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.share, color: Colors.black, size: 24),
+            icon: const Icon(
+              Icons.ios_share_outlined,
+              color: Colors.black,
+              size: 24,
+            ),
             onPressed: () {},
           ),
           const SizedBox(width: 8),
