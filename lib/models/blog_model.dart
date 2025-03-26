@@ -98,7 +98,7 @@ final List<BlogPost> blogPosts = [
     ''',
     publishTime: DateTime.now(),
   ),
-    BlogPost(
+  BlogPost(
     id: '5',
     authorName: 'Shoe Trends',
     authorImage: 'assets/blog/profile.png',
@@ -124,7 +124,7 @@ final List<BlogPost> blogPosts = [
     ''',
     publishTime: DateTime.now(),
   ),
-    BlogPost(
+  BlogPost(
     id: '7',
     authorName: 'Ortuseight',
     authorImage: 'assets/blog/profile.png',
@@ -155,5 +155,5 @@ final List<BlogPost> blogPosts = [
         With its rapid growth and expanding international presence, Ortuseight is poised to become a major player in the global sportswear industry. As it continues to innovate and cater to diverse athletic needs, the brand’s future looks promising.
     ''',
     publishTime: DateTime.now(),
-  )
+  ),
 ];
