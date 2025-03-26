@@ -8,6 +8,17 @@ class SellerPage extends StatefulWidget {
 class _SellerPageState extends State<SellerPage> {
   bool hasNpwp = true;
 
+  final _formKey = GlobalKey<FormState>();
+  String? selectedBank;
+  String? selectedProvince;
+
+  List<String> banks = ["Bank BCA", "Bank BNI", "Bank BRI"];
+  List<String> provinces = [
+    "Sumatera Utara",
+    "Sumatera Barat",
+    "Sumatera Timur",
+  ];
+
   void _showUploadOptions() {
     showModalBottomSheet(
       context: context,
@@ -29,12 +40,6 @@ class _SellerPageState extends State<SellerPage> {
     );
   }
 
-  // final _formKey = GlobalKey<FormState>();
-  // TextEditingController npwpController = TextEditingController();
-  // TextEditingController ktpController = TextEditingController();
-  // TextEditingController nameController = TextEditingController();
-  // TextEditingController addressController = TextEditingController();
-
   // void _submitForm() {
   //   if (_formKey.currentState!.validate()) {
   //     ScaffoldMessenger.of(
@@ -46,10 +51,14 @@ class _SellerPageState extends State<SellerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Sell With Us")),
+      appBar: AppBar(
+        title: Text("Sell With Us"),
+        shape: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -180,6 +189,144 @@ class _SellerPageState extends State<SellerPage> {
                       ],
                     ),
                   ),
+                ),
+              ),
+              Text(
+                'Mobile Number *',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Make sure to input active number connected with SMS or Whatsapp to receive any updates regarding to your products.',
+                style: TextStyle(color: Colors.grey),
+              ),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          '../assets/seller/indonesia_flag.png',
+                          width: 24,
+                        ),
+                        SizedBox(width: 5),
+                        Text('+62'),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: TextFormField(
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        hintText: 'Phone Number',
+                        border: OutlineInputBorder(),
+                        errorStyle: TextStyle(color: Colors.red),
+                      ),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator:
+                          (value) =>
+                              (value == null || value.isEmpty)
+                                  ? 'Phone Number is required'
+                                  : null,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Account Holder's Name *",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Input the bank account you would like to be associated with all transaction occured in this platform',
+                style: TextStyle(color: Colors.grey),
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: "Input account holder's name",
+                  border: OutlineInputBorder(),
+                  errorStyle: TextStyle(color: Colors.red),
+                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator:
+                    (value) =>
+                        (value == null || value.isEmpty)
+                            ? "Account Holder's Name is required"
+                            : null,
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Account Number *",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(hintText: "Account Number"),
+                validator: (value) {
+                  if (value == null || value.isEmpty) return "Required";
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Bank Name *",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              DropdownButtonFormField<String>(
+                value: selectedBank,
+                hint: Text("Select Bank Name"),
+                items:
+                    banks.map((bank) {
+                      return DropdownMenuItem(value: bank, child: Text(bank));
+                    }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedBank = value;
+                  });
+                },
+                validator: (value) => value == null ? "Required" : null,
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Seller Location *",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              DropdownButtonFormField<String>(
+                value: selectedProvince,
+                hint: Text("Select Province"),
+                items:
+                    provinces.map((province) {
+                      return DropdownMenuItem(
+                        value: province,
+                        child: Text(province),
+                      );
+                    }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedProvince = value;
+                  });
+                },
+                validator: (value) => value == null ? "Required" : null,
+              ),
+              SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Form Submitted Successfully")),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade400, // Disabled color
+                  ),
+                  child: Text("Submit"),
                 ),
               ),
             ],
