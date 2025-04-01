@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tugasuts/features/blog/blog.dart';
 import 'package:tugasuts/features/home/home_page.dart';
+import 'package:tugasuts/features/seller/seller.dart';
 
 void main() {
   runApp(const Kasut());
@@ -141,9 +142,9 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
     ),
     _ScreenData(
       appBar: (context) => const _CustomAppBar(title: 'Selling'),
-      body: (context) => const Center(child: Text('Selling Content')),
-      iconData: Icons.price_check,
-      activeIconData: Icons.price_check_outlined,
+      body: (context) => const SellerPage(),
+      iconData: Icons.sell,
+      activeIconData: Icons.sell_outlined,
       label: 'Selling',
     ),
     _ScreenData(
