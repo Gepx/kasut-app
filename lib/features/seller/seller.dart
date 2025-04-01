@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SellerPage extends StatefulWidget {
+  const SellerPage({super.key});
+
   @override
-  _SellerPageState createState() => _SellerPageState();
+  State<SellerPage> createState() => _SellerPageState();
 }
 
 class _SellerPageState extends State<SellerPage> {
@@ -82,7 +84,7 @@ class _SellerPageState extends State<SellerPage> {
                   ),
                   Expanded(
                     child: RadioListTile<bool>(
-                      title: Text("I don’t have NPWP"),
+                      title: Text("I don't have NPWP"),
                       value: false,
                       groupValue: hasNpwp,
                       onChanged: (value) {
