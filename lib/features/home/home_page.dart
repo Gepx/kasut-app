@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tugasuts/features/blog/blog.dart';
 import 'package:tugasuts/features/home/home_all.dart';
 import 'package:tugasuts/features/home/home_search_bar.dart';
+import 'package:tugasuts/features/seller/seller.dart';
 
 // State provider for shared state between HomeAppBar and HomeBody
 class HomeStateProvider extends InheritedWidget {
@@ -63,6 +64,12 @@ class _HomePageState extends State<HomePage>
           MaterialPageRoute(builder: (context) => Blog()),
         );
         break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SellerPage()),
+        );
+        break;
     }
   }
 
@@ -107,9 +114,9 @@ class _HomePageState extends State<HomePage>
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  _selectedIndex == 3 ? Icons.favorite : Icons.favorite_border,
+                  _selectedIndex == 3 ? Icons.sell : Icons.sell_outlined,
                 ),
-                label: 'Favorites',
+                label: 'Seller',
               ),
               BottomNavigationBarItem(
                 icon: Icon(
