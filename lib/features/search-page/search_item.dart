@@ -90,8 +90,12 @@ class _SearchPageState extends State<SearchPage> {
       (i) => List.filled(s2.length + 1, 0.0),
     );
 
-    for (var i = 0; i <= s1.length; i++) matrix[i][0] = i.toDouble();
-    for (var j = 0; j <= s2.length; j++) matrix[0][j] = j.toDouble();
+    for (var i = 0; i <= s1.length; i++) {
+      matrix[i][0] = i.toDouble();
+    }
+    for (var j = 0; j <= s2.length; j++) {
+      matrix[0][j] = j.toDouble();
+    }
 
     for (var i = 1; i <= s1.length; i++) {
       for (var j = 1; j <= s2.length; j++) {
@@ -258,7 +262,7 @@ class _SearchPageState extends State<SearchPage> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: Color.fromRGBO(158, 158, 158, 0.1),
                 spreadRadius: 1,
                 blurRadius: 4,
                 offset: const Offset(0, 2),
