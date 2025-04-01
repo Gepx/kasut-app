@@ -65,12 +65,8 @@ flutter:
     - assets/brand-products/
     - assets/brand-products/adidas/
     - assets/brands/
-<<<<<<< HEAD
     - assets/seller/
-:=======
-
     - assets/home/
->>>>>>> 2125008db30351acf5b8d5e51032fd0bdbfdb5b0
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
