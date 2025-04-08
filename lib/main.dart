@@ -127,7 +127,9 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
       label: 'Home',
     ),
     _ScreenData(
-      appBar: (context) => const _CustomAppBar(title: 'Blog'),
+      appBar:
+          (context) =>
+              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
       body: (context) => const Blog(),
       iconData: Icons.article,
       activeIconData: Icons.newspaper_outlined,
@@ -141,7 +143,9 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
       label: 'Market',
     ),
     _ScreenData(
-      appBar: (context) => const _CustomAppBar(title: 'Selling'),
+      appBar:
+          (context) =>
+              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
       body: (context) => const SellerPage(),
       iconData: Icons.sell,
       activeIconData: Icons.sell_outlined,
