@@ -262,7 +262,8 @@ class _SearchPageState extends State<SearchPage> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Color.fromRGBO(158, 158, 158, 0.1),
+                color: Color.fromRGBO(158, 158, 158, 0.4),
+                // color: Colors.grey.withValues(),
                 spreadRadius: 1,
                 blurRadius: 4,
                 offset: const Offset(0, 2),
