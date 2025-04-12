@@ -3,12 +3,14 @@ class Shoe {
   final String brand;
   final double price;
   final String imageUrl;
+  final double? oldPrice; // Added optional old price
 
   const Shoe({
     required this.name,
     required this.brand,
     required this.price,
     required this.imageUrl,
+    this.oldPrice, // Added to constructor
   });
 }
 
