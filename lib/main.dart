@@ -220,7 +220,7 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
     super.initState();
     // Initialize TabController for Home page (assuming 3 tabs)
     // TODO: Get the correct tab count dynamically if possible
-    _homeTabController = TabController(length: 3, vsync: this);
+    _homeTabController = TabController(length: 14, vsync: this);
   }
 
   void _onIconTapped(int index) {
