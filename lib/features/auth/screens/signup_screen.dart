@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'profile_screen.dart'; // Navigate to profile on success
-import 'signup_screen.dart'; // Navigate to signup
+import 'login_screen.dart'; // Navigate to login after signup
 import '../services/auth_service.dart'; // Use AuthService
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
-  // Define a named route for easier navigation
-  static const String routeName = '/login';
+  // Define a named route
+  static const String routeName = '/signup';
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final AuthService _authService = AuthService(); // Instance of AuthService
   bool _isLoading = false;
@@ -24,11 +24,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _login() async {
+  Future<void> _signup() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -36,10 +37,15 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       final email = _emailController.text.trim();
+      final username = _usernameController.text.trim();
       final password = _passwordController.text.trim();
 
-      // Use the AuthService to login
-      final user = await _authService.login(email: email, password: password);
+      // Use the AuthService to signup
+      final success = await _authService.signUp(
+        email: email,
+        username: username,
+        password: password,
+      );
 
       // Check if the widget is still mounted before updating state
       if (!mounted) return;
@@ -48,17 +54,21 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
 
-      if (user != null) {
-        // Navigate to Profile Screen on successful login, replacing the login screen
+      if (success) {
+        // Show success message (optional)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Signup successful! Please login.')),
+        );
+        // Navigate to Login Screen, replacing the signup screen
         Navigator.pushNamedAndRemoveUntil(
           context,
-          ProfileScreen.routeName,
-          (route) => false, // Remove all routes below ProfileScreen
+          LoginScreen.routeName,
+          (route) => false, // Remove all routes below LoginScreen
         );
       } else {
-        // Show error message if login fails
+        // Show error message if signup fails (e.g., email exists)
         setState(() {
-          _errorMessage = 'Invalid email or password. Please try again.';
+          _errorMessage = 'Signup failed. Email might already be in use.';
         });
       }
     }
@@ -67,27 +77,25 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login'), centerTitle: true),
+      appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
       body: Center(
         child: SingleChildScrollView(
-          // Allows scrolling if content overflows
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment:
-                    CrossAxisAlignment.stretch, // Make buttons stretch
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    'Welcome Back!',
+                    'Create Account',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Please login to your account',
+                    'Enter your details below',
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
@@ -107,9 +115,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      // Basic email format check
                       if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                         return 'Please enter a valid email address';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      hintText: 'Choose a username',
+                      prefixIcon: const Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a username';
                       }
                       return null;
                     },
@@ -119,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _passwordController,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      hintText: 'Enter your password',
+                      hintText: 'Create a password',
                       prefixIcon: const Icon(Icons.lock_outline),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -128,10 +153,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
+                        return 'Please enter a password';
                       }
                       if (value.length < 6) {
-                        // Example: Minimum password length
                         return 'Password must be at least 6 characters';
                       }
                       return null;
@@ -159,9 +183,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
-                        onPressed: _login,
+                        onPressed: _signup,
                         child: const Text(
-                          'Login',
+                          'Sign Up',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -171,13 +195,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         _isLoading
                             ? null
                             : () {
-                              // Navigate to Signup Screen
-                              Navigator.pushNamed(
+                              // Navigate back to Login Screen
+                              Navigator.pop(
                                 context,
-                                SignupScreen.routeName,
-                              );
+                              ); // Go back to the previous screen (Login)
                             },
-                    child: const Text("Don't have an account? Sign Up"),
+                    child: const Text('Already have an account? Login'),
                   ),
                 ],
               ),

@@ -76,68 +76,76 @@ class Blog extends StatelessWidget {
                     ),
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Blog thumbnail
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          post.images.first,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
+                child: Material(
+                  // Added Material widget
+                  color:
+                      Colors
+                          .transparent, // Keep background transparent if needed
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Blog thumbnail
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            post.images.first,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Author info
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: AssetImage(post.authorImage),
-                                  radius: 12,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  post.authorName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Author info
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                      post.authorImage,
+                                    ),
+                                    radius: 12,
                                   ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    post.authorName,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              // Blog title
+                              Text(
+                                post.title,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            // Blog title
-                            Text(
-                              post.title,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            // Publish time
-                            Text(
-                              '${post.publishTime.day}/${post.publishTime.month}/${post.publishTime.year}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
+                              const SizedBox(height: 8),
+                              // Publish time
+                              Text(
+                                '${post.publishTime.day}/${post.publishTime.month}/${post.publishTime.year}',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                ), // Closing parenthesis for Material
               );
             },
           ),

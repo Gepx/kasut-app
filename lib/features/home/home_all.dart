@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:tugasuts/features/single-product/single_product_page.dart';
-import 'package:tugasuts/models/shoe_model.dart';
-import 'package:tugasuts/widgets/sneaker_card.dart';
+import 'package:kasut/features/single-product/single_product_page.dart';
+import 'package:kasut/models/shoe_model.dart';
+import 'package:kasut/widgets/sneaker_card.dart';
 
 // BoxData class for the category boxes
 class BoxData {
@@ -77,9 +77,9 @@ class CategoryAll extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Categories Grid - 2 rows of 4 items
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -88,7 +88,9 @@ class CategoryAll extends StatelessWidget {
               children: [
                 Text(
                   'Categories',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 GridView.count(
@@ -114,7 +116,7 @@ class CategoryAll extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            listData[index].title, 
+                            listData[index].title,
                             style: const TextStyle(fontSize: 10),
                           ),
                         ],
@@ -125,9 +127,9 @@ class CategoryAll extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Featured Sneakers
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -139,7 +141,9 @@ class CategoryAll extends StatelessWidget {
                   children: [
                     Text(
                       'Featured Sneakers',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -157,9 +161,9 @@ class CategoryAll extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Popular Section
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -171,7 +175,9 @@ class CategoryAll extends StatelessWidget {
                   children: [
                     Text(
                       'Popular Right Now',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -189,16 +195,19 @@ class CategoryAll extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Single Product Button Demo
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('View Single Product Demo'),
               onPressed: () {
@@ -210,7 +219,7 @@ class CategoryAll extends StatelessWidget {
               },
             ),
           ),
-          
+
           const SizedBox(height: 32),
         ],
       ),

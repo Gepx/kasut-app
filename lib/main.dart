@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart'; // Corrected import
-import 'package:provider/provider.dart'; // Import Provider
-import 'package:tugasuts/features/auth/providers/auth_provider.dart'; // Import AuthNotifier
-import 'package:tugasuts/features/auth/screens/profile_screen.dart'; // Import the new ProfileScreen
-import 'package:tugasuts/features/blog/blog.dart';
-import 'package:tugasuts/features/home/home_page.dart';
-import 'package:tugasuts/features/seller/seller.dart';
+// import 'package:provider/provider.dart'; // Removed Provider for static auth
+// import 'package:kasut_app/features/auth/providers/auth_provider.dart'; // Removed AuthNotifier
+import 'features/auth/screens/login_screen.dart';
+import 'features/auth/screens/profile_screen.dart'; // Import the new ProfileScreen
+import 'features/auth/screens/signup_screen.dart';
+import 'features/profile/screens/buying_screen.dart';
+import 'features/profile/screens/selling_screen.dart';
+import 'features/profile/screens/consignment_screen.dart';
+import 'features/profile/screens/kasut_credit_screen.dart';
+import 'features/profile/screens/seller_credit_screen.dart';
+import 'features/profile/screens/kasut_points_screen.dart';
+import 'features/profile/screens/my_voucher_screen.dart';
+import 'features/profile/screens/wishlist_screen.dart';
+import 'features/profile/screens/invite_friend_screen.dart';
+import 'features/profile/screens/settings_screen.dart';
+import 'features/profile/screens/faq_screen.dart';
+import 'package:kasut/features/blog/blog.dart'; // Assuming this path is correct
+import 'package:kasut/features/home/home_page.dart'; // Assuming home-page.dart is the main home widget
+import 'package:kasut/features/seller/seller.dart'; // Correct path, class is SellerPage
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthNotifier(), // Create the AuthNotifier instance
-      child: const Kasut(),
-    ),
+    // ChangeNotifierProvider removed for static auth
+    const Kasut(),
   );
 }
 
@@ -20,7 +31,30 @@ class Kasut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: const Main());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/main', // Start with the Main widget containing bottom nav
+      routes: {
+        '/main':
+            (context) => const Main(), // Route for the main screen structure
+        LoginScreen.routeName: (context) => const LoginScreen(),
+        SignupScreen.routeName: (context) => const SignupScreen(),
+        ProfileScreen.routeName: (context) => const ProfileScreen(),
+        // ProfileScreen is part of the Main widget's screens now
+        // Profile sub-screen routes
+        BuyingScreen.routeName: (context) => const BuyingScreen(),
+        SellingScreen.routeName: (context) => const SellingScreen(),
+        ConsignmentScreen.routeName: (context) => const ConsignmentScreen(),
+        KasutCreditScreen.routeName: (context) => const KasutCreditScreen(),
+        SellerCreditScreen.routeName: (context) => const SellerCreditScreen(),
+        KasutPointsScreen.routeName: (context) => const KasutPointsScreen(),
+        MyVoucherScreen.routeName: (context) => const MyVoucherScreen(),
+        WishlistScreen.routeName: (context) => const WishlistScreen(),
+        InviteFriendScreen.routeName: (context) => const InviteFriendScreen(),
+        SettingsScreen.routeName: (context) => const SettingsScreen(),
+        FaqScreen.routeName: (context) => const FaqScreen(),
+      },
+    );
   }
 }
 
@@ -121,46 +155,60 @@ class _CustomBottomNavigationBar extends StatelessWidget {
   }
 }
 
-// Update the _MainScreenState class to properly handle TabController
+// Update the _MainScreenState class
 class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
+  // Added mixin
   int _selectedIndex = 0;
-  late TabController _tabController;
+  TabController? _homeTabController; // Added TabController for Home
 
   // Use a list of _ScreenData objects for navigation screens
-  final List<_ScreenData> _bottomNavScreens = [
+  // Note: This list is built *after* _homeTabController is initialized in initState
+  List<_ScreenData> get _bottomNavScreens => [
     _ScreenData(
-      // Provide a placeholder AppBar function to avoid initializer error
-      appBar: (context) => AppBar(title: const Text('Home')),
-      body: (context) => const HomePage(),
+      // Home screen - uses HomePage and HomeAppBar with the controller
+      appBar:
+          (context) => HomeAppBar(
+            tabController: _homeTabController!,
+          ), // Assumes HomeAppBar takes TabController
+      body:
+          (context) => HomePage(
+            tabController: _homeTabController!,
+          ), // Assumes HomePage takes TabController
       iconData: Icons.home,
       activeIconData: Icons.home_outlined,
       label: 'Home',
     ),
     // ...other screen data items remain unchanged
     _ScreenData(
-      appBar: (context) => PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
-      body: (context) => const Blog(),
+      appBar:
+          (context) =>
+              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
+      body: (context) => const Blog(), // Use actual Blog page
       iconData: Icons.article,
       activeIconData: Icons.newspaper_outlined,
       label: 'Blog',
     ),
     _ScreenData(
       appBar: (context) => const _CustomAppBar(title: 'Market'),
-      body: (context) => const Center(child: Text('Market Content')),
+      // TODO: Replace with actual Market page widget when available
+      body: (context) => const Center(child: Text('Market Page Placeholder')),
       iconData: Icons.search,
       activeIconData: Icons.search_outlined,
       label: 'Market',
     ),
     _ScreenData(
-      appBar: (context) => PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
-      body: (context) => const SellerPage(),
+      appBar:
+          (context) =>
+              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
+      body:
+          (context) => const SellerPage(), // Use correct class name: SellerPage
       iconData: Icons.sell,
       activeIconData: Icons.sell_outlined,
       label: 'Selling',
     ),
     _ScreenData(
       appBar: (context) => const _CustomAppBar(title: 'Profile'),
-      body: (context) => const ProfileScreen(),
+      body: (context) => const ProfileScreen(), // Keep ProfileScreen here
       iconData: Icons.person_rounded,
       activeIconData: Icons.person_outline,
       label: 'Profile',
@@ -170,12 +218,13 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // Initialize TabController with the correct length from home_page.dart's _brands list
-    // We're using 14 which is the number of brands in the _brands list
-    _tabController = TabController(length: 14, vsync: this);
+    // Initialize TabController for Home page (assuming 3 tabs)
+    // TODO: Get the correct tab count dynamically if possible
+    _homeTabController = TabController(length: 3, vsync: this);
   }
 
   void _onIconTapped(int index) {
+    // No special navigation for index 0 anymore
     setState(() {
       _selectedIndex = index;
     });
@@ -183,7 +232,7 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _homeTabController?.dispose(); // Dispose the home tab controller
     super.dispose();
   }
 
@@ -196,32 +245,20 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
       );
     }
 
-    // Determine the AppBar based on the selected index
-    final PreferredSizeWidget currentAppBar;
-    if (_selectedIndex == 0) { // Index 0 is Home
-      // Build HomeAppBar here, passing the initialized controller
-      currentAppBar = HomeAppBar(tabController: _tabController);
-    } else {
-      // For other screens, use the function defined in _ScreenData
-      currentAppBar = _bottomNavScreens[_selectedIndex].appBar(context);
-    }
+    // AppBar is now directly determined by the selected screen's definition
+    // Get the current screen data
+    final currentScreen = _bottomNavScreens[_selectedIndex];
 
     return Scaffold(
-      appBar: currentAppBar,
-      // Use a wrapper that provides the TabController to descendants
-      body: _selectedIndex == 0
-          ? _createHomeBodyWithTabController()
-          : _bottomNavScreens[_selectedIndex].body(context),
+      // Use the appBar builder from the current screen data
+      appBar: currentScreen.appBar(context),
+      // Use the body builder from the current screen data
+      body: currentScreen.body(context),
       bottomNavigationBar: _CustomBottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onIconTapped,
         screens: _bottomNavScreens,
       ),
     );
-  }
-  
-  // Wrapper method to provide TabController to HomePage body
-  Widget _createHomeBodyWithTabController() {
-    return _bottomNavScreens[_selectedIndex].body(context);
   }
 }
