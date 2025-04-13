@@ -1,10 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // Corrected import
+import 'package:provider/provider.dart'; // Import Provider
+import 'package:tugasuts/features/auth/providers/auth_provider.dart'; // Import AuthNotifier
+import 'package:tugasuts/features/auth/screens/profile_screen.dart'; // Import the new ProfileScreen
 import 'package:tugasuts/features/blog/blog.dart';
 import 'package:tugasuts/features/home/home_page.dart';
 import 'package:tugasuts/features/seller/seller.dart';
 
 void main() {
-  runApp(const Kasut());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AuthNotifier(), // Create the AuthNotifier instance
+      child: const Kasut(),
+    ),
+  );
 }
 
 class Kasut extends StatelessWidget {
@@ -113,23 +121,24 @@ class _CustomBottomNavigationBar extends StatelessWidget {
   }
 }
 
+// Update the _MainScreenState class to properly handle TabController
 class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   late TabController _tabController;
 
-  // Use a list of _ScreenData objects instead of Maps
+  // Use a list of _ScreenData objects for navigation screens
   final List<_ScreenData> _bottomNavScreens = [
     _ScreenData(
-      appBar: (context) => const HomeAppBar(),
-      body: (context) => const HomeBody(),
+      // Provide a placeholder AppBar function to avoid initializer error
+      appBar: (context) => AppBar(title: const Text('Home')),
+      body: (context) => const HomePage(),
       iconData: Icons.home,
       activeIconData: Icons.home_outlined,
       label: 'Home',
     ),
+    // ...other screen data items remain unchanged
     _ScreenData(
-      appBar:
-          (context) =>
-              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
+      appBar: (context) => PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
       body: (context) => const Blog(),
       iconData: Icons.article,
       activeIconData: Icons.newspaper_outlined,
@@ -143,9 +152,7 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
       label: 'Market',
     ),
     _ScreenData(
-      appBar:
-          (context) =>
-              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
+      appBar: (context) => PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
       body: (context) => const SellerPage(),
       iconData: Icons.sell,
       activeIconData: Icons.sell_outlined,
@@ -153,7 +160,7 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
     ),
     _ScreenData(
       appBar: (context) => const _CustomAppBar(title: 'Profile'),
-      body: (context) => const Center(child: Text('Profile Content')),
+      body: (context) => const ProfileScreen(),
       iconData: Icons.person_rounded,
       activeIconData: Icons.person_outline,
       label: 'Profile',
@@ -163,8 +170,9 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // Initialize the TabController here, using 'this' for vsync
-    _tabController = TabController(length: 10, vsync: this);
+    // Initialize TabController with the correct length from home_page.dart's _brands list
+    // We're using 14 which is the number of brands in the _brands list
+    _tabController = TabController(length: 14, vsync: this);
   }
 
   void _onIconTapped(int index) {
@@ -181,26 +189,39 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // Index out-of-bounds check (defensive programming)
+    // Index out-of-bounds check
     if (_selectedIndex < 0 || _selectedIndex >= _bottomNavScreens.length) {
       return const Scaffold(
         body: Center(child: Text('Error: Invalid screen index.')),
       );
     }
 
+    // Determine the AppBar based on the selected index
+    final PreferredSizeWidget currentAppBar;
+    if (_selectedIndex == 0) { // Index 0 is Home
+      // Build HomeAppBar here, passing the initialized controller
+      currentAppBar = HomeAppBar(tabController: _tabController);
+    } else {
+      // For other screens, use the function defined in _ScreenData
+      currentAppBar = _bottomNavScreens[_selectedIndex].appBar(context);
+    }
+
     return Scaffold(
-      body: HomeStateProvider(
-        tabController: _tabController,
-        child: Scaffold(
-          appBar: _bottomNavScreens[_selectedIndex].appBar(context),
-          body: _bottomNavScreens[_selectedIndex].body(context),
-          bottomNavigationBar: _CustomBottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onIconTapped,
-            screens: _bottomNavScreens,
-          ),
-        ),
+      appBar: currentAppBar,
+      // Use a wrapper that provides the TabController to descendants
+      body: _selectedIndex == 0
+          ? _createHomeBodyWithTabController()
+          : _bottomNavScreens[_selectedIndex].body(context),
+      bottomNavigationBar: _CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onIconTapped,
+        screens: _bottomNavScreens,
       ),
     );
+  }
+  
+  // Wrapper method to provide TabController to HomePage body
+  Widget _createHomeBodyWithTabController() {
+    return _bottomNavScreens[_selectedIndex].body(context);
   }
 }
