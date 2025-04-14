@@ -4,85 +4,6 @@ import 'package:kasut/features/home/home_search_bar.dart';
 import 'package:kasut/models/shoe_model.dart';
 import 'package:kasut/widgets/sneaker_card.dart';
 
-// --- Placeholder Data ---
-// Using placeholder network images for testing
-final List<Shoe> _sampleSneakers = [
-  Shoe(
-    // id: '1', // Removed - Not in Shoe constructor
-    name: 'Nike Dunk High By You',
-    brand: 'Nike',
-    price: 1850000,
-    oldPrice: 2100000, // Added sample old price
-    imageUrl:
-        'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/99486859-0ff3-46b4-949b-2d16af2ad421/custom-nike-dunk-high-by-you-shoes.png',
-    // description: 'Customizable high-top sneaker.', // Removed
-    // sizes: ['US 9', 'US 10', 'US 11'], // Removed
-    // color: 'Multi-Color', // Removed
-    // releaseDate: DateTime(2023, 1, 1), // Removed
-  ),
-  Shoe(
-    // id: '2', // Removed
-    name: 'Samba OG Shoes',
-    brand: 'Adidas',
-    price: 1500000,
-    oldPrice: 1750000, // Added sample old price
-    imageUrl:
-        'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/7ed0855435194229a525aad6009a0497_9366/Samba_OG_Shoes_White_B75806_01_standard.jpg',
-    // description: 'Classic indoor soccer shoe turned streetwear staple.', // Removed
-    // sizes: ['US 8', 'US 9', 'US 10'], // Removed
-    // color: 'White', // Removed
-    // releaseDate: DateTime(2022, 8, 15), // Removed
-  ),
-  Shoe(
-    // id: '3', // Removed
-    name: 'MADE in USA 990v4',
-    brand: 'New Balance',
-    price: 2800000,
-    imageUrl:
-        'https://nb.scene7.com/is/image/NB/u990gr4_nb_02_i?pdpflexf2&qlt=80&fmt=webp&wid=440&hei=440',
-    // description: 'Iconic running shoe known for comfort and style.', // Removed
-    // sizes: ['US 9', 'US 9.5', 'US 10'], // Removed
-    // color: 'Grey', // Removed
-    // releaseDate: DateTime(2023, 5, 20), // Removed
-  ),
-  Shoe(
-    // id: '4', // Removed
-    name: 'GEL-KAYANO 30',
-    brand: 'Asics',
-    price: 2100000,
-    imageUrl:
-        'https://images.asics.com/is/image/asics/1011B792_100_SR_RT_GLB?\$sfcc-product\$', // Escaped $
-    // description: 'Supportive running shoe for long distances.', // Removed
-    // sizes: ['US 10', 'US 11', 'US 12'], // Removed
-    // color: 'White/Blue', // Removed
-    // releaseDate: DateTime(2023, 7, 1), // Removed
-  ),
-  Shoe(
-    // id: '5', // Removed
-    name: 'Air Jordan 1 Mid',
-    brand: 'Air Jordan',
-    price: 1950000,
-    imageUrl:
-        'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/air-jordan-1-mid-shoes-86f1ZW.png',
-    // description: 'Mid-top version of the iconic AJ1.', // Removed
-    // sizes: ['US 8', 'US 9', 'US 10'], // Removed
-    // color: 'Black/Red', // Removed
-    // releaseDate: DateTime(2023, 3, 10), // Removed
-  ),
-  Shoe(
-    // id: '6', // Removed
-    name: 'Puma Suede Classic XXI',
-    brand: 'Puma',
-    price: 1100000,
-    imageUrl:
-        'https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/374915/01/sv01/fnd/IND/fmt/png/Suede-Classic-XXI-Men\'s-Sneakers',
-    // description: 'Timeless suede sneaker.', // Removed
-    // sizes: ['US 9', 'US 10', 'US 11'], // Removed
-    // color: 'Red/White', // Removed
-    // releaseDate: DateTime(2022, 11, 5), // Removed
-  ),
-];
-
 // List of brands for the tabs
 final List<String> _brands = [
   "All",
@@ -306,18 +227,6 @@ class CategoryInfo {
   CategoryInfo({required this.title, required this.imagePath});
 }
 
-// List of categories based on the screenshot
-final List<CategoryInfo> _categories = [
-  CategoryInfo(title: 'Men', imagePath: 'assets/home/mens.png'),
-  CategoryInfo(title: 'Women', imagePath: 'assets/home/womens.png'),
-  CategoryInfo(title: 'Kids', imagePath: 'assets/home/kids.png'),
-  CategoryInfo(title: 'Air Jordan', imagePath: 'assets/home/airjordan.png'),
-  CategoryInfo(title: 'OnClouds', imagePath: 'assets/home/oncloud.png'),
-  CategoryInfo(title: 'Samba', imagePath: 'assets/home/samba.png'),
-  CategoryInfo(title: 'Asics', imagePath: 'assets/home/asics.png'),
-  CategoryInfo(title: 'New Arrivals', imagePath: 'assets/home/arrivals.png'),
-];
-
 // HomeBody accepts TabController from HomePage
 class HomeBody extends StatelessWidget {
   // Changed to StatelessWidget
@@ -527,7 +436,7 @@ class CategoryCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12), // Padding inside the container
             decoration: BoxDecoration(
-              color: Colors.grey[100], // Light grey background
+              color: Colors.white, // Light grey background
               borderRadius: BorderRadius.circular(12), // Rounded corners
             ),
             child: AspectRatio(

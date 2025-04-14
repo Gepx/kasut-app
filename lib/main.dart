@@ -33,6 +33,18 @@ class Kasut extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        // Add theme data
+        scaffoldBackgroundColor:
+            Colors.white, // Set scaffold background to pure white
+        appBarTheme: const AppBarTheme(
+          // Ensure AppBars are also white by default if needed
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0, // Optional: remove app bar shadow
+        ),
+        // You can add other theme customizations here if needed
+      ),
       initialRoute: '/main', // Start with the Main widget containing bottom nav
       routes: {
         '/main':

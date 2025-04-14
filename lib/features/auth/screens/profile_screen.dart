@@ -155,7 +155,6 @@ class ProfileScreen extends StatelessWidget {
     Map<String, String> currentUser,
   ) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
 
     // Placeholder data - replace with actual data later
     final String username =
@@ -168,8 +167,7 @@ class ProfileScreen extends StatelessWidget {
     const String version = 'Version 5.0.13'; // Static version
 
     return Container(
-      color:
-          Colors.grey[100], // Light grey background for the whole profile page
+      color: Colors.white, // Ensure white background for the whole profile page
       child: ListView(
         padding: EdgeInsets.zero, // Remove default padding
         children: [
