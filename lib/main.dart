@@ -2,6 +2,7 @@ import 'package:flutter/material.dart'; // Corrected import
 // import 'package:provider/provider.dart'; // Removed Provider for static auth
 // import 'package:kasut_app/features/auth/providers/auth_provider.dart'; // Removed AuthNotifier
 import 'features/auth/screens/login_screen.dart';
+import 'screens/splash_screen.dart';
 import 'features/auth/screens/profile_screen.dart'; // Import the new ProfileScreen
 import 'features/auth/screens/signup_screen.dart';
 import 'features/profile/screens/buying_screen.dart';
@@ -26,6 +27,19 @@ void main() {
   );
 }
 
+class SplashDemoApp extends StatelessWidget {
+  const SplashDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Splash Demo',
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+    );
+  }
+}
+
 class Kasut extends StatelessWidget {
   const Kasut({super.key});
 
@@ -45,15 +59,13 @@ class Kasut extends StatelessWidget {
         ),
         // You can add other theme customizations here if needed
       ),
-      initialRoute: '/main', // Start with the Main widget containing bottom nav
+      initialRoute: SplashScreen.routeName, // Mulai dari SplashScreen
       routes: {
-        '/main':
-            (context) => const Main(), // Route for the main screen structure
+        SplashScreen.routeName: (context) => const SplashScreen(),
+        '/main': (context) => const Main(), // Home with bottom nav
         LoginScreen.routeName: (context) => const LoginScreen(),
         SignupScreen.routeName: (context) => const SignupScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
-        // ProfileScreen is part of the Main widget's screens now
-        // Profile sub-screen routes
         BuyingScreen.routeName: (context) => const BuyingScreen(),
         SellingScreen.routeName: (context) => const SellingScreen(),
         ConsignmentScreen.routeName: (context) => const ConsignmentScreen(),
