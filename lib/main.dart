@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart'; // Corrected import
+import 'package:kasut/features/market/market.dart';
 // import 'package:provider/provider.dart'; // Removed Provider for static auth
 // import 'package:kasut_app/features/auth/providers/auth_provider.dart'; // Removed AuthNotifier
 import 'features/auth/screens/login_screen.dart';
@@ -180,10 +181,11 @@ class _CustomBottomNavigationBar extends StatelessWidget {
 }
 
 // Update the _MainScreenState class
-class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
+class _MainScreenState extends State<Main> with TickerProviderStateMixin {
   // Added mixin
   int _selectedIndex = 0;
-  TabController? _homeTabController; // Added TabController for Home
+  TabController? _homeTabController;
+  TabController? _marketTabController; // Added TabController for Home
 
   // Use a list of _ScreenData objects for navigation screens
   // Note: This list is built *after* _homeTabController is initialized in initState
@@ -213,9 +215,9 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
       label: 'Blog',
     ),
     _ScreenData(
-      appBar: (context) => const _CustomAppBar(title: 'Market'),
+      appBar: (context) => MarketAppBar(tabController: _marketTabController!),
       // TODO: Replace with actual Market page widget when available
-      body: (context) => const Center(child: Text('Market Page Placeholder')),
+      body: (context) => MarketScreen(tabController: _marketTabController!),
       iconData: Icons.search,
       activeIconData: Icons.search_outlined,
       label: 'Market',
@@ -245,6 +247,10 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
     // Initialize TabController for Home page (assuming 3 tabs)
     // TODO: Get the correct tab count dynamically if possible
     _homeTabController = TabController(length: 14, vsync: this);
+    _marketTabController = TabController(
+      length: 14,
+      vsync: this,
+    ); // Added for Market
   }
 
   void _onIconTapped(int index) {
@@ -256,7 +262,8 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _homeTabController?.dispose(); // Dispose the home tab controller
+    _homeTabController?.dispose();
+    _marketTabController?.dispose(); // Dispose the home tab controller
     super.dispose();
   }
 
