@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Navigate to Profile Screen on successful login, replacing the login screen
         Navigator.pushNamedAndRemoveUntil(
           context,
-          ProfileScreen.routeName,
+          "/main",
           (route) => false, // Remove all routes below ProfileScreen
         );
       } else {

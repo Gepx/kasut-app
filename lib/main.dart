@@ -233,7 +233,9 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
       label: 'Selling',
     ),
     _ScreenData(
-      appBar: (context) => const _CustomAppBar(title: 'Profile'),
+      appBar:
+          (context) =>
+              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
       body: (context) => const ProfileScreen(), // Keep ProfileScreen here
       iconData: Icons.person_rounded,
       activeIconData: Icons.person_outline,
