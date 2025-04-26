@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart'; // Corrected import
+import 'package:kasut/features/market/market.dart';
 // import 'package:provider/provider.dart'; // Removed Provider for static auth
 // import 'package:kasut_app/features/auth/providers/auth_provider.dart'; // Removed AuthNotifier
 import 'features/auth/screens/login_screen.dart';
+import 'screens/splash_screen.dart';
 import 'features/auth/screens/profile_screen.dart'; // Import the new ProfileScreen
 import 'features/auth/screens/signup_screen.dart';
 import 'features/profile/screens/buying_screen.dart';
@@ -23,6 +25,19 @@ void main() {
   runApp(const Kasut());
 }
 
+class SplashDemoApp extends StatelessWidget {
+  const SplashDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Splash Demo',
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+    );
+  }
+}
+
 class Kasut extends StatelessWidget {
   const Kasut({super.key});
 
@@ -42,10 +57,10 @@ class Kasut extends StatelessWidget {
         ),
         // You can add other theme customizations here if needed
       ),
-      initialRoute: '/main', // Start with the Main widget containing bottom nav
+      initialRoute: SplashScreen.routeName, // Mulai dari SplashScreen
       routes: {
-        '/main':
-            (context) => const Main(), // Route for the main screen structure
+        SplashScreen.routeName: (context) => const SplashScreen(),
+        '/main': (context) => const Main(), // Home with bottom nav
         LoginScreen.routeName: (context) => const LoginScreen(),
         SignupScreen.routeName: (context) => const SignupScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
@@ -163,10 +178,11 @@ class _CustomBottomNavigationBar extends StatelessWidget {
 }
 
 // Update the _MainScreenState class
-class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
+class _MainScreenState extends State<Main> with TickerProviderStateMixin {
   // Added mixin
   int _selectedIndex = 0;
-  TabController? _homeTabController; // Added TabController for Home
+  TabController? _homeTabController;
+  TabController? _marketTabController; // Added TabController for Home
 
   // Use a list of _ScreenData objects for navigation screens
   // Note: This list is built *after* _homeTabController is initialized in initState
@@ -196,9 +212,9 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
       label: 'Blog',
     ),
     _ScreenData(
-      appBar: (context) => const _CustomAppBar(title: 'Market'),
+      appBar: (context) => MarketAppBar(tabController: _marketTabController!),
       // TODO: Replace with actual Market page widget when available
-      body: (context) => const Center(child: Text('Market Page Placeholder')),
+      body: (context) => MarketScreen(tabController: _marketTabController!),
       iconData: Icons.search,
       activeIconData: Icons.search_outlined,
       label: 'Market',
@@ -214,7 +230,9 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
       label: 'Selling',
     ),
     _ScreenData(
-      appBar: (context) => const _CustomAppBar(title: 'Profile'),
+      appBar:
+          (context) =>
+              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
       body: (context) => const ProfileScreen(), // Keep ProfileScreen here
       iconData: Icons.person_rounded,
       activeIconData: Icons.person_outline,
@@ -226,6 +244,10 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _homeTabController = TabController(length: 14, vsync: this);
+    _marketTabController = TabController(
+      length: 14,
+      vsync: this,
+    ); // Added for Market
   }
 
   void _onIconTapped(int index) {
@@ -237,7 +259,8 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _homeTabController?.dispose(); // Dispose the home tab controller
+    _homeTabController?.dispose();
+    _marketTabController?.dispose(); // Dispose the home tab controller
     super.dispose();
   }
 

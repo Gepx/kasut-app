@@ -34,9 +34,12 @@ class ProfileScreen extends StatelessWidget {
     final currentUser = AuthService.currentUser;
 
     // The Scaffold and AppBar are handled in main.dart
-    return currentUser != null
-        ? _buildLoggedInView(context, currentUser)
-        : _buildLoggedOutView(context);
+    return Scaffold(
+      body:
+          currentUser != null
+              ? _buildLoggedInView(context, currentUser)
+              : _buildLoggedOutView(context),
+    );
   }
 
   // --- Logged Out View (Keep existing implementation) ---
