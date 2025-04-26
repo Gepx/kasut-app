@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasut/features/faq/faq_page.dart';
 
 class FaqScreen extends StatelessWidget {
   static const String routeName = '/faq'; // Define route name
@@ -16,7 +17,7 @@ class FaqScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: const Center(child: Text('FAQ Screen Placeholder')),
+      body: FAQPage(),
     );
   }
 }
