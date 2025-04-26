@@ -44,15 +44,8 @@ class CategoryAll extends StatelessWidget {
       "https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     ];
 
-    final List<String> desktopImageUrls = [
-      "https://via.placeholder.com/1200x400.png/CCCCCC/969696?text=Wide+Banner+1",
-      "https://via.placeholder.com/1200x400.png/AAAAAA/808080?text=Wide+Banner+2",
-      "https://via.placeholder.com/1200x400.png/DDDDDD/A0A0A0?text=Wide+Banner+3",
-    ];
-
-    // Select the appropriate image list based on screen width
-    final List<String> selectedImageUrls =
-        screenWidth < breakpoint ? mobileImageUrls : desktopImageUrls;
+    // Removed desktopImageUrls and selectedImageUrls logic.
+    // Carousel items and options are now determined conditionally below.
 
     // Wrap the entire scrollable content in a white container
     return Container(
@@ -69,59 +62,121 @@ class CategoryAll extends StatelessWidget {
                   bottom: BorderSide(color: Colors.grey.shade300, width: 2),
                 ),
               ),
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  height: 350.0,
-                  autoPlay: true,
-                  viewportFraction: 1.0,
-                  enableInfiniteScroll: true,
-                ),
-                items:
-                    selectedImageUrls.map((url) {
-                      return Image.network(
-                        url,
-                        width: double.infinity,
-                        height: 350,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                        // Optional: Add error and loading builders for better UX
-                        loadingBuilder: (
-                          BuildContext context,
-                          Widget child,
-                          ImageChunkEvent? loadingProgress,
-                        ) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value:
-                                  loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                            ),
-                          );
-                        },
-                        errorBuilder: (
-                          BuildContext context,
-                          Object exception,
-                          StackTrace? stackTrace,
-                        ) {
-                          return Container(
-                            // Placeholder for error
+              child: Builder(
+                // Use Builder to access context for Theme and screenWidth check
+                builder: (context) {
+                  // Determine carousel content and options based on screen width
+                  final bool isMobile = screenWidth < breakpoint;
+                  final List<Widget> carouselItems;
+                  final CarouselOptions carouselOptions;
+
+                  if (isMobile) {
+                    // Mobile: Show banner images
+                    carouselItems =
+                        mobileImageUrls.map((url) {
+                          return Image.network(
+                            url,
                             width: double.infinity,
                             height: 350,
-                            color: Colors.grey.shade300,
-                            child: const Center(
-                              child: Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
-                                size: 50,
-                              ),
-                            ),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.center,
+                            loadingBuilder: (
+                              BuildContext context,
+                              Widget child,
+                              ImageChunkEvent? loadingProgress,
+                            ) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                              loadingProgress
+                                                  .expectedTotalBytes!
+                                          : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (
+                              BuildContext context,
+                              Object exception,
+                              StackTrace? stackTrace,
+                            ) {
+                              return Container(
+                                width: double.infinity,
+                                height: 350,
+                                color: Colors.grey.shade300,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 50,
+                                  ),
+                                ),
+                              );
+                            },
                           );
-                        },
-                      );
-                    }).toList(),
+                        }).toList();
+
+                    carouselOptions = CarouselOptions(
+                      height: 350.0,
+                      autoPlay: true, // Enable for mobile
+                      viewportFraction: 1.0,
+                      enableInfiniteScroll: true, // Enable for mobile
+                    );
+                  } else {
+                    // Desktop: Show welcome message and logo
+                    carouselItems = [
+                      Container(
+                        // Use a Container for potential background/padding
+                        width: double.infinity,
+                        height: 350,
+                        color: Colors.grey.shade200, // Example background
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Placeholder for logo - replace with Image.asset if available
+                              Text(
+                                'Kasut Logo', // Placeholder
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              // Example using Image.asset (commented out):
+                              // Image.asset(
+                              //   'assets/logo.png', // Ensure this path is correct in your project
+                              //   height: 100, // Adjust size as needed
+                              //   errorBuilder: (context, error, stackTrace) => Text('Logo Error'), // Handle asset error
+                              // ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Welcome to Kasut!',
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ];
+
+                    carouselOptions = CarouselOptions(
+                      height: 350.0,
+                      autoPlay: false, // Disable for desktop
+                      viewportFraction: 1.0,
+                      enableInfiniteScroll: false, // Disable for desktop
+                    );
+                  }
+
+                  // Return the CarouselSlider with conditional items and options
+                  return CarouselSlider(
+                    options: carouselOptions,
+                    items: carouselItems,
+                  );
+                },
               ),
             ),
 
@@ -232,21 +287,26 @@ class CategoryAll extends StatelessWidget {
                           // Mobile layout: Horizontal ListView
                           return SizedBox(
                             height: 320, // Fixed height for the horizontal list
-                            width: constraints.maxWidth, // Explicitly set width
+                            // REMOVED OverflowBox. SizedBox directly contains ListView.
+                            // ListView will determine its own width based on content.
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: _featuredSneakers.length,
                               itemBuilder: (context, index) {
                                 final sneaker = _featuredSneakers[index];
+                                // Ensure items have defined width for ListView to calculate scroll extent
                                 return Padding(
                                   padding: EdgeInsets.only(
-                                    left: index == 0 ? 0 : 8,
+                                    left:
+                                        index == 0
+                                            ? 0
+                                            : 8, // Keep padding logic
                                     right: 8,
                                   ),
                                   child: SizedBox(
                                     width:
                                         MediaQuery.of(context).size.width *
-                                        0.45, // Control card width for mobile
+                                        0.45, // Keep defined item width
                                     child: SneakerCard(sneaker: sneaker),
                                   ),
                                 );
@@ -324,21 +384,26 @@ class CategoryAll extends StatelessWidget {
                           // Mobile layout: Horizontal ListView
                           return SizedBox(
                             height: 320, // Fixed height for the horizontal list
-                            width: constraints.maxWidth, // Explicitly set width
+                            // REMOVED OverflowBox. SizedBox directly contains ListView.
+                            // ListView will determine its own width based on content.
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: _popularSneakers.length,
                               itemBuilder: (context, index) {
                                 final sneaker = _popularSneakers[index];
+                                // Ensure items have defined width for ListView to calculate scroll extent
                                 return Padding(
                                   padding: EdgeInsets.only(
-                                    left: index == 0 ? 0 : 8,
+                                    left:
+                                        index == 0
+                                            ? 0
+                                            : 8, // Keep padding logic
                                     right: 8,
                                   ),
                                   child: SizedBox(
                                     width:
                                         MediaQuery.of(context).size.width *
-                                        0.45, // Control card width for mobile
+                                        0.45, // Keep defined item width
                                     child: SneakerCard(sneaker: sneaker),
                                   ),
                                 );

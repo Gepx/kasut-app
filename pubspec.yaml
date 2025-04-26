@@ -65,7 +65,7 @@ flutter:
   assets:
     - assets/blog/
     - assets/brand-products/
-    - assets/brand-products/adidas/
+    - assets/brand-products/
     - assets/brands/
     - assets/seller/
     - assets/home/

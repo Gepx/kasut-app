@@ -20,10 +20,7 @@ import 'package:kasut/features/home/home_page.dart'; // Assuming home-page.dart 
 import 'package:kasut/features/seller/seller.dart'; // Correct path, class is SellerPage
 
 void main() {
-  runApp(
-    // ChangeNotifierProvider removed for static auth
-    const Kasut(),
-  );
+  runApp(const Kasut());
 }
 
 class Kasut extends StatelessWidget {
@@ -52,8 +49,6 @@ class Kasut extends StatelessWidget {
         LoginScreen.routeName: (context) => const LoginScreen(),
         SignupScreen.routeName: (context) => const SignupScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
-        // ProfileScreen is part of the Main widget's screens now
-        // Profile sub-screen routes
         BuyingScreen.routeName: (context) => const BuyingScreen(),
         SellingScreen.routeName: (context) => const SellingScreen(),
         ConsignmentScreen.routeName: (context) => const ConsignmentScreen(),
@@ -230,8 +225,6 @@ class _MainScreenState extends State<Main> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // Initialize TabController for Home page (assuming 3 tabs)
-    // TODO: Get the correct tab count dynamically if possible
     _homeTabController = TabController(length: 14, vsync: this);
   }
 
