@@ -3,13 +3,14 @@ import 'package:kasut/features/home/home_all.dart'; // Add import for CategoryAl
 import 'package:kasut/features/home/home_search_bar.dart';
 import 'package:kasut/models/shoe_model.dart';
 import 'package:kasut/widgets/sneaker_card.dart';
+import 'package:kasut/features/single-product/single_product_page.dart'; // Import SingleProductPage
 
 // List of brands for the tabs
 final List<String> _brands = [
   "All",
   "Air Jordan",
   "Adidas",
-  "onCloud",
+  "OnCloud",
   "Nike",
   "Puma",
   "New Balance",
@@ -51,7 +52,7 @@ final Map<String, BrandInfo> _brandInfo = {
         "Founded in 1949 in Germany, Adidas is one of the world's largest sportswear manufacturers known for its three stripes logo. The brand combines performance technology with street-style designs across footwear, apparel, and accessories.",
   ),
   "onCloud": const BrandInfo(
-    name: "onCloud",
+    name: "OnCloud",
     logoPath: "assets/brands/oncloud.png",
     description:
         "On is a Swiss running shoe company founded in 2010, known for its innovative CloudTec® cushioning technology. Their lightweight designs offer both comfort and performance for road and trail running.",
@@ -250,16 +251,47 @@ class HomeBody extends StatelessWidget {
               // Show the "All" tab content from home_all.dart
               return const CategoryAll();
             } else {
-              // For other brands, show filtered products
-              // Filter the sneakers based on the brand
-              final filteredSneakers =
-                  ShoeData.shoes.where((shoe) => shoe.brand == brand).toList();
-
-              // Show brand-specific content
-              return _BrandTabContent(brand: brand, sneakers: filteredSneakers);
+              // For other brands, show filtered products by brand
+              return FutureBuilder<List<Shoe>>(
+                future: _loadBrandSneakers(brand),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error loading $brand sneakers: ${snapshot.error}',
+                      ),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return _BrandTabContent(brand: brand, sneakers: []);
+                  } else {
+                    return _BrandTabContent(
+                      brand: brand,
+                      sneakers: snapshot.data!,
+                    );
+                  }
+                },
+              );
             }
           }).toList(),
     );
+  }
+
+  // Helper method to load sneakers by brand
+  Future<List<Shoe>> _loadBrandSneakers(String brand) async {
+    try {
+      // Load products if needed
+      if (ShoeData.shoes.isEmpty) {
+        await ShoeData.loadFromAsset('assets/data/products.json');
+      }
+
+      // Use the new getByBrand method
+      return ShoeData.getByBrand(brand);
+    } catch (e) {
+      print('Error loading sneakers for brand $brand: $e');
+      return [];
+    }
   }
 }
 
@@ -272,16 +304,17 @@ class _BrandTabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get brand info if available
     final brandInfo = _brandInfo[brand];
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
       children: [
-        // Updated brand banner with logo on left and description on right
+        // Brand banner with logo and description
         if (brandInfo != null)
           Container(
-            height: 150, // Increased height to prevent overflow
+            height: 150,
             width: double.infinity,
             margin: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
@@ -296,18 +329,27 @@ class _BrandTabContent extends StatelessWidget {
               ],
             ),
             child: Row(
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // Ensure vertical centering
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Logo on the left - made bigger
+                // Logo on the left
                 Container(
-                  width: 120, // Increased width for larger logo
+                  width: 120,
                   padding: const EdgeInsets.all(10),
-                  child: Image.asset(brandInfo.logoPath, fit: BoxFit.contain),
+                  child: Image.asset(
+                    brandInfo.logoPath,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.shopping_bag,
+                        size: 50,
+                        color: Colors.grey[400],
+                      );
+                    },
+                  ),
                 ),
                 // Divider
                 Container(height: 100, width: 1, color: Colors.grey[300]),
-                // Text on the right
+                // Brand description
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -340,6 +382,7 @@ class _BrandTabContent extends StatelessWidget {
             ),
           )
         else
+          // Fallback if no brand info
           Container(
             height: 120,
             width: double.infinity,
@@ -371,17 +414,9 @@ class _BrandTabContent extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        // Sneaker grid for this brand
+        // Sneaker grid or empty state
         sneakers.isEmpty
-            ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Text(
-                  'No $brand sneakers found',
-                  style: TextStyle(color: Colors.grey.shade600),
-                ),
-              ),
-            )
+            ? _buildEmptyState(context)
             : _buildSneakerGrid(context, sneakers),
 
         const SizedBox(height: 20),
@@ -389,20 +424,44 @@ class _BrandTabContent extends StatelessWidget {
     );
   }
 
-  // Reuse the sneaker grid builder from HomeBody
-  Widget _buildSneakerGrid(BuildContext context, List<Shoe> sneakers) {
-    if (sneakers.isEmpty) {
-      return const Center(child: Text('No sneakers found for this brand.'));
-    }
+  // Empty state widget
+  Widget _buildEmptyState(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(32.0),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off_outlined, size: 48, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            'No $brand sneakers found',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Check back later for new arrivals',
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
 
-    // Updated grid layout with better height calculation
+  // Sneaker grid builder
+  Widget _buildSneakerGrid(BuildContext context, List<Shoe> sneakers) {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.55, // Adjusted aspect ratio for better height
+        childAspectRatio: 0.55, // Adjusted aspect ratio for cards
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
       ),
@@ -410,7 +469,14 @@ class _BrandTabContent extends StatelessWidget {
       itemBuilder: (context, index) {
         return SneakerCard(
           sneaker: sneakers[index],
-          // Let SneakerCard determine its own height
+          onTap: () {
+            // Navigate to product page
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => SingleProductPage(shoe: sneakers[index]),
+              ),
+            );
+          },
         );
       },
     );

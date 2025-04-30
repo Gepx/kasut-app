@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.20.2
   provider: ^6.1.4
   iconsax: ^0.0.8 # Added for profile screen icons
+  url_strategy: ^0.2.0 # Added for removing hash from browser URLs
 
 dev_dependencies:
   flutter_test:
@@ -66,11 +67,16 @@ flutter:
   assets:
     - assets/blog/
     - assets/brand-products/
-    - assets/brand-products/
+    - assets/brand-products/Adidas/
+    - assets/brand-products/Nike/
+    - assets/brand-products/New Balance/
+    - assets/brand-products/Asics/
+    - assets/brand-products/Puma/
     - assets/brands/
     - assets/seller/
     - assets/home/
     - assets/images/logo4.json
+    - assets/data/
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
