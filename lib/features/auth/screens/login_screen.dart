@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'profile_screen.dart'; // Navigate to profile on success
 import 'signup_screen.dart'; // Navigate to signup
 import '../services/auth_service.dart'; // Use AuthService
 
