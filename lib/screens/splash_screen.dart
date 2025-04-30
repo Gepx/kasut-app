@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     Timer(const Duration(seconds: 5), () {
-      Navigator.of(context).pushReplacementNamed('/main');
+      Navigator.of(context).pushReplacementNamed('/home');
     });
   }
 
@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
                   (context, child) =>
                       Transform.scale(scale: _animation.value, child: child),
               child: const Text(
-                "Welcome to My App",
+                "KasutApp",
                 style: TextStyle(
                   color: Color.fromARGB(255, 10, 0, 0),
                   fontSize: 22,

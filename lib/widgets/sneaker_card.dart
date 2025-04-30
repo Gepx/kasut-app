@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // For currency formatting
 import '../models/shoe_model.dart'; // Import the Shoe model
+import 'image_loader.dart'; // Import the AssetImageLoader
 
 /// A reusable card widget to display sneaker information.
 ///
@@ -12,12 +13,14 @@ class SneakerCard extends StatefulWidget {
   // Add optional width and height parameters for more flexible sizing
   final double? width;
   final double? height;
+  final Function()? onTap;
 
   const SneakerCard({
     super.key, // Use super parameter
     required this.sneaker,
     this.width,
     this.height,
+    this.onTap,
   });
 
   @override
@@ -38,191 +41,192 @@ class _SneakerCardState extends State<SneakerCard> {
     );
     final textTheme = Theme.of(context).textTheme;
 
-    // Ensure card has enough height - at least 280px for good appearance
-    return Container(
-      width: widget.width,
-      height: widget.height ?? 280, // Set a minimum height if not provided
-      child: Card(
-        // Using Card for elevation and rounded corners by default
-        clipBehavior: Clip.antiAlias, // Ensures image respects rounded corners
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0), // Rounded corners
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        width: widget.width,
+        height: widget.height ?? 320, // Increased height to fix overflow
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200),
         ),
-        elevation: 2.0, // Subtle shadow
-        child: InkWell(
-          // Make the whole card tappable (optional)
-          onTap: () {
-            // TODO: Implement navigation to product details page
-            print('Tapped on card: ${widget.sneaker.name}');
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Sneaker Image Section - Give it more space (60% of card height)
-              Expanded(
-                flex: 6, // Allocate more space to the image
-                child: Stack(
-                  children: [
-                    Positioned.fill(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Product Image with Favorite Button
+            Expanded(
+              flex: 3,
+              child: Stack(
+                children: [
+                  // Product Image
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    child: AssetImageLoader(
+                      imagePath: widget.sneaker.firstPict,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+
+                  // Favorite Button
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isFavorite = !_isFavorite;
+                        });
+                      },
                       child: Container(
-                        color: Colors.grey[100], // Lighter background
-                        child: Padding(
-                          padding: const EdgeInsets.all(
-                            8.0,
-                          ), // Add padding around image
-                          child: Image.network(
-                            // Changed from Image.asset
-                            widget
-                                .sneaker
-                                .imageUrl, // Access sneaker via widget.
-                            fit:
-                                BoxFit
-                                    .contain, // Use contain to see the whole shoe
-                            // Optional: Add error handling for image loading
-                            errorBuilder: (context, error, stackTrace) {
-                              print(
-                                "Error loading image: ${widget.sneaker.imageUrl} - $error",
-                              ); // Log error
-                              return const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.broken_image,
-                                      color: Colors.grey,
-                                      size: 40,
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      "No image",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value:
-                                      loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress
-                                                  .cumulativeBytesLoaded /
-                                              loadingProgress
-                                                  .expectedTotalBytes!
-                                          : null,
-                                  strokeWidth: 2,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Favorite Icon (Top Right)
-                    Positioned(
-                      top: 8.0,
-                      right: 8.0,
-                      // Use IconButton for better semantics and tap handling
-                      child: IconButton(
-                        icon: Icon(
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
                           _isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: _isFavorite ? Colors.red : Colors.black54,
-                          size: 22.0, // Slightly larger icon
+                          color: _isFavorite ? Colors.red : Colors.black,
+                          size: 24,
                         ),
-                        style: IconButton.styleFrom(
-                          // Add background for visibility
-                          backgroundColor: Colors.white.withOpacity(0.7),
-                          padding: const EdgeInsets.all(6),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isFavorite = !_isFavorite;
-                            // TODO: Add logic to persist favorite state if needed
-                          });
-                        },
                       ),
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-              // Sneaker Details Section (40% of card height)
-              Expanded(
-                flex: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(
-                    12.0,
-                  ), // Padding for text content
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min, // Use minimum space needed
-                    children: [
-                      // Brand Name
-                      // Brand Name (with potential flame icon - represented by text for now)
-                      // TODO: Add conditional flame icon if logic is defined
-                      Text(
-                        widget.sneaker.brand, // Keep original casing
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                  // Tags (Best Seller, etc)
+                  if (widget.sneaker.tags.isNotEmpty)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4.0), // Spacing
-                      // Sneaker Name
-                      Text(
-                        widget.sneaker.name,
-                        style:
-                            textTheme
-                                .bodyMedium, // Use bodyMedium for consistency
-                        maxLines: 2, // Allow up to two lines for the name
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8.0), // Spacing
-                      // Lowest Ask Label
-                      Text(
-                        'Lowest Ask',
-                        style: textTheme.labelSmall?.copyWith(
-                          color: Colors.grey[600],
-                        ), // Smaller grey label
-                      ),
-                      const SizedBox(height: 2.0), // Less spacing
-                      // Current Price
-                      Text(
-                        currencyFormatter.format(widget.sneaker.price),
-                        style: textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ), // Larger bold price
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-
-                      // Optional: Old Price (Strikethrough)
-                      if (widget.sneaker.oldPrice != null &&
-                          widget.sneaker.oldPrice! > widget.sneaker.price)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
-                          child: Text(
-                            currencyFormatter.format(widget.sneaker.oldPrice!),
-                            style: textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[500],
-                              decoration:
-                                  TextDecoration.lineThrough, // Strikethrough
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        decoration: BoxDecoration(
+                          color: _getTagColor(widget.sneaker.tags.first),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          widget.sneaker.tags.first,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            // Product Info Section - Using fixed height layout
+            Container(
+              height: 125, // Fixed height for info section
+              padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Brand with fire emoji
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.sneaker.brand,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Text("🔥", style: TextStyle(fontSize: 14)),
                     ],
                   ),
-                ),
+
+                  // Product Name
+                  Text(
+                    widget.sneaker.name,
+                    style: const TextStyle(fontSize: 14),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  // Lowest Ask Label
+                  const Text(
+                    "Lowest Ask",
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+
+                  // Spacer to push price info to the bottom
+                  const Spacer(),
+
+                  // Price Section - Same height regardless of discount
+                  SizedBox(
+                    height: 40,
+                    child:
+                        widget.sneaker.discountPrice != null
+                            ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Discounted Price
+                                Text(
+                                  currencyFormatter.format(
+                                    widget.sneaker.discountPrice,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                // Original Price (strikethrough)
+                                Text(
+                                  currencyFormatter.format(
+                                    widget.sneaker.price,
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[500],
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                currencyFormatter.format(widget.sneaker.price),
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                  ),
+                ],
               ),
-            ],
-          ), // End Column
-        ), // End InkWell
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  // Helper method to get color based on tag
+  Color _getTagColor(String tag) {
+    switch (tag) {
+      case 'Best Seller':
+        return Colors.orange;
+      case 'Most Popular':
+        return Colors.red;
+      case 'Special Price':
+        return Colors.purple;
+      case 'Free Delivery':
+        return Colors.green;
+      default:
+        return Colors.blue;
+    }
   }
 }

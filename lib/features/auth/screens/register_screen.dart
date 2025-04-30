@@ -52,7 +52,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Get AuthNotifier instance (don't listen for changes here)
     final authNotifier = Provider.of<AuthNotifier>(context, listen: false);
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: Colors.white,
