@@ -246,14 +246,14 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
     super.initState();
     // Initialize home tab controller with the correct number of tabs (matching brands)
     // This should match the number of tabs in _brands list in home_page.dart
-    _homeTabController = TabController(length: 14, vsync: this);
+    _homeTabController = TabController(length: 10, vsync: this);
     _homeTabController!.addListener(() {
       // This ensures tab selection is maintained across rebuilds
       setState(() {});
     });
 
     // Market tab controller
-    _marketTabController = TabController(length: 14, vsync: this);
+    _marketTabController = TabController(length: 10, vsync: this);
     _marketTabController!.addListener(() {
       setState(() {});
     });

@@ -156,18 +156,35 @@ class _MarketScreenState extends State<MarketScreen> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
-      child: GridView.builder(
-        itemCount: filteredShoes.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 0.7,
-        ),
-        itemBuilder: (context, index) {
-          final shoe = filteredShoes[index];
-          return SneakerCard(sneaker: shoe);
-        },
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Calculate number of columns based on available width
+          int crossAxisCount = 2; // Default for phones
+          double childAspectRatio = 0.7;
+          
+          // Responsive grid layout based on screen width
+          if (constraints.maxWidth > 600 && constraints.maxWidth < 900) {
+            crossAxisCount = 3; // Tablets
+            childAspectRatio = 0.65;
+          } else if (constraints.maxWidth >= 900) {
+            crossAxisCount = 4; // Desktops and large tablets
+            childAspectRatio = 0.6;
+          }
+          
+          return GridView.builder(
+            itemCount: filteredShoes.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: childAspectRatio,
+            ),
+            itemBuilder: (context, index) {
+              final shoe = filteredShoes[index];
+              return SneakerCard(sneaker: shoe);
+            },
+          );
+        }
       ),
     );
   }

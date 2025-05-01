@@ -45,7 +45,9 @@ class _SneakerCardState extends State<SneakerCard> {
       onTap: widget.onTap,
       child: Container(
         width: widget.width,
-        height: widget.height ?? 320, // Increased height to fix overflow
+        height:
+            widget.height ??
+            260, // Reduced from 320 to 260 for more compact cards
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -62,7 +64,9 @@ class _SneakerCardState extends State<SneakerCard> {
                   // Product Image
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(
+                      8,
+                    ), // Reduced padding from 12 to 8
                     child: AssetImageLoader(
                       imagePath: widget.sneaker.firstPict,
                       fit: BoxFit.contain,
@@ -84,7 +88,7 @@ class _SneakerCardState extends State<SneakerCard> {
                         child: Icon(
                           _isFavorite ? Icons.favorite : Icons.favorite_border,
                           color: _isFavorite ? Colors.red : Colors.black,
-                          size: 24,
+                          size: 20, // Reduced size from 24 to 20
                         ),
                       ),
                     ),
@@ -97,8 +101,8 @@ class _SneakerCardState extends State<SneakerCard> {
                       left: 8,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                          horizontal: 6, // Reduced padding from 8 to 6
+                          vertical: 3, // Reduced padding from 4 to 3
                         ),
                         decoration: BoxDecoration(
                           color: _getTagColor(widget.sneaker.tags.first),
@@ -108,7 +112,7 @@ class _SneakerCardState extends State<SneakerCard> {
                           widget.sneaker.tags.first,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 10,
+                            fontSize: 9, // Reduced font size from 10 to 9
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -120,8 +124,13 @@ class _SneakerCardState extends State<SneakerCard> {
 
             // Product Info Section - Using fixed height layout
             Container(
-              height: 125, // Fixed height for info section
-              padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
+              height: 100, // Reduced height from 125 to 100
+              padding: const EdgeInsets.fromLTRB(
+                10,
+                4,
+                10,
+                12,
+              ), // Reduced horizontal padding from 12 to 10
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -132,7 +141,7 @@ class _SneakerCardState extends State<SneakerCard> {
                         child: Text(
                           widget.sneaker.brand,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14, // Reduced from 16 to 14
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
@@ -140,14 +149,19 @@ class _SneakerCardState extends State<SneakerCard> {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Text("🔥", style: TextStyle(fontSize: 14)),
+                      const Text(
+                        "🔥",
+                        style: TextStyle(fontSize: 12),
+                      ), // Reduced from 14 to 12
                     ],
                   ),
 
                   // Product Name
                   Text(
                     widget.sneaker.name,
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ), // Reduced from 14 to 12
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -155,7 +169,10 @@ class _SneakerCardState extends State<SneakerCard> {
                   // Lowest Ask Label
                   const Text(
                     "Lowest Ask",
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey,
+                    ), // Reduced from 12 to 10
                   ),
 
                   // Spacer to push price info to the bottom
@@ -163,7 +180,7 @@ class _SneakerCardState extends State<SneakerCard> {
 
                   // Price Section - Same height regardless of discount
                   SizedBox(
-                    height: 40,
+                    height: 36, // Reduced from 40 to 36
                     child:
                         widget.sneaker.discountPrice != null
                             ? Column(
@@ -176,7 +193,7 @@ class _SneakerCardState extends State<SneakerCard> {
                                     widget.sneaker.discountPrice,
                                   ),
                                   style: const TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 14, // Reduced from 15 to 14
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -187,21 +204,18 @@ class _SneakerCardState extends State<SneakerCard> {
                                     widget.sneaker.price,
                                   ),
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 10, // Reduced from 12 to 10
                                     color: Colors.grey[500],
                                     decoration: TextDecoration.lineThrough,
                                   ),
                                 ),
                               ],
                             )
-                            : Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                currencyFormatter.format(widget.sneaker.price),
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            : Text(
+                              currencyFormatter.format(widget.sneaker.price),
+                              style: const TextStyle(
+                                fontSize: 14, // Reduced from 15 to 14
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                   ),

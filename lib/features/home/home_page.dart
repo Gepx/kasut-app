@@ -16,10 +16,6 @@ final List<String> _brands = [
   "New Balance",
   "Asics",
   "Salomon",
-  "Ortuseight",
-  "Mizuno",
-  "Under Armour",
-  "Specs",
   "Yeezy",
 ];
 
@@ -41,7 +37,7 @@ final Map<String, BrandInfo> _brandInfo = {
   "Air Jordan": const BrandInfo(
     name: "Air Jordan",
     logoPath:
-        "assets/brands/nike.png", // Using Nike logo since it's a Nike sub-brand
+        "assets/brands/air_jordan.png", // Updated to use Air Jordan logo instead of Nike
     description:
         "Air Jordan is a sub-brand of Nike created for basketball legend Michael Jordan. Launched in 1984, the iconic silhouettes have transcended sports to become cultural symbols representing peak athletic performance and street style.",
   ),
@@ -51,7 +47,7 @@ final Map<String, BrandInfo> _brandInfo = {
     description:
         "Founded in 1949 in Germany, Adidas is one of the world's largest sportswear manufacturers known for its three stripes logo. The brand combines performance technology with street-style designs across footwear, apparel, and accessories.",
   ),
-  "onCloud": const BrandInfo(
+  "OnCloud": const BrandInfo(
     name: "OnCloud",
     logoPath: "assets/brands/oncloud.png",
     description:
@@ -77,13 +73,13 @@ final Map<String, BrandInfo> _brandInfo = {
   ),
   "Asics": const BrandInfo(
     name: "Asics",
-    logoPath: "assets/brands/asics.png", // This logo may need to be added
+    logoPath: "assets/brands/asics.png",
     description:
         "Founded in 1949 in Japan, ASICS (Anima Sana In Corpore Sano - A Sound Mind in a Sound Body) specializes in performance running shoes with advanced cushioning technologies like GEL™ and FlyteFoam™ for injury prevention and comfort.",
   ),
   "Salomon": const BrandInfo(
     name: "Salomon",
-    logoPath: "assets/brands/salomon.png", // This logo may need to be added
+    logoPath: "assets/brands/salomon.png",
     description:
         "Founded in 1947 in the French Alps, Salomon started as a ski equipment manufacturer. Today, they're known for technical trail running shoes and outdoor footwear designed for challenging terrains and weather conditions.",
   ),
@@ -113,7 +109,7 @@ final Map<String, BrandInfo> _brandInfo = {
   ),
   "Yeezy": const BrandInfo(
     name: "Yeezy",
-    logoPath: "assets/brands/yeezy.png", // This logo may need to be added
+    logoPath: "assets/brands/yeezy.png",
     description:
         "Yeezy is a fashion collaboration between Kanye West and Adidas that began in 2015. Known for distinctive aesthetics, innovative materials, and limited releases, Yeezy sneakers have become highly collectible cultural icons.",
   ),
@@ -199,20 +195,43 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               top: BorderSide(color: Colors.grey.shade300, width: 0.1),
             ),
           ),
-          child: TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            controller: tabController, // Use passed controller
-            labelStyle: const TextStyle(
-              fontSize: 10, // Keep style or adjust
-              fontWeight: FontWeight.bold,
-            ),
-            // Generate tabs dynamically from the _brands list
-            tabs: _brands.map((brand) => Tab(text: brand)).toList(),
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey,
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorColor: Colors.black,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Determine if we're on desktop view based on width
+              final isDesktop = constraints.maxWidth >= 900;
+
+              return TabBar(
+                isScrollable: true,
+                tabAlignment:
+                    isDesktop ? TabAlignment.center : TabAlignment.start,
+                controller: tabController, // Use passed controller
+                labelStyle: const TextStyle(
+                  fontSize: 10, // Keep style or adjust
+                  fontWeight: FontWeight.bold,
+                ),
+                // Generate tabs dynamically from the _brands list
+                tabs:
+                    _brands
+                        .map(
+                          (brand) => Padding(
+                            // Add horizontal padding to create space between tabs on desktop
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isDesktop ? 16.0 : 0.0,
+                            ),
+                            child: Tab(text: brand),
+                          ),
+                        )
+                        .toList(),
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                indicatorSize: TabBarIndicatorSize.label,
+                indicatorColor: Colors.black,
+                // Add tab padding for desktop view
+                labelPadding: EdgeInsets.symmetric(
+                  horizontal: isDesktop ? 24.0 : 8.0,
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -455,26 +474,48 @@ class _BrandTabContent extends StatelessWidget {
 
   // Sneaker grid builder
   Widget _buildSneakerGrid(BuildContext context, List<Shoe> sneakers) {
-    return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.55, // Adjusted aspect ratio for cards
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-      ),
-      itemCount: sneakers.length,
-      itemBuilder: (context, index) {
-        return SneakerCard(
-          sneaker: sneakers[index],
-          onTap: () {
-            // Navigate to product page
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => SingleProductPage(shoe: sneakers[index]),
-              ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate number of columns based on available width
+        int crossAxisCount = 2; // Default for phones
+        double childAspectRatio = 0.55;
+
+        // Responsive grid layout based on screen width
+        if (constraints.maxWidth > 600 && constraints.maxWidth < 900) {
+          crossAxisCount = 3; // Tablets
+          childAspectRatio = 0.6;
+        } else if (constraints.maxWidth >= 900 && constraints.maxWidth < 1200) {
+          crossAxisCount = 4; // Small desktops
+          childAspectRatio = 0.6;
+        } else if (constraints.maxWidth >= 1200 &&
+            constraints.maxWidth < 1600) {
+          crossAxisCount = 7; // Large desktops
+          childAspectRatio = 0.55;
+        }
+
+        return GridView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+          ),
+          itemCount: sneakers.length,
+          itemBuilder: (context, index) {
+            return SneakerCard(
+              sneaker: sneakers[index],
+              onTap: () {
+                // Navigate to product page
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder:
+                        (context) => SingleProductPage(shoe: sneakers[index]),
+                  ),
+                );
+              },
             );
           },
         );

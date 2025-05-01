@@ -423,11 +423,13 @@ class _CategoryAllState extends State<CategoryAll> {
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     gridDelegate:
-                                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                                        SliverGridDelegateWithMaxCrossAxisExtent(
                                           maxCrossAxisExtent:
-                                              250, // Max width for each item
+                                              200, // Reduced from 250 to show more columns
                                           childAspectRatio:
-                                              0.6, // Adjust aspect ratio as needed
+                                              constraints.maxWidth > 900
+                                                  ? 0.55
+                                                  : 0.6, // Adjust aspect ratio based on screen width
                                           mainAxisSpacing: 12,
                                           crossAxisSpacing: 12,
                                         ),
@@ -551,11 +553,13 @@ class _CategoryAllState extends State<CategoryAll> {
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     gridDelegate:
-                                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                                        SliverGridDelegateWithMaxCrossAxisExtent(
                                           maxCrossAxisExtent:
-                                              250, // Max width for each item
+                                              200, // Reduced from 250 to show more columns
                                           childAspectRatio:
-                                              0.6, // Adjust aspect ratio as needed
+                                              constraints.maxWidth > 900
+                                                  ? 0.55
+                                                  : 0.6, // Adjust aspect ratio based on screen width
                                           mainAxisSpacing: 12,
                                           crossAxisSpacing: 12,
                                         ),
