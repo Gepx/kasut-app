@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../models/product_model.dart';
+import '../../models/shoe_model.dart';
+import '../../widgets/image_loader.dart';
 import 'buy_product_page.dart';
 
 class SingleProductPage extends StatefulWidget {
-  const SingleProductPage({super.key});
+  final Shoe shoe;
+
+  const SingleProductPage({super.key, required this.shoe});
 
   @override
   State<SingleProductPage> createState() => _SingleProductPageState();
@@ -12,12 +15,40 @@ class SingleProductPage extends StatefulWidget {
 
 class _SingleProductPageState extends State<SingleProductPage> {
   int _currentImageIndex = 0;
-  int? _selectedSize;
+  double? _selectedSize;
+  bool _isFavorite = false;
+  late List<String> _images;
+
   final currencyFormat = NumberFormat.currency(
     locale: 'id_ID',
     symbol: 'IDR ',
     decimalDigits: 0,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _images = [
+      widget.shoe.firstPict,
+      widget.shoe.secondPict,
+      widget.shoe.thirdPict,
+    ];
+  }
+
+  List<double> get _availableSizes {
+    List<double> sizes = [];
+
+    if (widget.shoe.sizes.containsKey('men')) {
+      sizes.addAll(widget.shoe.sizes['men']!);
+    }
+
+    if (widget.shoe.sizes.containsKey('women')) {
+      sizes.addAll(widget.shoe.sizes['women']!);
+    }
+
+    sizes.sort();
+    return sizes;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +74,15 @@ class _SingleProductPageState extends State<SingleProductPage> {
         actions: [
           IconButton(
             icon: Icon(
-              dummyProduct.isFavorite ? Icons.favorite : Icons.favorite_border,
+              _isFavorite ? Icons.favorite : Icons.favorite_border,
               color: Colors.black,
               size: 24,
             ),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                _isFavorite = !_isFavorite;
+              });
+            },
           ),
           IconButton(
             icon: const Icon(
@@ -72,7 +107,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                   child: Container(
                     color: Colors.grey[100],
                     child: PageView.builder(
-                      itemCount: dummyProduct.images.length,
+                      itemCount: _images.length,
                       onPageChanged: (index) {
                         setState(() {
                           _currentImageIndex = index;
@@ -82,8 +117,8 @@ class _SingleProductPageState extends State<SingleProductPage> {
                         return Center(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 40),
-                            child: Image.asset(
-                              dummyProduct.images[index],
+                            child: AssetImageLoader(
+                              imagePath: _images[index],
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -99,7 +134,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
-                      dummyProduct.images.length,
+                      _images.length,
                       (index) => Container(
                         margin: const EdgeInsets.symmetric(horizontal: 4),
                         width: 8,
@@ -126,31 +161,37 @@ class _SingleProductPageState extends State<SingleProductPage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            currencyFormat.format(1480000),
+                            widget.shoe.discountPrice != null
+                                ? currencyFormat.format(
+                                  widget.shoe.discountPrice,
+                                )
+                                : currencyFormat.format(widget.shoe.price),
                             style: const TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Text(
-                              currencyFormat.format(1599000),
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                                decoration: TextDecoration.lineThrough,
+                          if (widget.shoe.discountPrice != null) ...[
+                            const SizedBox(width: 8),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                currencyFormat.format(widget.shoe.price),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                  decoration: TextDecoration.lineThrough,
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                       const SizedBox(height: 16),
 
                       // Brand & Name
                       Text(
-                        dummyProduct.brand,
+                        widget.shoe.brand,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -158,7 +199,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        dummyProduct.name,
+                        widget.shoe.name,
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black87,
@@ -179,7 +220,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                         spacing: 8,
                         runSpacing: 8,
                         children:
-                            dummyProduct.sizes.map((size) {
+                            _availableSizes.map((size) {
                               final isSelected = _selectedSize == size;
                               return GestureDetector(
                                 onTap: () {
@@ -202,7 +243,9 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      size.toString(),
+                                      size.toString().endsWith('.0')
+                                          ? size.toInt().toString()
+                                          : size.toString(),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight:
@@ -238,7 +281,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  dummyProduct.sku,
+                                  widget.shoe.sku,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -260,7 +303,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  dummyProduct.color,
+                                  widget.shoe.color,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -282,9 +325,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  DateFormat(
-                                    'dd/MM/yyyy',
-                                  ).format(dummyProduct.releaseDate),
+                                  widget.shoe.releaseDate,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -295,89 +336,29 @@ class _SingleProductPageState extends State<SingleProductPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
 
-                      // Product Description
+                      // Description Section Title
+                      const SizedBox(height: 24),
                       const Text(
-                        'Product Description',
+                        'Description',
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 8),
+
+                      // Description Text
                       Text(
-                        dummyProduct.description,
+                        widget.shoe.description,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[700],
                           height: 1.5,
+                          color: Colors.grey[800],
                         ),
                       ),
-                      const SizedBox(height: 24),
 
-                      // Related Products
-                      const Text(
-                        'Related Products',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        height: 220,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: relatedProducts.length,
-                          itemBuilder: (context, index) {
-                            final product = relatedProducts[index];
-                            return Container(
-                              width: 160,
-                              margin: const EdgeInsets.only(right: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height: 160,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.grey[300]!,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Image.asset(
-                                        product.images[0],
-                                        height: 140,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    product.brand,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    product.name,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.grey[600],
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      // Add space for the button at the bottom
                       const SizedBox(height: 100),
                     ],
                   ),
@@ -385,6 +366,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
               ],
             ),
           ),
+          // Action Button at bottom
           Positioned(
             bottom: 0,
             left: 0,
@@ -392,69 +374,48 @@ class _SingleProductPageState extends State<SingleProductPage> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
-                border: Border(
-                  top: BorderSide(color: Colors.grey[300]!, width: 1),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed:
-                          _selectedSize == null
-                              ? null
-                              : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => const BuyProductPage(),
-                                  ),
-                                );
-                              },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[600],
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        disabledBackgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      icon: const Icon(Icons.shopping_cart_outlined),
-                      label: const Text(
-                        'Buy',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[600],
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      icon: const Icon(Icons.close),
-                      label: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
                   ),
                 ],
+              ),
+              child: ElevatedButton(
+                onPressed:
+                    _selectedSize != null
+                        ? () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => BuyProductPage(
+                                    shoe: widget.shoe,
+                                    selectedSize: _selectedSize!,
+                                  ),
+                            ),
+                          );
+                        }
+                        : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  disabledBackgroundColor: Colors.grey[300],
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  _selectedSize != null
+                      ? 'Buy Now - Size ${_selectedSize.toString().endsWith('.0') ? _selectedSize!.toInt() : _selectedSize}'
+                      : 'Select Size',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
           ),

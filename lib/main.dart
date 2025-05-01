@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart'; // Corrected import
 import 'package:kasut/features/market/market.dart';
-// import 'package:provider/provider.dart'; // Removed Provider for static auth
-// import 'package:kasut_app/features/auth/providers/auth_provider.dart'; // Removed AuthNotifier
 import 'features/auth/screens/login_screen.dart';
 import 'screens/splash_screen.dart';
 import 'features/auth/screens/profile_screen.dart'; // Import the new ProfileScreen
@@ -20,12 +18,12 @@ import 'features/profile/screens/faq_screen.dart';
 import 'package:kasut/features/blog/blog.dart'; // Assuming this path is correct
 import 'package:kasut/features/home/home_page.dart'; // Assuming home-page.dart is the main home widget
 import 'package:kasut/features/seller/seller.dart'; // Correct path, class is SellerPage
+import 'package:url_strategy/url_strategy.dart'; // Import for URL strategy
 
 void main() {
-  runApp(
-    // ChangeNotifierProvider removed for static auth
-    const Kasut(),
-  );
+  // Remove hash from URLs
+  setPathUrlStrategy();
+  runApp(const Kasut());
 }
 
 class SplashDemoApp extends StatelessWidget {
@@ -63,7 +61,7 @@ class Kasut extends StatelessWidget {
       initialRoute: SplashScreen.routeName, // Mulai dari SplashScreen
       routes: {
         SplashScreen.routeName: (context) => const SplashScreen(),
-        '/main': (context) => const Main(), // Home with bottom nav
+        '/home': (context) => const Main(), // Changed from '/main' to '/home'
         LoginScreen.routeName: (context) => const LoginScreen(),
         SignupScreen.routeName: (context) => const SignupScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
@@ -246,13 +244,19 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // Initialize TabController for Home page (assuming 3 tabs)
-    // TODO: Get the correct tab count dynamically if possible
+    // Initialize home tab controller with the correct number of tabs (matching brands)
+    // This should match the number of tabs in _brands list in home_page.dart
     _homeTabController = TabController(length: 14, vsync: this);
-    _marketTabController = TabController(
-      length: 14,
-      vsync: this,
-    ); // Added for Market
+    _homeTabController!.addListener(() {
+      // This ensures tab selection is maintained across rebuilds
+      setState(() {});
+    });
+
+    // Market tab controller
+    _marketTabController = TabController(length: 14, vsync: this);
+    _marketTabController!.addListener(() {
+      setState(() {});
+    });
   }
 
   void _onIconTapped(int index) {
