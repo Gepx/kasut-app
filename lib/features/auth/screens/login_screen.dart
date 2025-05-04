@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       if (user != null) {
-        // Navigate to Home Screen on successful login, replacing the login screen
+        // Navigate to Home screen on successful login, replacing the login screen
         Navigator.pushNamedAndRemoveUntil(
           context,
           "/home",
