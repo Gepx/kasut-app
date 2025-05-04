@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart'; // Corrected import
+import 'dart:convert'; // Import dart:convert for json decoding
 import 'package:kasut/features/market/market.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'screens/splash_screen.dart';
@@ -183,47 +184,62 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
   // Added mixin
   int _selectedIndex = 0;
   TabController? _homeTabController;
-  TabController? _marketTabController; // Added TabController for Home
+  TabController? _marketTabController;
+
+  List<String> _brands = []; // State variable to hold brands
+  bool _isLoadingBrands = true; // State variable to track loading
 
   // Use a list of _ScreenData objects for navigation screens
-  // Note: This list is built *after* _homeTabController is initialized in initState
   List<_ScreenData> get _bottomNavScreens => [
     _ScreenData(
       // Home screen - uses HomePage and HomeAppBar with the controller
       appBar:
           (context) => HomeAppBar(
             tabController: _homeTabController!,
-          ), // Assumes HomeAppBar takes TabController
+            brands: _brands, // Pass brands to HomeAppBar
+          ),
       body:
           (context) => HomePage(
             tabController: _homeTabController!,
-          ), // Assumes HomePage takes TabController
+            brands: _brands, // Pass brands to HomePage
+          ),
       iconData: Icons.home,
       activeIconData: Icons.home_outlined,
       label: 'Home',
     ),
-    // ...other screen data items remain unchanged
     _ScreenData(
       appBar:
-          (context) =>
-              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
+          (context) => const PreferredSize(
+            preferredSize: Size.zero,
+            child: SizedBox.shrink(),
+          ),
       body: (context) => const Blog(), // Use actual Blog page
       iconData: Icons.article,
       activeIconData: Icons.newspaper_outlined,
       label: 'Blog',
     ),
     _ScreenData(
-      appBar: (context) => MarketAppBar(tabController: _marketTabController!),
-      // TODO: Replace with actual Market page widget when available
-      body: (context) => MarketScreen(tabController: _marketTabController!),
+      appBar:
+          (context) => MarketAppBar(
+            tabController: _marketTabController!,
+            brands: _brands, // Pass brands to MarketAppBar
+          ),
+      body:
+          (context) => MarketScreen(
+            // Wrap MarketScreen in a WidgetBuilder
+            tabController: _marketTabController!,
+            brands: _brands, // Pass brands to MarketScreen
+          ),
       iconData: Icons.search,
       activeIconData: Icons.search_outlined,
       label: 'Market',
     ),
     _ScreenData(
       appBar:
-          (context) =>
-              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
+          (context) => const PreferredSize(
+            preferredSize: Size.zero,
+            child: SizedBox.shrink(),
+          ),
       body:
           (context) => const SellerPage(), // Use correct class name: SellerPage
       iconData: Icons.sell,
@@ -232,8 +248,10 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
     ),
     _ScreenData(
       appBar:
-          (context) =>
-              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
+          (context) => const PreferredSize(
+            preferredSize: Size.zero,
+            child: SizedBox.shrink(),
+          ),
       body: (context) => const ProfileScreen(), // Keep ProfileScreen here
       iconData: Icons.person_rounded,
       activeIconData: Icons.person_outline,
@@ -244,23 +262,78 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // Initialize home tab controller with the correct number of tabs (matching brands)
-    // This should match the number of tabs in _brands list in home_page.dart
-    _homeTabController = TabController(length: 10, vsync: this);
-    _homeTabController!.addListener(() {
-      // This ensures tab selection is maintained across rebuilds
-      setState(() {});
-    });
+    _loadBrands(); // Start loading brands
+  }
 
-    // Market tab controller
-    _marketTabController = TabController(length: 10, vsync: this);
-    _marketTabController!.addListener(() {
-      setState(() {});
-    });
+  // Function to load brand names from the assets directory
+  Future<void> _loadBrands() async {
+    try {
+      // Use rootBundle to load the list of assets
+      final manifestContent = await DefaultAssetBundle.of(
+        context,
+      ).loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+
+      // Use a Set to store unique brand names
+      final Set<String> brandNames = {};
+
+      // Filter keys for files within assets/brand-products/
+      manifestMap.keys
+          .where((String key) {
+            return key.startsWith('assets/brand-products/') &&
+                !key.endsWith('/');
+          })
+          .forEach((String key) {
+            // Extract the brand name (part after 'assets/brand-products/' and before the next '/')
+            final parts = key.split('/');
+            if (parts.length > 2) {
+              brandNames.add(parts[2]); // Add the brand name to the set
+            }
+          });
+
+      // Convert the Set to a List, add "All", and sort (optional)
+      final List<String> loadedBrands = ["All", ...brandNames.toList()];
+      // loadedBrands.sort(); // Optional: Sort alphabetically if needed, keeping "All" first
+
+      setState(() {
+        _brands = loadedBrands;
+        _isLoadingBrands = false;
+        // Initialize tab controllers after brands are loaded
+        _homeTabController = TabController(length: _brands.length, vsync: this);
+        _marketTabController = TabController(
+          length: _brands.length,
+          vsync: this,
+        );
+
+        _homeTabController!.addListener(() {
+          setState(() {});
+        });
+        _marketTabController!.addListener(() {
+          setState(() {});
+        });
+      });
+    } catch (e) {
+      print('Error loading brands: $e');
+      setState(() {
+        _isLoadingBrands = false;
+        // Initialize with a default list if loading fails
+        _brands = ["All", "Error Loading Brands"];
+        _homeTabController = TabController(length: _brands.length, vsync: this);
+        _marketTabController = TabController(
+          length: _brands.length,
+          vsync: this,
+        );
+        _homeTabController!.addListener(() {
+          setState(() {});
+        });
+        _marketTabController!.addListener(() {
+          setState(() {});
+        });
+      });
+    }
   }
 
   void _onIconTapped(int index) {
-    // No special navigation for index 0 anymore
     setState(() {
       _selectedIndex = index;
     });
@@ -269,27 +342,26 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
   @override
   void dispose() {
     _homeTabController?.dispose();
-    _marketTabController?.dispose(); // Dispose the home tab controller
+    _marketTabController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Index out-of-bounds check
+    if (_isLoadingBrands) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     if (_selectedIndex < 0 || _selectedIndex >= _bottomNavScreens.length) {
       return const Scaffold(
         body: Center(child: Text('Error: Invalid screen index.')),
       );
     }
 
-    // AppBar is now directly determined by the selected screen's definition
-    // Get the current screen data
     final currentScreen = _bottomNavScreens[_selectedIndex];
 
     return Scaffold(
-      // Use the appBar builder from the current screen data
       appBar: currentScreen.appBar(context),
-      // Use the body builder from the current screen data
       body: currentScreen.body(context),
       bottomNavigationBar: _CustomBottomNavigationBar(
         currentIndex: _selectedIndex,

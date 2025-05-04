@@ -49,10 +49,62 @@ class Shoe {
     final name = json['name'] as String;
     final brand = json['brand'] as String;
 
+    // Handle special case for brand folder name mappings
+    String normalizeBrandPath(String brandName) {
+      // Create a map of brand name variations to folder names
+      final Map<String, String> brandFolderNames = {
+        'air jordan': 'Air Jordan',
+        'onclouds': 'OnClouds',
+        'on': 'OnClouds',
+        'onitsuka tiger': 'Onisutka Tiger',
+        'new balance': 'New Balance',
+        'asics': 'Asics',
+        'nike': 'Nike',
+        'adidas': 'Adidas',
+        'puma': 'Puma',
+        'salomon': 'Salomon',
+        'yeezy': 'Yeezy',
+      };
+
+      // Get normalized folder name or use the original brand name
+      final String normalizedBrand = brandName.toLowerCase();
+      return brandFolderNames[normalizedBrand] ?? brandName;
+    }
+
+    // Process image paths to ensure they're correctly formatted and URL-safe
+    String processImagePath(String path) {
+      // Clean up newlines first
+      String cleanedPath = cleanPath(path);
+
+      // If path already contains the full path, return it
+      if (cleanedPath.startsWith('assets/brand-products/')) {
+        return cleanedPath;
+      }
+
+      // Otherwise construct path based on brand name
+      final normalizedBrand = normalizeBrandPath(brand);
+
+      // Replace spaces in filenames with underscores to avoid encoding issues
+      final String safeFileName = cleanedPath.replaceAll(' ', '_');
+
+      return 'assets/brand-products/$normalizedBrand/$safeFileName';
+    }
+
     // Ensure these images exist or fallback to placeholders
-    final firstPict = cleanPath(json['firstPict'] as String);
-    final secondPict = cleanPath(json['secondPict'] as String);
-    final thirdPict = cleanPath(json['thirdPict'] as String);
+    final firstPict =
+        json.containsKey('firstPict') && json['firstPict'] != null
+            ? processImagePath(json['firstPict'] as String)
+            : defaultPlaceholder;
+
+    final secondPict =
+        json.containsKey('secondPict') && json['secondPict'] != null
+            ? processImagePath(json['secondPict'] as String)
+            : defaultPlaceholder;
+
+    final thirdPict =
+        json.containsKey('thirdPict') && json['thirdPict'] != null
+            ? processImagePath(json['thirdPict'] as String)
+            : defaultPlaceholder;
 
     return Shoe(
       name: name,
@@ -121,6 +173,29 @@ class ShoeData {
               .toList();
 
       _isLoading = false;
+      // Log the number of shoes loaded
+      print('Successfully loaded ${_shoes.length} shoes');
+
+      // For detailed debugging, you can use JsonEncoder to pretty-print the first shoe
+      if (_shoes.isNotEmpty) {
+        final encoder = JsonEncoder.withIndent('  ');
+        // Create a simplified list of all shoes with key information
+        final simplifiedShoes =
+            _shoes
+                .map(
+                  (shoe) => {
+                    'name': shoe.name,
+                    'brand': shoe.brand,
+                    'price': shoe.price,
+                    'discountPrice': shoe.discountPrice,
+                  },
+                )
+                .toList();
+
+        // Log number of shoes and print all shoes in a structured format
+        print('Loaded ${_shoes.length} shoes:');
+        print(encoder.convert(simplifiedShoes));
+      }
       return _shoes;
     } catch (e) {
       print('Error parsing JSON: $e');
@@ -163,43 +238,51 @@ class ShoeData {
     }
   }
 
+  // Helper to normalize brand names for better matching
+  static String _normalizeBrandName(String brand) {
+    // Remove spaces, convert to lowercase for initial check
+    String normalizedCheck = brand.toLowerCase().replaceAll(' ', '');
+
+    // Handle special cases - return the desired display/comparison name
+    if (normalizedCheck == 'oncloud' || normalizedCheck == 'on') {
+      return 'OnClouds';
+    }
+    if (normalizedCheck == 'newbalance' || normalizedCheck == 'nb') {
+      return 'New Balance';
+    }
+    if (normalizedCheck == 'onitsukatiger') {
+      return 'Onisutka Tiger'; // Corrected spelling based on folder name
+    }
+    if (normalizedCheck == 'airjordan') {
+      // Handles "AirJordan" from JSON
+      return 'Air Jordan';
+    }
+
+    // If no special mapping, return the original brand name as passed.
+    // The comparison in getByBrand should handle potential case differences.
+    return brand;
+  }
+
   // Get shoes filtered by brand
   static List<Shoe> getByBrand(String brand) {
     if (brand.isEmpty) return _shoes;
 
-    // Normalize brand names for better matching
-    final normalizedBrand = _normalizeBrandName(brand);
+    // Normalize the target brand name from the tab/filter
+    final normalizedTargetBrand = _normalizeBrandName(brand);
 
     return _shoes.where((shoe) {
+      // Normalize the brand name from the shoe data
       final normalizedShoeBrand = _normalizeBrandName(shoe.brand);
 
-      // Check brand name or tags
-      return normalizedShoeBrand == normalizedBrand ||
+      // Perform a case-insensitive comparison for robustness
+      return normalizedShoeBrand.toLowerCase() ==
+              normalizedTargetBrand.toLowerCase() ||
           shoe.tags.any(
-            (tag) => _normalizeBrandName(tag).contains(normalizedBrand),
+            (tag) => _normalizeBrandName(
+              tag,
+            ).toLowerCase().contains(normalizedTargetBrand.toLowerCase()),
           );
     }).toList();
-  }
-
-  // Helper to normalize brand names for better matching
-  static String _normalizeBrandName(String brand) {
-    // Remove spaces, convert to lowercase
-    String normalized = brand.toLowerCase().replaceAll(' ', '');
-
-    // Handle special cases
-    if (normalized == 'oncloud' || normalized == 'on') {
-      return 'oncloud';
-    }
-
-    if (normalized == 'airjordan' || normalized == 'jordan') {
-      return 'airjordan';
-    }
-
-    if (normalized == 'newbalance' || normalized == 'nb') {
-      return 'newbalance';
-    }
-
-    return normalized;
   }
 
   // Clear cached data (useful for testing)
@@ -283,6 +366,29 @@ class ShoeData {
         color: "White/Flame",
         sku: "OC-CN-Z5-WF",
         releaseDate: "2023-08-21",
+      ),
+      // Adding an Air Jordan mock example with the correct folder name
+      Shoe(
+        name: "Air Jordan 4 Retro SB Navy",
+        brand: "Air Jordan",
+        price: 3500000,
+        discountPrice: 3200000,
+        firstPict:
+            "assets/brand-products/AirJordan/Air Jordan 4 Retro SB Navy - 1.png",
+        secondPict:
+            "assets/brand-products/AirJordan/Air Jordan 4 Retro SB Navy - 2.png",
+        thirdPict:
+            "assets/brand-products/AirJordan/Air Jordan 4 Retro SB Navy - 3.png",
+        sizes: {
+          "men":
+              [40, 41, 42, 43, 44, 45].map((size) => size.toDouble()).toList(),
+        },
+        tags: ["Limited Edition", "SB Collection"],
+        description:
+            "The Air Jordan 4 Retro SB Navy brings skate-ready durability to the iconic basketball silhouette. Featuring premium materials with navy blue suede upper, gum outsoles, and signature Air cushioning.",
+        color: "Navy/Gum",
+        sku: "AJ4-SB-NVY-001",
+        releaseDate: "2023-05-17",
       ),
     ];
   }

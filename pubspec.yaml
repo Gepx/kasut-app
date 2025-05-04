@@ -71,10 +71,15 @@ flutter:
     - assets/blog/
     - assets/brand-products/
     - assets/brand-products/Adidas/
-    - assets/brand-products/Nike/
-    - assets/brand-products/New Balance/
+    - assets/brand-products/Air Jordan/
     - assets/brand-products/Asics/
+    - assets/brand-products/New Balance/
+    - assets/brand-products/Nike/
+    - assets/brand-products/OnClouds/
+    - assets/brand-products/Onisutka Tiger/
     - assets/brand-products/Puma/
+    - assets/brand-products/Salomon/
+    - assets/brand-products/Yeezy/
     - assets/brands/
     - assets/seller/
     - assets/home/

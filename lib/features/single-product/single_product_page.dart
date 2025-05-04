@@ -16,6 +16,7 @@ class SingleProductPage extends StatefulWidget {
 class _SingleProductPageState extends State<SingleProductPage> {
   int _currentImageIndex = 0;
   double? _selectedSize;
+  String _selectedCategory = 'men'; // Default category
   bool _isFavorite = false;
   late List<String> _images;
 
@@ -35,23 +36,41 @@ class _SingleProductPageState extends State<SingleProductPage> {
     ];
   }
 
-  List<double> get _availableSizes {
-    List<double> sizes = [];
-
-    if (widget.shoe.sizes.containsKey('men')) {
-      sizes.addAll(widget.shoe.sizes['men']!);
+  // Get available categories for the current shoe
+  List<String> get _availableCategories {
+    List<String> categories = [];
+    if (widget.shoe.sizes.containsKey('men') &&
+        widget.shoe.sizes['men']!.isNotEmpty) {
+      categories.add('men');
     }
-
-    if (widget.shoe.sizes.containsKey('women')) {
-      sizes.addAll(widget.shoe.sizes['women']!);
+    if (widget.shoe.sizes.containsKey('women') &&
+        widget.shoe.sizes['women']!.isNotEmpty) {
+      categories.add('women');
     }
+    if (widget.shoe.sizes.containsKey('kids') &&
+        widget.shoe.sizes['kids']!.isNotEmpty) {
+      categories.add('kids');
+    }
+    // Ensure 'men' is the default if available
+    if (!categories.contains(_selectedCategory) && categories.isNotEmpty) {
+      _selectedCategory = categories.first;
+    }
+    return categories;
+  }
 
+  // Get sizes based on the selected category
+  List<double> get _sizesForSelectedCategory {
+    List<double> sizes = widget.shoe.sizes[_selectedCategory] ?? [];
     sizes.sort();
     return sizes;
   }
 
   @override
   Widget build(BuildContext context) {
+    final availableCategories = _availableCategories;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktop = screenWidth >= 800; // Example breakpoint
+
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: false,
@@ -207,9 +226,67 @@ class _SingleProductPageState extends State<SingleProductPage> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Size Selection
+                      // Category Selection
+                      if (availableCategories.length > 1) ...[
+                        const Text(
+                          'Select Category',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          children:
+                              availableCategories.map((category) {
+                                final isSelected =
+                                    _selectedCategory == category;
+                                return ChoiceChip(
+                                  label: Text(
+                                    category[0].toUpperCase() +
+                                        category.substring(1),
+                                  ), // Capitalize
+                                  selected: isSelected,
+                                  onSelected: (selected) {
+                                    if (selected) {
+                                      setState(() {
+                                        _selectedCategory = category;
+                                        _selectedSize =
+                                            null; // Reset selected size when category changes
+                                      });
+                                    }
+                                  },
+                                  selectedColor: Colors.black,
+                                  labelStyle: TextStyle(
+                                    color:
+                                        isSelected
+                                            ? Colors.white
+                                            : Colors.black,
+                                    fontWeight:
+                                        isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                  ),
+                                  backgroundColor: Colors.grey[100],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: BorderSide(
+                                      color:
+                                          isSelected
+                                              ? Colors.black
+                                              : Colors.grey[300]!,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Size Selection - Updated Label
                       const Text(
-                        'Select Size (EU)',
+                        'Select Size (UK)', // Changed EU to UK
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -220,7 +297,8 @@ class _SingleProductPageState extends State<SingleProductPage> {
                         spacing: 8,
                         runSpacing: 8,
                         children:
-                            _availableSizes.map((size) {
+                            _sizesForSelectedCategory.map((size) {
+                              // Use sizes for the selected category
                               final isSelected = _selectedSize == size;
                               return GestureDetector(
                                 onTap: () {
@@ -229,8 +307,11 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                   });
                                 },
                                 child: Container(
-                                  width: 72,
-                                  height: 44,
+                                  width:
+                                      isDesktop
+                                          ? 90
+                                          : 72, // Slightly wider buttons on desktop
+                                  height: isDesktop ? 50 : 44,
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color:

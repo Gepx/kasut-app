@@ -23,12 +23,14 @@ final List<String> _brands = [
 
 // MarketAppBar class in the same file
 class MarketAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final TabController tabController; // Add controller parameter
+  final TabController tabController;
+  final List<String> brands; // Add brands parameter
 
   const MarketAppBar({
     super.key,
     required this.tabController,
-  }); // Require controller
+    required this.brands, // Require brands
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(135); // Adjust height if needed
@@ -82,20 +84,35 @@ class MarketAppBar extends StatelessWidget implements PreferredSizeWidget {
               top: BorderSide(color: Colors.grey.shade300, width: 0.1),
             ),
           ),
-          child: TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            controller: tabController, // Use passed controller
-            labelStyle: const TextStyle(
-              fontSize: 10, // Keep style or adjust
-              fontWeight: FontWeight.bold,
-            ),
-            // Generate tabs dynamically from the _brands list
-            tabs: _brands.map((brand) => Tab(text: brand)).toList(),
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey,
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorColor: Colors.black,
+          child: LayoutBuilder(
+            // Use LayoutBuilder for responsive padding
+            builder: (context, constraints) {
+              final isDesktop =
+                  constraints.maxWidth >= 900; // Determine if desktop
+
+              return TabBar(
+                isScrollable: true,
+                tabAlignment:
+                    isDesktop
+                        ? TabAlignment.center
+                        : TabAlignment.start, // Align tabs
+                controller: tabController, // Use passed controller
+                labelStyle: const TextStyle(
+                  fontSize: 12, // Increased font size for better readability
+                  fontWeight: FontWeight.bold,
+                ),
+                // Generate tabs dynamically from the brands list
+                tabs: brands.map((brand) => Tab(text: brand)).toList(),
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                indicatorSize: TabBarIndicatorSize.label,
+                indicatorColor: Colors.black,
+                labelPadding: EdgeInsets.symmetric(
+                  horizontal:
+                      isDesktop ? 24.0 : 8.0, // Increased mobile padding
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -108,8 +125,13 @@ Size get preferredSize => Size.fromHeight(kToolbarHeight + 50); // Height of App
 
 class MarketScreen extends StatefulWidget {
   final TabController tabController;
+  final List<String> brands; // Add brands parameter
 
-  const MarketScreen({super.key, required this.tabController});
+  const MarketScreen({
+    super.key,
+    required this.tabController,
+    required this.brands,
+  }); // Require brands
 
   @override
   State<MarketScreen> createState() => _MarketScreenState();
@@ -132,15 +154,29 @@ class _MarketScreenState extends State<MarketScreen> {
   }
 
   void _filterShoes() {
-    final selectedBrand = _brands[widget.tabController.index];
+    if (widget.brands.isEmpty) {
+      // Handle case where brands are not yet loaded
+      setState(() {
+        filteredShoes = [];
+      });
+      return;
+    }
+    final selectedBrand =
+        widget.brands[widget.tabController.index]; // Use widget.brands
 
     setState(() {
       if (selectedBrand == "All") {
         filteredShoes = ShoeData.shoes;
       } else {
+        // Normalize brand names for filtering
+        final normalizedSelectedBrand = _normalizeBrandName(selectedBrand);
         filteredShoes =
             ShoeData.shoes
-                .where((shoe) => shoe.brand == selectedBrand)
+                .where(
+                  (shoe) =>
+                      _normalizeBrandName(shoe.brand) ==
+                      normalizedSelectedBrand,
+                ) // Use normalized names for filtering
                 .toList();
       }
     });
@@ -161,7 +197,7 @@ class _MarketScreenState extends State<MarketScreen> {
           // Calculate number of columns based on available width
           int crossAxisCount = 2; // Default for phones
           double childAspectRatio = 0.7;
-          
+
           // Responsive grid layout based on screen width
           if (constraints.maxWidth > 600 && constraints.maxWidth < 900) {
             crossAxisCount = 3; // Tablets
@@ -170,7 +206,7 @@ class _MarketScreenState extends State<MarketScreen> {
             crossAxisCount = 4; // Desktops and large tablets
             childAspectRatio = 0.6;
           }
-          
+
           return GridView.builder(
             itemCount: filteredShoes.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -184,10 +220,47 @@ class _MarketScreenState extends State<MarketScreen> {
               return SneakerCard(sneaker: shoe);
             },
           );
-        }
+        },
       ),
     );
   }
+}
+
+// Helper to normalize brand names for filtering (can reuse from ShoeData if accessible)
+String _normalizeBrandName(String brand) {
+  // Remove spaces, convert to lowercase
+  String normalized = brand.toLowerCase().replaceAll(' ', '');
+
+  // Handle special cases (should match logic in ShoeData)
+  if (normalized == 'oncloud' || normalized == 'on') {
+    return 'OnClouds'.toLowerCase().replaceAll(
+      ' ',
+      '',
+    ); // Normalize to match JSON
+  }
+
+  if (normalized == 'airjordan' || normalized == 'jordan') {
+    return 'Air Jordan'.toLowerCase().replaceAll(
+      ' ',
+      '',
+    ); // Normalize to match JSON
+  }
+
+  if (normalized == 'onitsukatiger') {
+    return 'Onisutka Tiger'.toLowerCase().replaceAll(
+      ' ',
+      '',
+    ); // Normalize to match JSON
+  }
+
+  if (normalized == 'newbalance' || normalized == 'nb') {
+    return 'New Balance'.toLowerCase().replaceAll(
+      ' ',
+      '',
+    ); // Normalize to match JSON
+  }
+
+  return normalized;
 }
 
 class FilterModal extends StatefulWidget {

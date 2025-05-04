@@ -48,11 +48,11 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       if (user != null) {
-        // Navigate to Profile Screen on successful login, replacing the login screen
+        // Navigate to Home Screen on successful login, replacing the login screen
         Navigator.pushNamedAndRemoveUntil(
           context,
-          "/main",
-          (route) => false, // Remove all routes below ProfileScreen
+          "/home",
+          (route) => false, // Remove all previous routes
         );
       } else {
         // Show error message if login fails

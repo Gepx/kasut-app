@@ -134,8 +134,8 @@
     "secondPict": "assets/brand-products/Air Jordan/Air Jordan 1 Retro Low OG Year of the Snake (2025) - 2.png",
     "thirdPict": "assets/brand-products/Air Jordan/Air Jordan 1 Retro Low OG Year of the Snake (2025) - 1.png",
     "sizes": {
-      "men": [7, 8, 9, 10, 11, 12],
-      "women": [6, 7, 8, 9, 10],
+      "men": [],
+      "women": [6, 7, 9, 10],
       "kids": [4, 5, 6, 7]
     },
     "tags": ["Special Price", "Free Delivery"],
@@ -154,7 +154,7 @@
     "sizes": {
       "men": [7, 8, 9, 10, 11, 12],
       "women": [6, 7, 8, 9],
-      "kids": [4, 5, 6, 7]
+      "kids": []
     },
     "tags": ["Most Popular"],
     "price": 1800000,
@@ -190,7 +190,7 @@
     "thirdPict": "assets/brand-products/Air Jordan/Air Jordan 1 Retro High OG Lost and Found - 3.png",
     "sizes": {
       "men": [7, 8, 9, 10, 11, 12],
-      "women": [6, 7, 8, 9, 10],
+      "women": [],
       "kids": [4, 5, 6, 7]
     },
     "tags": ["Most Popular", "Best Seller"],
@@ -244,9 +244,9 @@
     "secondPict": "assets/brand-products/Air Jordan/Air Jordan 1 Low SE Archaeo Brown - 2.png",
     "thirdPict": "assets/brand-products/Air Jordan/Air Jordan 1 Low SE Archaeo Brown - 3.png",
     "sizes": {
-      "men": [7, 8, 9, 10, 11, 12],
-      "women": [6, 7, 8, 9],
-      "kids": [4, 5, 6, 7]
+      "men": [10, 11, 12],
+      "women": [],
+      "kids": [4, 5]
     },
     "tags": ["Special Price"],
     "price": 1800000,

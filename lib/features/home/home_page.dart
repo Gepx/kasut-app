@@ -10,11 +10,12 @@ final List<String> _brands = [
   "All",
   "Air Jordan",
   "Adidas",
-  "OnCloud",
+  "OnClouds",
   "Nike",
   "Puma",
   "New Balance",
   "Asics",
+  "Onisutka Tiger",
   "Salomon",
   "Yeezy",
 ];
@@ -47,11 +48,11 @@ final Map<String, BrandInfo> _brandInfo = {
     description:
         "Founded in 1949 in Germany, Adidas is one of the world's largest sportswear manufacturers known for its three stripes logo. The brand combines performance technology with street-style designs across footwear, apparel, and accessories.",
   ),
-  "OnCloud": const BrandInfo(
-    name: "OnCloud",
+  "OnClouds": const BrandInfo(
+    name: "OnClouds",
     logoPath: "assets/brands/oncloud.png",
     description:
-        "On is a Swiss running shoe company founded in 2010, known for its innovative CloudTec® cushioning technology. Their lightweight designs offer both comfort and performance for road and trail running.",
+        "On is a Swiss running sh oe company founded in 2010, known for its innovative CloudTec® cushioning technology. Their lightweight designs offer both comfort and performance for road and trail running.",
   ),
   "Nike": const BrandInfo(
     name: "Nike",
@@ -82,6 +83,12 @@ final Map<String, BrandInfo> _brandInfo = {
     logoPath: "assets/brands/salomon.png",
     description:
         "Founded in 1947 in the French Alps, Salomon started as a ski equipment manufacturer. Today, they're known for technical trail running shoes and outdoor footwear designed for challenging terrains and weather conditions.",
+  ),
+  "Onisutka Tiger": const BrandInfo(
+    name: "Onisutka Tiger",
+    logoPath: "assets/brands/onisutka_tiger.png",
+    description:
+        "Founded in 1984, Onisutka Tiger is a brand known for its signature tiger design. Their shoes are known for their lightweight construction and durability, making them a popular choice for runners and athletes.",
   ),
   "Ortuseight": const BrandInfo(
     name: "Ortuseight",
@@ -120,11 +127,13 @@ final Map<String, BrandInfo> _brandInfo = {
 
 // HomePage accepts TabController from main.dart
 class HomePage extends StatelessWidget {
-  final TabController tabController; // Add controller parameter
+  final TabController tabController;
+  final List<String> brands; // Add brands parameter
 
   const HomePage({
     super.key,
-    required this.tabController, // Require controller
+    required this.tabController,
+    required this.brands, // Require brands
   });
 
   // Removed _HomePageState class and its TabController management
@@ -135,7 +144,10 @@ class HomePage extends StatelessWidget {
     // HomePage widget now simply returns the HomeBody.
     // The AppBar is constructed in main.dart where the TabController lives.
     // Pass the controller down to HomeBody
-    return HomeBody(tabController: tabController);
+    return HomeBody(
+      tabController: tabController,
+      brands: brands,
+    ); // Pass brands to HomeBody
   }
 }
 
@@ -145,12 +157,14 @@ class HomePage extends StatelessWidget {
 
 // Updated AppBar to accept TabController
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final TabController tabController; // Add controller parameter
+  final TabController tabController;
+  final List<String> brands; // Add brands parameter
 
   const HomeAppBar({
     super.key,
     required this.tabController,
-  }); // Require controller
+    required this.brands, // Require brands
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(135); // Adjust height if needed
@@ -206,29 +220,20 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     isDesktop ? TabAlignment.center : TabAlignment.start,
                 controller: tabController, // Use passed controller
                 labelStyle: const TextStyle(
-                  fontSize: 10, // Keep style or adjust
+                  fontSize:
+                      12, // Slightly increased font size for better readability
                   fontWeight: FontWeight.bold,
                 ),
-                // Generate tabs dynamically from the _brands list
-                tabs:
-                    _brands
-                        .map(
-                          (brand) => Padding(
-                            // Add horizontal padding to create space between tabs on desktop
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isDesktop ? 16.0 : 0.0,
-                            ),
-                            child: Tab(text: brand),
-                          ),
-                        )
-                        .toList(),
+                // Generate tabs dynamically from the brands list
+                tabs: brands.map((brand) => Tab(text: brand)).toList(),
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorColor: Colors.black,
                 // Add tab padding for desktop view
                 labelPadding: EdgeInsets.symmetric(
-                  horizontal: isDesktop ? 24.0 : 8.0,
+                  horizontal:
+                      isDesktop ? 24.0 : 8.0, // Increased mobile padding
                 ),
               );
             },
@@ -247,14 +252,15 @@ class CategoryInfo {
   CategoryInfo({required this.title, required this.imagePath});
 }
 
-// HomeBody accepts TabController from HomePage
+// HomeBody accepts TabController and brands list from HomePage
 class HomeBody extends StatelessWidget {
-  // Changed to StatelessWidget
-  final TabController tabController; // Add controller parameter
+  final TabController tabController;
+  final List<String> brands; // Add brands parameter
 
   const HomeBody({
     super.key,
-    required this.tabController, // Require controller
+    required this.tabController,
+    required this.brands, // Require brands
   });
 
   // Removed _HomeBodyState class and its internal TabController management
@@ -265,7 +271,8 @@ class HomeBody extends StatelessWidget {
     return TabBarView(
       controller: tabController, // Use passed controller
       children:
-          _brands.map((brand) {
+          brands.map((brand) {
+            // Use the passed brands list
             if (brand == "All") {
               // Show the "All" tab content from home_all.dart
               return const CategoryAll();
@@ -337,7 +344,7 @@ class _BrandTabContent extends StatelessWidget {
             width: double.infinity,
             margin: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(

@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:kasut/features/single-product/single_product_page.dart';
 import 'package:kasut/models/shoe_model.dart';
 import 'package:kasut/widgets/sneaker_card.dart';
+import 'package:kasut/features/browse/category_page.dart'; // Add this import
 
 // BoxData class for the category boxes
 class BoxData {
@@ -68,12 +69,12 @@ class _CategoryAllState extends State<CategoryAll> {
                       shoe.tags.contains('Featured') ||
                       shoe.tags.contains('Best Seller'),
                 )
-                .take(6)
+                .take(8)
                 .toList();
 
         // If no featured items found, just take first 6
         if (_featuredSneakers.isEmpty) {
-          _featuredSneakers = allShoes.take(6).toList();
+          _featuredSneakers = allShoes.take(8).toList();
         }
 
         // Get popular sneakers
@@ -92,7 +93,7 @@ class _CategoryAllState extends State<CategoryAll> {
           _popularSneakers =
               allShoes
                   .where((shoe) => !_featuredSneakers.contains(shoe))
-                  .take(4)
+                  .take(8)
                   .toList();
         }
 
@@ -206,42 +207,77 @@ class _CategoryAllState extends State<CategoryAll> {
                               enableInfiniteScroll: true, // Enable for mobile
                             );
                           } else {
-                            // Desktop: Show welcome message and logo
+                            // Desktop: Show welcome message and logo with improved layout
                             carouselItems = [
                               Container(
-                                // Use a Container for potential background/padding
                                 width: double.infinity,
                                 height: 350,
-                                color:
-                                    Colors.grey.shade200, // Example background
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      // Placeholder for logo - replace with Image.asset if available
-                                      Text(
-                                        'Kasut Logo', // Placeholder
-                                        style: TextStyle(
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      // Example using Image.asset (commented out):
-                                      // Image.asset(
-                                      //   'assets/logo.png', // Ensure this path is correct in your project
-                                      //   height: 100, // Adjust size as needed
-                                      //   errorBuilder: (context, error, stackTrace) => Text('Logo Error'), // Handle asset error
-                                      // ),
-                                      const SizedBox(height: 20),
-                                      Text(
-                                        'Welcome to Kasut!',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.headlineSmall?.copyWith(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
+                                // Optional: Add a subtle gradient or background pattern
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.grey.shade100, // Lighter shade
+                                      Colors
+                                          .grey
+                                          .shade300, // Slightly darker shade
                                     ],
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 40.0,
+                                    ), // Add some padding
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // --- Kasut Logo Section Updated ---
+                                        // Using the placeholder icon with slightly larger size
+                                        Icon(
+                                          Icons
+                                              .directions_run, // Placeholder shoe icon
+                                          size:
+                                              100, // Increased size for desktop
+                                          color:
+                                              Colors
+                                                  .redAccent
+                                                  .shade400, // Slightly deeper color
+                                        ),
+                                        /* Add your actual logo here if available:
+                                        Image.asset(
+                                          'assets/images/your_desktop_logo.png', // Use a suitable desktop logo
+                                          height: 120,
+                                        ),
+                                        */
+                                        const SizedBox(
+                                          height: 24,
+                                        ), // Increased spacing
+                                        Text(
+                                          'Welcome to Kasut!',
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.headlineMedium?.copyWith(
+                                            // Larger text style
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Your destination for authentic sneakers.', // Add a tagline
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleMedium?.copyWith(
+                                            color: Colors.grey.shade700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -249,10 +285,9 @@ class _CategoryAllState extends State<CategoryAll> {
 
                             carouselOptions = CarouselOptions(
                               height: 350.0,
-                              autoPlay: false, // Disable for desktop
+                              autoPlay: false,
                               viewportFraction: 1.0,
-                              enableInfiniteScroll:
-                                  false, // Disable for desktop
+                              enableInfiniteScroll: false,
                             );
                           }
 
@@ -294,32 +329,64 @@ class _CategoryAllState extends State<CategoryAll> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 children: List.generate(
-                                  8,
-                                  (index) => Container(
-                                    margin: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade200,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          listData[index].image,
-                                          width: imageSize, // Use dynamic size
-                                          height: imageSize, // Use dynamic size
-                                          fit: BoxFit.contain,
+                                  listData.length, // Use listData.length
+                                  (index) => GestureDetector(
+                                    // Wrap with GestureDetector
+                                    onTap: () {
+                                      final categoryTitle =
+                                          listData[index].title;
+                                      print(
+                                        'Navigating to category: $categoryTitle',
+                                      );
+
+                                      // Navigate to CategoryPage with the selected category
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => CategoryPage(
+                                                categoryTitle: categoryTitle,
+                                              ),
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          listData[index].title,
-                                          style: const TextStyle(fontSize: 10),
-                                          textAlign:
-                                              TextAlign
-                                                  .center, // Center text for better look
-                                        ),
-                                      ],
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            listData[index].image,
+                                            width:
+                                                imageSize, // Use dynamic size
+                                            height:
+                                                imageSize, // Use dynamic size
+                                            fit: BoxFit.contain,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Icon(
+                                                      Icons.error,
+                                                      color:
+                                                          Colors.red.shade300,
+                                                    ), // Add error builder
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            listData[index].title,
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                            ),
+                                            textAlign:
+                                                TextAlign
+                                                    .center, // Center text for better look
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -594,37 +661,6 @@ class _CategoryAllState extends State<CategoryAll> {
                     const SizedBox(height: 24),
 
                     // Single Product Button Demo
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text('View Single Product Demo'),
-                        onPressed: () {
-                          // Choose a random shoe from our loaded ones
-                          final randomShoe =
-                              _featuredSneakers.isNotEmpty
-                                  ? _featuredSneakers[0]
-                                  : null;
-
-                          if (randomShoe != null) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        SingleProductPage(shoe: randomShoe),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-
                     const SizedBox(height: 32),
                   ],
                 ),

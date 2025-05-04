@@ -69,7 +69,7 @@ class _SneakerCardState extends State<SneakerCard> {
                     ), // Reduced padding from 12 to 8
                     child: AssetImageLoader(
                       imagePath: widget.sneaker.firstPict,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                     ),
                   ),
 
@@ -127,9 +127,9 @@ class _SneakerCardState extends State<SneakerCard> {
               height: 100, // Reduced height from 125 to 100
               padding: const EdgeInsets.fromLTRB(
                 10,
-                4,
+                0,
                 10,
-                12,
+                10,
               ), // Reduced horizontal padding from 12 to 10
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

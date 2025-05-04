@@ -26,8 +26,11 @@ class _BuyProductPageState extends State<BuyProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Get the price to display (discounted or regular)
     final price = widget.shoe.discountPrice ?? widget.shoe.price;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktop = screenWidth >= 800;
+    final double horizontalPadding =
+        isDesktop ? screenWidth * 0.15 : 16.0; // More padding on desktop
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -53,9 +56,12 @@ class _BuyProductPageState extends State<BuyProductPage> {
       ),
       body: Column(
         children: [
-          // Product Info Card
+          // Product Info Card - Add padding
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: 16,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
@@ -116,10 +122,13 @@ class _BuyProductPageState extends State<BuyProductPage> {
             ),
           ),
 
-          // Order Details
+          // Order Details - Add padding
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: 16,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -263,9 +272,12 @@ class _BuyProductPageState extends State<BuyProductPage> {
             ),
           ),
 
-          // Bottom Payment Button
+          // Bottom Payment Button - Adjust layout and padding
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding, // Use dynamic padding
+              vertical: 16,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
