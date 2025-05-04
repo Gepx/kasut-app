@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasut/features/single-product/single_product_page.dart';
 import 'package:kasut/models/shoe_model.dart';
 import 'package:kasut/widgets/sneaker_card.dart';
 import 'package:kasut/features/home/home_search_bar.dart';
@@ -166,7 +167,17 @@ class _MarketScreenState extends State<MarketScreen> {
         ),
         itemBuilder: (context, index) {
           final shoe = filteredShoes[index];
-          return SneakerCard(sneaker: shoe);
+          return SneakerCard(
+            sneaker: shoe,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SingleProductPage(shoe: shoe),
+                ),
+              );
+            },
+          );
         },
       ),
     );

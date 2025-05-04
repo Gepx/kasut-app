@@ -18,6 +18,8 @@ import 'features/profile/screens/faq_screen.dart';
 import 'package:kasut/features/blog/blog.dart'; // Assuming this path is correct
 import 'package:kasut/features/home/home_page.dart'; // Assuming home-page.dart is the main home widget
 import 'package:kasut/features/seller/seller.dart'; // Correct path, class is SellerPage
+import 'package:kasut/features/seller/sellerlogic.dart';
+import 'package:kasut/features/seller/seller_service.dart';
 import 'package:url_strategy/url_strategy.dart'; // Import for URL strategy
 
 void main() {
@@ -82,7 +84,10 @@ class Kasut extends StatelessWidget {
 }
 
 class Main extends StatefulWidget {
-  const Main({super.key});
+  // Optional initial tab index for bottom navigation
+  final int initialIndex;
+
+  const Main({super.key, this.initialIndex = 0});
 
   @override
   State<Main> createState() => _MainScreenState();
@@ -180,8 +185,7 @@ class _CustomBottomNavigationBar extends StatelessWidget {
 
 // Update the _MainScreenState class
 class _MainScreenState extends State<Main> with TickerProviderStateMixin {
-  // Added mixin
-  int _selectedIndex = 0;
+  late int _selectedIndex;
   TabController? _homeTabController;
   TabController? _marketTabController; // Added TabController for Home
 
@@ -225,7 +229,11 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
           (context) =>
               PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
       body:
-          (context) => const SellerPage(), // Use correct class name: SellerPage
+          (context) =>
+              // Show registration form if not yet registered, else show seller products
+              SellerService.currentSeller == null
+                  ? SellerPage()
+                  : SellerLogic(),
       iconData: Icons.sell,
       activeIconData: Icons.sell_outlined,
       label: 'Selling',
@@ -244,8 +252,10 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    // Set initial selected tab based on widget parameter
+    _selectedIndex = widget.initialIndex;
+
     // Initialize home tab controller with the correct number of tabs (matching brands)
-    // This should match the number of tabs in _brands list in home_page.dart
     _homeTabController = TabController(length: 14, vsync: this);
     _homeTabController!.addListener(() {
       // This ensures tab selection is maintained across rebuilds
