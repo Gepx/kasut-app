@@ -1,10 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart'; // Assuming iconsax is used
+import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
+import 'package:kasut/features/auth/screens/login_screen.dart';
+import 'package:kasut/features/auth/services/auth_service.dart';
+import 'package:kasut/providers/wishlist_provider.dart';
+import 'package:kasut/widgets/sneaker_card.dart'; // Import SneakerCard
 
-class WishlistScreen extends StatelessWidget {
-  static const String routeName = '/wishlist'; // Define route name
+class WishlistScreen extends StatefulWidget {
+  static const String routeName = '/wishlist';
 
   const WishlistScreen({super.key});
+
+  @override
+  State<WishlistScreen> createState() => _WishlistScreenState();
+}
+
+class _WishlistScreenState extends State<WishlistScreen> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthAndLoadWishlist();
+  }
+
+  Future<void> _checkAuthAndLoadWishlist() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Check if user is logged in
+    final currentUser = AuthService.currentUser;
+    final isLoggedIn = currentUser != null;
+
+    if (isLoggedIn) {
+      // Get user ID (using email as ID)
+      final userId = currentUser['email']?.toString() ?? '';
+
+      // Initialize wishlist provider with user ID
+      await Provider.of<WishlistProvider>(
+        context,
+        listen: false,
+      ).initializeWithUser(userId);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,156 +60,119 @@ class WishlistScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Iconsax.filter), // Filter icon
+            icon: const Icon(Iconsax.filter),
             onPressed: () {
-              // TODO: Implement filter action
+              // TODO: Implement filter action if needed
             },
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: const [
-          // Example Wishlist Item Card (Static Data)
-          _WishlistItemCard(
-            imageUrl: 'https://via.placeholder.com/150', // Placeholder image
-            name: 'Nike Air Jordan 1 Retro High OG SP',
-            variant: 'Fragment x Travis Scott',
-            size: 'US 9.5',
-            lowestAsk: 'Rp 25.000.000',
-            highestBid: 'Rp 22.500.000',
-          ),
-          // Add more static items here if needed
-        ],
-      ),
+      body: _buildBody(),
     );
   }
-}
 
-// Helper widget for the wishlist item card
-class _WishlistItemCard extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String variant;
-  final String size;
-  final String lowestAsk;
-  final String highestBid;
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-  const _WishlistItemCard({
-    required this.imageUrl,
-    required this.name,
-    required this.variant,
-    required this.size,
-    required this.lowestAsk,
-    required this.highestBid,
-  });
+    // Check if user is logged in
+    final isLoggedIn = AuthService.currentUser != null;
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2.0,
-      margin: const EdgeInsets.only(bottom: 16.0),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    if (!isLoggedIn) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network(
-              imageUrl,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-              // Add error builder for network image
-              errorBuilder:
-                  (context, error, stackTrace) => Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.grey[200],
-                    child: const Icon(
-                      Icons.image_not_supported,
-                      color: Colors.grey,
-                    ),
-                  ),
+            const Text('Please log in to view your wishlist.'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, LoginScreen.routeName).then((_) {
+                  _checkAuthAndLoadWishlist();
+                });
+              },
+              child: const Text('Log In'),
             ),
-            const SizedBox(width: 12.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    variant,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text('Size: $size', style: const TextStyle(fontSize: 14)),
-                  const SizedBox(height: 8.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Lowest Ask',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            lowestAsk,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ), // Or your app's ask color
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Highest Bid',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            highestBid,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
-                            ), // Or your app's bid color
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // Optional: Add a remove from wishlist button if shown in design
-            // IconButton(
-            //   icon: Icon(Iconsax.heart_slash), // Or appropriate icon
-            //   onPressed: () { /* TODO: Implement remove */ },
-            //   padding: EdgeInsets.zero,
-            //   constraints: BoxConstraints(),
-            // ),
           ],
         ),
-      ),
+      );
+    }
+
+    // Use Consumer to listen to wishlist changes
+    return Consumer<WishlistProvider>(
+      builder: (context, wishlistProvider, child) {
+        final wishlistItems = wishlistProvider.getWishlistItems();
+
+        if (wishlistItems.isEmpty) {
+          return const Center(child: Text('Your wishlist is empty.'));
+        }
+
+        // Use LayoutBuilder to determine screen size and adjust columns accordingly
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            // Calculate number of columns based on screen width
+            // Default to 2 columns for mobile, more for larger screens
+            int crossAxisCount = 2; // Default for mobile
+
+            if (constraints.maxWidth > 600) {
+              crossAxisCount = 3; // Tablet
+            }
+            if (constraints.maxWidth > 900) {
+              crossAxisCount = 4; // Desktop
+            }
+
+            return GridView.builder(
+              padding: const EdgeInsets.all(16.0),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: 0.7, // Adjust based on your card dimensions
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: wishlistItems.length,
+              itemBuilder: (context, index) {
+                final shoe = wishlistItems[index];
+                return Stack(
+                  children: [
+                    // Use the existing SneakerCard widget
+                    SneakerCard(
+                      sneaker: shoe,
+                      // No need to specify width/height as the grid handles sizing
+                      onTap: () {
+                        // Navigate to product detail page if needed
+                      },
+                    ),
+                    // Add X button overlay for removal
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: InkWell(
+                        onTap: () {
+                          // Remove from wishlist
+                          wishlistProvider.toggleWishlist(shoe.sku);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.8),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.red,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

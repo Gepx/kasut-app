@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For currency formatting
-import '../models/shoe_model.dart'; // Import the Shoe model
-import 'image_loader.dart'; // Import the AssetImageLoader
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../models/shoe_model.dart';
+import '../providers/wishlist_provider.dart';
+import 'image_loader.dart';
 
-/// A reusable card widget to display sneaker information.
-///
-/// Takes a [Shoe] object and displays its image, brand, name, and price
-/// in a styled card format based on the design reference.
-class SneakerCard extends StatefulWidget {
-  // Changed to StatefulWidget
+class SneakerCard extends StatelessWidget {
+  // Changed to StatelessWidget
   final Shoe sneaker;
-  // Add optional width and height parameters for more flexible sizing
   final double? width;
   final double? height;
   final Function()? onTap;
 
   const SneakerCard({
-    super.key, // Use super parameter
+    super.key,
     required this.sneaker,
     this.width,
     this.height,
@@ -24,30 +21,24 @@ class SneakerCard extends StatefulWidget {
   });
 
   @override
-  State<SneakerCard> createState() => _SneakerCardState();
-}
-
-class _SneakerCardState extends State<SneakerCard> {
-  // Added State class
-  bool _isFavorite = false; // State for favorite button
-
-  @override
   Widget build(BuildContext context) {
+    // Get the wishlist provider
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
+    // Check if this sneaker is in the wishlist
+    final isFavorite = wishlistProvider.isInWishlist(sneaker.sku);
+
     // Currency formatter for IDR
     final currencyFormatter = NumberFormat.currency(
       locale: 'id_ID',
-      symbol: 'IDR ', // Keep space for separation
-      decimalDigits: 0, // No decimal digits for IDR
+      symbol: 'IDR ',
+      decimalDigits: 0,
     );
-    final textTheme = Theme.of(context).textTheme;
 
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: onTap,
       child: Container(
-        width: widget.width,
-        height:
-            widget.height ??
-            260, // Reduced from 320 to 260 for more compact cards
+        width: width,
+        height: height ?? 260,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -64,55 +55,52 @@ class _SneakerCardState extends State<SneakerCard> {
                   // Product Image
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(
-                      8,
-                    ), // Reduced padding from 12 to 8
+                    padding: const EdgeInsets.all(8),
                     child: AssetImageLoader(
-                      imagePath: widget.sneaker.firstPict,
+                      imagePath: sneaker.firstPict,
                       fit: BoxFit.cover,
                     ),
                   ),
 
-                  // Favorite Button
+                  // Favorite Button - Updated to use provider
                   Positioned(
                     top: 8,
                     right: 8,
                     child: InkWell(
                       onTap: () {
-                        setState(() {
-                          _isFavorite = !_isFavorite;
-                        });
+                        // Toggle wishlist status using provider
+                        wishlistProvider.toggleWishlist(sneaker.sku);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         child: Icon(
-                          _isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: _isFavorite ? Colors.red : Colors.black,
-                          size: 20, // Reduced size from 24 to 20
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.black,
+                          size: 20,
                         ),
                       ),
                     ),
                   ),
 
                   // Tags (Best Seller, etc)
-                  if (widget.sneaker.tags.isNotEmpty)
+                  if (sneaker.tags.isNotEmpty)
                     Positioned(
                       top: 8,
                       left: 8,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 6, // Reduced padding from 8 to 6
-                          vertical: 3, // Reduced padding from 4 to 3
+                          horizontal: 6,
+                          vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: _getTagColor(widget.sneaker.tags.first),
+                          color: _getTagColor(sneaker.tags.first),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          widget.sneaker.tags.first,
+                          sneaker.tags.first,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 9, // Reduced font size from 10 to 9
+                            fontSize: 9,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -122,7 +110,7 @@ class _SneakerCardState extends State<SneakerCard> {
               ),
             ),
 
-            // Product Info Section - Using fixed height layout
+            // Rest of the product info section remains the same
             Container(
               height: 100, // Reduced height from 125 to 100
               padding: const EdgeInsets.fromLTRB(
@@ -139,9 +127,9 @@ class _SneakerCardState extends State<SneakerCard> {
                     children: [
                       Expanded(
                         child: Text(
-                          widget.sneaker.brand,
+                          sneaker.brand,
                           style: const TextStyle(
-                            fontSize: 14, // Reduced from 16 to 14
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
@@ -158,7 +146,7 @@ class _SneakerCardState extends State<SneakerCard> {
 
                   // Product Name
                   Text(
-                    widget.sneaker.name,
+                    sneaker.name, // Changed from widget.sneaker.name
                     style: const TextStyle(
                       fontSize: 12,
                     ), // Reduced from 14 to 12
@@ -182,7 +170,8 @@ class _SneakerCardState extends State<SneakerCard> {
                   SizedBox(
                     height: 36, // Reduced from 40 to 36
                     child:
-                        widget.sneaker.discountPrice != null
+                        sneaker.discountPrice !=
+                                null // Changed from widget.sneaker.discountPrice
                             ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -190,7 +179,8 @@ class _SneakerCardState extends State<SneakerCard> {
                                 // Discounted Price
                                 Text(
                                   currencyFormatter.format(
-                                    widget.sneaker.discountPrice,
+                                    sneaker
+                                        .discountPrice, // Changed from widget.sneaker.discountPrice
                                   ),
                                   style: const TextStyle(
                                     fontSize: 14, // Reduced from 15 to 14
@@ -201,7 +191,8 @@ class _SneakerCardState extends State<SneakerCard> {
                                 // Original Price (strikethrough)
                                 Text(
                                   currencyFormatter.format(
-                                    widget.sneaker.price,
+                                    sneaker
+                                        .price, // Changed from widget.sneaker.price
                                   ),
                                   style: TextStyle(
                                     fontSize: 10, // Reduced from 12 to 10
@@ -212,7 +203,9 @@ class _SneakerCardState extends State<SneakerCard> {
                               ],
                             )
                             : Text(
-                              currencyFormatter.format(widget.sneaker.price),
+                              currencyFormatter.format(
+                                sneaker.price,
+                              ), // Changed from widget.sneaker.price
                               style: const TextStyle(
                                 fontSize: 14, // Reduced from 15 to 14
                                 fontWeight: FontWeight.bold,

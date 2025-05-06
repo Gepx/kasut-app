@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "email": "john@example.com",
+      "username": "john_doe",
+      "password": "password123",
+      "kasutCredit": 500000,
+      "sellCredit": 0,
+      "kasutPoints": 100,
+      "registeredAsSeller": false
+    },
+    {
+      "email": "jane@example.com",
+      "username": "jane_smith",
+      "password": "password456",
+      "kasutCredit": 750000,
+      "sellCredit": 1250000,
+      "kasutPoints": 250,
+      "registeredAsSeller": true
+    }
+  ]
+}

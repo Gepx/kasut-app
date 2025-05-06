@@ -19,9 +19,9 @@ import 'features/profile/screens/faq_screen.dart';
 import 'package:kasut/features/blog/blog.dart'; // Assuming this path is correct
 import 'package:kasut/features/home/home_page.dart'; // Assuming home-page.dart is the main home widget
 import 'package:kasut/features/seller/seller.dart'; // Correct path, class is SellerPage
-import 'package:kasut/features/seller/sellerlogic.dart';
-import 'package:kasut/features/seller/seller_service.dart';
 import 'package:url_strategy/url_strategy.dart'; // Import for URL strategy
+import 'package:provider/provider.dart';
+import 'package:kasut/providers/wishlist_provider.dart';
 
 void main() {
   // Remove hash from URLs
@@ -47,45 +47,47 @@ class Kasut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        // Add theme data
-        scaffoldBackgroundColor:
-            Colors.white, // Set scaffold background to pure white
-        appBarTheme: const AppBarTheme(
-          // Ensure AppBars are also white by default if needed
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          elevation: 0, // Optional: remove app bar shadow
+    return ChangeNotifierProvider(
+      create: (context) => WishlistProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          // Add theme data
+          scaffoldBackgroundColor:
+              Colors.white, // Set scaffold background to pure white
+          appBarTheme: const AppBarTheme(
+            // Ensure AppBars are also white by default if needed
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            elevation: 0, // Optional: remove app bar shadow
+          ),
+          // You can add other theme customizations here if needed
         ),
-        // You can add other theme customizations here if needed
+        initialRoute: SplashScreen.routeName, // Mulai dari SplashScreen
+        routes: {
+          SplashScreen.routeName: (context) => const SplashScreen(),
+          '/home': (context) => const Main(), // Changed from '/main' to '/home'
+          LoginScreen.routeName: (context) => const LoginScreen(),
+          SignupScreen.routeName: (context) => const SignupScreen(),
+          ProfileScreen.routeName: (context) => const ProfileScreen(),
+          BuyingScreen.routeName: (context) => const BuyingScreen(),
+          SellingScreen.routeName: (context) => const SellingScreen(),
+          ConsignmentScreen.routeName: (context) => const ConsignmentScreen(),
+          KasutCreditScreen.routeName: (context) => const KasutCreditScreen(),
+          SellerCreditScreen.routeName: (context) => const SellerCreditScreen(),
+          KasutPointsScreen.routeName: (context) => const KasutPointsScreen(),
+          MyVoucherScreen.routeName: (context) => const MyVoucherScreen(),
+          WishlistScreen.routeName: (context) => const WishlistScreen(),
+          InviteFriendScreen.routeName: (context) => const InviteFriendScreen(),
+          SettingsScreen.routeName: (context) => const SettingsScreen(),
+          FaqScreen.routeName: (context) => const FaqScreen(),
+        },
       ),
-      initialRoute: SplashScreen.routeName, // Mulai dari SplashScreen
-      routes: {
-        SplashScreen.routeName: (context) => const SplashScreen(),
-        '/home': (context) => const Main(), // Changed from '/main' to '/home'
-        LoginScreen.routeName: (context) => const LoginScreen(),
-        SignupScreen.routeName: (context) => const SignupScreen(),
-        ProfileScreen.routeName: (context) => const ProfileScreen(),
-        BuyingScreen.routeName: (context) => const BuyingScreen(),
-        SellingScreen.routeName: (context) => const SellingScreen(),
-        ConsignmentScreen.routeName: (context) => const ConsignmentScreen(),
-        KasutCreditScreen.routeName: (context) => const KasutCreditScreen(),
-        SellerCreditScreen.routeName: (context) => const SellerCreditScreen(),
-        KasutPointsScreen.routeName: (context) => const KasutPointsScreen(),
-        MyVoucherScreen.routeName: (context) => const MyVoucherScreen(),
-        WishlistScreen.routeName: (context) => const WishlistScreen(),
-        InviteFriendScreen.routeName: (context) => const InviteFriendScreen(),
-        SettingsScreen.routeName: (context) => const SettingsScreen(),
-        FaqScreen.routeName: (context) => const FaqScreen(),
-      },
     );
   }
 }
 
 class Main extends StatefulWidget {
-  // Optional initial tab index for bottom navigation
   final int initialIndex;
 
   const Main({super.key, this.initialIndex = 0});
@@ -186,7 +188,8 @@ class _CustomBottomNavigationBar extends StatelessWidget {
 
 // Update the _MainScreenState class
 class _MainScreenState extends State<Main> with TickerProviderStateMixin {
-  late int _selectedIndex;
+  // Added mixin
+  int _selectedIndex = 0;
   TabController? _homeTabController;
   TabController? _marketTabController;
 
@@ -240,14 +243,12 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
     ),
     _ScreenData(
       appBar:
-          (context) =>
-              PreferredSize(preferredSize: Size.zero, child: SizedBox.shrink()),
+          (context) => const PreferredSize(
+            preferredSize: Size.zero,
+            child: SizedBox.shrink(),
+          ),
       body:
-          (context) =>
-              // Show registration form if not yet registered, else show seller products
-              SellerService.currentSeller == null
-                  ? SellerPage()
-                  : SellerLogic(),
+          (context) => const SellerPage(), // Use correct class name: SellerPage
       iconData: Icons.sell,
       activeIconData: Icons.sell_outlined,
       label: 'Selling',
@@ -268,21 +269,77 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // Set initial selected tab based on widget parameter
-    _selectedIndex = widget.initialIndex;
+    _selectedIndex =
+        widget.initialIndex; // Set initial index from widget parameter
+    _loadBrands(); // Start loading brands
+  }
 
-    // Initialize home tab controller with the correct number of tabs (matching brands)
-    _homeTabController = TabController(length: 14, vsync: this);
-    _homeTabController!.addListener(() {
-      // This ensures tab selection is maintained across rebuilds
-      setState(() {});
-    });
+  // Function to load brand names from the assets directory
+  Future<void> _loadBrands() async {
+    try {
+      // Use rootBundle to load the list of assets
+      final manifestContent = await DefaultAssetBundle.of(
+        context,
+      ).loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
-    // Market tab controller
-    _marketTabController = TabController(length: 14, vsync: this);
-    _marketTabController!.addListener(() {
-      setState(() {});
-    });
+      // Use a Set to store unique brand names
+      final Set<String> brandNames = {};
+
+      // Filter keys for files within assets/brand-products/
+      manifestMap.keys
+          .where((String key) {
+            return key.startsWith('assets/brand-products/') &&
+                !key.endsWith('/');
+          })
+          .forEach((String key) {
+            // Extract the brand name (part after 'assets/brand-products/' and before the next '/')
+            final parts = key.split('/');
+            if (parts.length > 2) {
+              brandNames.add(parts[2]); // Add the brand name to the set
+            }
+          });
+
+      // Convert the Set to a List, add "All", and sort (optional)
+      final List<String> loadedBrands = ["All", ...brandNames.toList()];
+      // loadedBrands.sort(); // Optional: Sort alphabetically if needed, keeping "All" first
+
+      setState(() {
+        _brands = loadedBrands;
+        _isLoadingBrands = false;
+        // Initialize tab controllers after brands are loaded
+        _homeTabController = TabController(length: _brands.length, vsync: this);
+        _marketTabController = TabController(
+          length: _brands.length,
+          vsync: this,
+        );
+
+        _homeTabController!.addListener(() {
+          setState(() {});
+        });
+        _marketTabController!.addListener(() {
+          setState(() {});
+        });
+      });
+    } catch (e) {
+      print('Error loading brands: $e');
+      setState(() {
+        _isLoadingBrands = false;
+        // Initialize with a default list if loading fails
+        _brands = ["All", "Error Loading Brands"];
+        _homeTabController = TabController(length: _brands.length, vsync: this);
+        _marketTabController = TabController(
+          length: _brands.length,
+          vsync: this,
+        );
+        _homeTabController!.addListener(() {
+          setState(() {});
+        });
+        _marketTabController!.addListener(() {
+          setState(() {});
+        });
+      });
+    }
   }
 
   void _onIconTapped(int index) {

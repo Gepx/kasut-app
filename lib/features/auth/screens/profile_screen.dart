@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart'; // Import iconsax
+import 'package:provider/provider.dart'; // Add this import
+import 'package:kasut/providers/wishlist_provider.dart'; // Add this import
 import 'package:kasut/features/auth/services/auth_service.dart';
 import 'package:kasut/features/auth/screens/login_screen.dart';
 import 'package:kasut/features/profile/screens/buying_screen.dart'; // Placeholder
@@ -155,15 +157,17 @@ class ProfileScreen extends StatelessWidget {
   // --- Logged In View (Updated Implementation) ---
   Widget _buildLoggedInView(
     BuildContext context,
-    Map<String, String> currentUser,
+    Map<String, dynamic>
+    currentUser, // Changed from Map<String, String> to Map<String, dynamic>
   ) {
     final textTheme = Theme.of(context).textTheme;
 
     // Placeholder data - replace with actual data later
     final String username =
-        currentUser['username'] ?? ''; // Use empty string as fallback
+        currentUser['username']?.toString() ??
+        ''; // Added toString() for safety
     final String email =
-        currentUser['email'] ?? ''; // Use empty string as fallback
+        currentUser['email']?.toString() ?? ''; // Added toString() for safety
     const String kasutCredit = 'IDR 0'; // Placeholder
     const String sellerCredit = 'IDR 0'; // Placeholder
     const String kasutPoints = 'KP 0'; // Placeholder
@@ -501,9 +505,12 @@ class ProfileScreen extends StatelessWidget {
     return InkWell(
       // Use InkWell for tap feedback
       onTap: () {
+        // In the _buildMenuItem method where isLogout is true
         if (isLogout) {
-          final authService = AuthService();
-          authService.logout();
+          // Clear the wishlist first
+          Provider.of<WishlistProvider>(context, listen: false).clearWishlist();
+          // Then logout
+          AuthService.logout();
           Navigator.pushNamedAndRemoveUntil(
             context,
             LoginScreen.routeName,

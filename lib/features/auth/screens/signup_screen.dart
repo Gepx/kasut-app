@@ -17,7 +17,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final AuthService _authService = AuthService(); // Instance of AuthService
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -40,8 +39,8 @@ class _SignupScreenState extends State<SignupScreen> {
       final username = _usernameController.text.trim();
       final password = _passwordController.text.trim();
 
-      // Use the AuthService to signup
-      final success = await _authService.signUp(
+      // Use the AuthService to signup as a static method
+      final success = await AuthService.signUp(
         email: email,
         username: username,
         password: password,

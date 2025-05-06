@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Add this import
+import 'package:kasut/providers/wishlist_provider.dart'; // Add this import
 import 'signup_screen.dart'; // Navigate to signup
 import '../services/auth_service.dart'; // Use AuthService
 
@@ -16,7 +18,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final AuthService _authService = AuthService(); // Instance of AuthService
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final password = _passwordController.text.trim();
 
       // Use the AuthService to login
-      final user = await _authService.login(email: email, password: password);
+      final user = await AuthService.login(email, password);
 
       // Check if the widget is still mounted before updating state
       if (!mounted) return;
@@ -48,6 +49,13 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       if (user != null) {
+        // Initialize wishlist with user ID
+        final wishlistProvider = Provider.of<WishlistProvider>(
+          context,
+          listen: false,
+        );
+        await wishlistProvider.initializeWithUser(user['email']);
+
         // Navigate to Home screen on successful login, replacing the login screen
         Navigator.pushNamedAndRemoveUntil(
           context,
