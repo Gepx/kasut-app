@@ -112,10 +112,10 @@ class _SellerPageState extends State<SellerPage> {
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                   );
                 },
-                child: Text("Login Now"),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
+                child: Text("Login Now"),
               ),
             ],
           ),

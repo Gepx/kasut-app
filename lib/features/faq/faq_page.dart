@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kasut/features/faq/faq_data.dart';
 
 class FAQPage extends StatefulWidget {
-  const FAQPage({Key? key}) : super(key: key);
+  const FAQPage({super.key});
 
   @override
   State<FAQPage> createState() => _FAQPageState();

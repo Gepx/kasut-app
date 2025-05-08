@@ -301,7 +301,7 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
           });
 
       // Convert the Set to a List, add "All", and sort (optional)
-      final List<String> loadedBrands = ["All", ...brandNames.toList()];
+      final List<String> loadedBrands = ["All", ...brandNames];
       // loadedBrands.sort(); // Optional: Sort alphabetically if needed, keeping "All" first
 
       setState(() {

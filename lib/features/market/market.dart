@@ -434,7 +434,7 @@ String _normalizeBrandName(String brand) {
 }
 
 class FilterModal extends StatefulWidget {
-  const FilterModal({Key? key}) : super(key: key);
+  const FilterModal({super.key});
 
   @override
   State<FilterModal> createState() => _FilterModalState();
