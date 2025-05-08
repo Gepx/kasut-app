@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../models/search_model.dart';
 import '../../models/shoe_model.dart';
 import 'package:intl/intl.dart';
+import '../../features/single-product/single_product_page.dart';
+import '../../widgets/image_loader.dart';
 
 class SearchPage extends StatefulWidget {
   final bool autoFocus;
@@ -263,7 +265,6 @@ class _SearchPageState extends State<SearchPage> {
             boxShadow: [
               BoxShadow(
                 color: Color.fromRGBO(158, 158, 158, 0.4),
-                // color: Colors.grey.withValues(),
                 spreadRadius: 1,
                 blurRadius: 4,
                 offset: const Offset(0, 2),
@@ -275,7 +276,12 @@ class _SearchPageState extends State<SearchPage> {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () {
-                // Handle shoe tap
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SingleProductPage(shoe: shoe),
+                  ),
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -289,13 +295,15 @@ class _SearchPageState extends State<SearchPage> {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.grey[300]!, width: 1),
                       ),
-                      child: Center(
-                        child: Text(
-                          shoe.brand[0],
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[600],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: AssetImageLoader(
+                            imagePath: shoe.firstPict,
+                            fit: BoxFit.contain,
+                            width: 64,
+                            height: 64,
                           ),
                         ),
                       ),
@@ -375,6 +383,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: GestureDetector(
                   onTap: () {
                     _searchController.text = brand.name;
+                    _filterShoes();
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -419,6 +428,7 @@ class _SearchPageState extends State<SearchPage> {
         child: GestureDetector(
           onTap: () {
             _searchController.text = SearchData.popularSearches[index];
+            _filterShoes();
           },
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
