@@ -16,6 +16,27 @@ class Shoe {
   final String sku;
   final String releaseDate;
 
+  // Computed properties
+  String get gender {
+    if (sizes.containsKey('women') && sizes['women']!.isNotEmpty) {
+      return 'Women';
+    } else if (sizes.containsKey('kids') && sizes['kids']!.isNotEmpty) {
+      return 'Kids';
+    } else {
+      return 'Men';
+    }
+  }
+
+  List<String> get availableSizes {
+    List<String> result = [];
+    sizes.forEach((category, sizeList) {
+      for (var size in sizeList) {
+        result.add('$category-$size');
+      }
+    });
+    return result;
+  }
+
   const Shoe({
     required this.name,
     required this.brand,

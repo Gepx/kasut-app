@@ -136,7 +136,7 @@ class _MarketScreenState extends State<MarketScreen> {
   List<Shoe> filteredShoes = [];
 
   // Filter state
-  Set<String> selectedConditions = {};
+  Set<String> selectedTags = {};
   Set<String> selectedGenders = {};
   Map<String, Set<String>> selectedSizes = {'Men': {}, 'Women': {}, 'Kids': {}};
 
@@ -172,7 +172,7 @@ class _MarketScreenState extends State<MarketScreen> {
       brandFilteredShoes = ShoeData.getByBrand(selectedBrand);
     }
 
-    // Apply additional filters (condition, gender, size)
+    // Apply additional filters (tags, gender, size)
     setState(() {
       filteredShoes = _applyFilters(brandFilteredShoes);
 
@@ -186,26 +186,30 @@ class _MarketScreenState extends State<MarketScreen> {
   // Apply all selected filters to the shoes
   List<Shoe> _applyFilters(List<Shoe> shoes) {
     // If no filters are selected, return all shoes
-    if (selectedConditions.isEmpty &&
+    if (selectedTags.isEmpty &&
         selectedGenders.isEmpty &&
         selectedSizes.values.every((sizes) => sizes.isEmpty)) {
       return shoes;
     }
 
     return shoes.where((shoe) {
-      // Filter by condition if any conditions are selected
-      if (selectedConditions.isNotEmpty) {
-        // Assuming shoe has a condition property
-        // If not, you'll need to adjust this logic
-        if (!selectedConditions.contains(shoe.condition)) {
+      // Filter by tags if any tags are selected
+      if (selectedTags.isNotEmpty) {
+        // Check if any of the selected tags match the shoe's tags
+        bool hasMatchingTag = false;
+        for (var tag in selectedTags) {
+          if (shoe.tags.contains(tag)) {
+            hasMatchingTag = true;
+            break;
+          }
+        }
+        if (!hasMatchingTag) {
           return false;
         }
       }
 
       // Filter by gender if any genders are selected
       if (selectedGenders.isNotEmpty) {
-        // Assuming shoe has a gender property
-        // If not, you'll need to adjust this logic
         if (!selectedGenders.contains(shoe.gender)) {
           return false;
         }
@@ -219,8 +223,6 @@ class _MarketScreenState extends State<MarketScreen> {
         // Check if any selected size matches the shoe's available sizes
         for (var gender in selectedSizes.keys) {
           if (selectedSizes[gender]!.isNotEmpty) {
-            // Assuming shoe has availableSizes property
-            // If not, you'll need to adjust this logic
             for (var size in selectedSizes[gender]!) {
               if (shoe.availableSizes.contains('$gender-$size')) {
                 sizeMatch = true;
@@ -238,12 +240,12 @@ class _MarketScreenState extends State<MarketScreen> {
 
   // Method to update filters from FilterModal
   void updateFilters({
-    required Set<String> conditions,
+    required Set<String> tags,
     required Set<String> genders,
     required Map<String, Set<String>> sizes,
   }) {
     setState(() {
-      selectedConditions = conditions;
+      selectedTags = tags;
       selectedGenders = genders;
       selectedSizes = sizes;
       _filterShoes(); // Re-apply filters
@@ -278,7 +280,7 @@ class _MarketScreenState extends State<MarketScreen> {
           return Column(
             children: [
               // Active filters display
-              if (selectedConditions.isNotEmpty ||
+              if (selectedTags.isNotEmpty ||
                   selectedGenders.isNotEmpty ||
                   selectedSizes.values.any((sizes) => sizes.isNotEmpty))
                 Padding(
@@ -319,12 +321,12 @@ class _MarketScreenState extends State<MarketScreen> {
   Widget _buildActiveFilters() {
     List<Widget> filterChips = [];
 
-    // Add condition filters
-    for (var condition in selectedConditions) {
+    // Add tag filters
+    for (var tag in selectedTags) {
       filterChips.add(
-        _buildFilterChip(condition, () {
+        _buildFilterChip(tag, () {
           setState(() {
-            selectedConditions.remove(condition);
+            selectedTags.remove(tag);
             _filterShoes();
           });
         }),
@@ -363,7 +365,7 @@ class _MarketScreenState extends State<MarketScreen> {
         TextButton(
           onPressed: () {
             setState(() {
-              selectedConditions.clear();
+              selectedTags.clear();
               selectedGenders.clear();
               for (var gender in selectedSizes.keys) {
                 selectedSizes[gender]!.clear();
@@ -593,9 +595,7 @@ class _FilterModalState extends State<FilterModal>
                                 .findAncestorStateOfType<_MarketScreenState>();
                         if (marketState != null) {
                           marketState.updateFilters(
-                            tags: Set.from(
-                              selectedTags,
-                            ), // Changed from conditions to tags
+                            tags: Set.from(selectedTags),
                             genders: Set.from(selectedGenders),
                             sizes: Map.fromEntries(
                               selectedSizes.entries.map(
