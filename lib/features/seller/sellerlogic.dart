@@ -1,341 +1,489 @@
-import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:kasut/features/seller/seller_service.dart';
+import 'package:kasut/features/seller/add_listing_screen.dart';
+import 'package:kasut/models/seller_listing_model.dart';
+import 'package:kasut/services/seller_listing_service.dart';
+import 'package:kasut/features/auth/services/auth_service.dart';
+import 'package:kasut/utils/indonesian_utils.dart';
+import 'package:kasut/utils/responsive_utils.dart';
 
 class SellerLogic extends StatefulWidget {
   const SellerLogic({super.key});
 
   @override
-  _SellerLogicState createState() => _SellerLogicState();
+  State<SellerLogic> createState() => _SellerLogicState();
 }
 
 class _SellerLogicState extends State<SellerLogic> {
-  List<Map<String, dynamic>> items = [];
-  Set<int> selectedIndexes = {};
+  List<SellerListing> _myListings = [];
 
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _priceController = TextEditingController();
-  int? editingIndex;
+  @override
+  void initState() {
+    super.initState();
+    _loadMyListings();
+  }
 
-  /// Show dialog to add or edit an item; returns new item data
-  Future<void> _showItemDialog({int? index}) async {
-    String itemCondition = 'New';
-    Uint8List? itemImage;
-    if (index != null) {
-      editingIndex = index;
-      final existing = items[index];
-      _nameController.text = existing['name'];
-      _priceController.text = existing['price'].toString();
-      itemCondition = existing['condition'] as String;
-      itemImage = existing['image'] as Uint8List?;
-    } else {
-      editingIndex = null;
-      _nameController.clear();
-      _priceController.clear();
-    }
-    // Show dialog and await new item data
-    final result = await showDialog<Map<String, dynamic>>(
-      context: context,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              title: Text(editingIndex == null ? 'Add Item' : 'Edit Item'),
-              content: SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: InputDecoration(labelText: 'Item Name'),
-                        validator:
-                            (value) =>
-                                (value == null || value.isEmpty)
-                                    ? 'Enter a name'
-                                    : null,
-                      ),
-                      TextFormField(
-                        controller: _priceController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(labelText: 'Price'),
-                        validator:
-                            (value) =>
-                                (value == null || value.isEmpty)
-                                    ? 'Enter a price'
-                                    : null,
-                      ),
-                      SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: Text('New'),
-                              value: 'New',
-                              groupValue: itemCondition,
-                              onChanged: (val) {
-                                setState(() => itemCondition = val!);
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: Text('Used'),
-                              value: 'Used',
-                              groupValue: itemCondition,
-                              onChanged: (val) {
-                                setState(() => itemCondition = val!);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      itemImage != null
-                          ? Image.memory(
-                            itemImage!,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          )
-                          : ElevatedButton.icon(
-                            onPressed: () async {
-                              final res = await FilePicker.platform.pickFiles(
-                                type: FileType.image,
-                                withData: true,
-                              );
-                              if (res != null &&
-                                  res.files.single.bytes != null) {
-                                setState(() {
-                                  itemImage = res.files.single.bytes!;
-                                });
-                              }
-                            },
-                            icon: Icon(Icons.upload_file),
-                            label: Text('Upload Image'),
-                          ),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  child: Text('Cancel', style: TextStyle(color: Colors.grey)),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                  ),
-                  onPressed: () {
-                    if (!(_formKey.currentState?.validate() ?? false)) return;
-                    if (itemImage == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Please upload an image')),
-                      );
-                      return;
-                    }
-                    final map = {
-                      'name': _nameController.text,
-                      'price': double.parse(_priceController.text),
-                      'condition': itemCondition,
-                      'image': itemImage,
-                    };
-                    Navigator.pop(dialogContext, map);
-                  },
-                  child: Text(
-                    editingIndex == null ? 'Add' : 'Update',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-    // After dialog closes, update the list if result exists
-    if (result != null) {
+  void _loadMyListings() {
+    final currentUser = AuthService.currentUser;
+    if (currentUser != null) {
       setState(() {
-        if (editingIndex != null) {
-          items[editingIndex!] = result;
-        } else {
-          items.add(result);
-        }
+        _myListings = SellerListingService.getListingsBySeller(currentUser['email']);
       });
     }
   }
 
-  void _deleteItem(int index) {
-    setState(() {
-      items.removeAt(index);
-      selectedIndexes.remove(index);
-    });
-  }
-
-  void _deleteSelectedItems() {
-    setState(() {
-      items = [
-        for (int i = 0; i < items.length; i++)
-          if (!selectedIndexes.contains(i)) items[i],
-      ];
-      selectedIndexes.clear();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    bool allSelected =
-        selectedIndexes.length == items.length && items.isNotEmpty;
+    final sellerData = SellerService.currentSeller;
 
-    return Column(
-      children: [
-        if (items.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Checkbox(
-                      value: allSelected,
-                      onChanged: (value) {
-                        setState(() {
-                          if (value == true) {
-                            selectedIndexes = Set.from(
-                              List.generate(items.length, (i) => i),
-                            );
-                          } else {
-                            selectedIndexes.clear();
-                          }
-                        });
-                      },
-                      activeColor: Colors.black,
-                    ),
-                    Text(
-                      "Select All",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                if (selectedIndexes.isNotEmpty)
-                  IconButton(
-                    icon: Icon(Icons.delete_forever, color: Colors.redAccent),
-                    onPressed: _deleteSelectedItems,
-                    tooltip: 'Delete selected',
-                  ),
-              ],
-            ),
+    if (sellerData == null) {
+      return const Scaffold(
+        body: Center(
+          child: Text('No seller data found'),
+        ),
+      );
+    }
+
+    return ResponsiveBuilder(
+      builder: (context, deviceType, width) {
+        final padding = ResponsiveUtils.getResponsivePadding(width);
+        
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Seller Dashboard'),
+            backgroundColor: Colors.white,
+            elevation: 0,
+            shape: const Border(bottom: BorderSide(color: Colors.grey, width: 1)),
           ),
-        Expanded(
-          child:
-              items.isEmpty
-                  ? Center(
-                    child: Text(
-                      'No items yet. Tap below to add.',
-                      style: TextStyle(color: Colors.black54),
+          body: RefreshIndicator(
+            onRefresh: () async {
+              _loadMyListings();
+            },
+            child: SingleChildScrollView(
+              padding: padding,
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Welcome Section
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue[200]!),
                     ),
-                  )
-                  : ListView.builder(
-                    padding: EdgeInsets.all(12),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return Card(
-                        color: Colors.grey[100],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        margin: EdgeInsets.symmetric(vertical: 6),
-                        child: ListTile(
-                          isThreeLine: true,
-                          leading:
-                              item['image'] != null
-                                  ? Image.memory(
-                                    item['image'] as Uint8List,
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  )
-                                  : Icon(Icons.image_not_supported, size: 50),
-                          title: Text(
-                            item['name'],
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Rp ${item['price']}',
-                                style: TextStyle(color: Colors.black54),
-                              ),
-                              Text(
-                                'Condition: ${item['condition']}',
-                                style: TextStyle(color: Colors.black54),
-                              ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Checkbox(
-                                value: selectedIndexes.contains(index),
-                                activeColor: Colors.black,
-                                onChanged: (value) {
-                                  setState(() {
-                                    if (value == true) {
-                                      selectedIndexes.add(index);
-                                    } else {
-                                      selectedIndexes.remove(index);
-                                    }
-                                  });
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Colors.blueAccent,
-                                ),
-                                onPressed: () => _showItemDialog(index: index),
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.redAccent,
-                                ),
-                                onPressed: () => _deleteItem(index),
-                              ),
-                            ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Selamat datang, ${sellerData['fullName']}!',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      );
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Akun seller Anda sudah aktif. Mulai jual sepatu Anda sekarang.',
+                          style: TextStyle(color: Colors.black87),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Quick Stats
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          'Produk Aktif',
+                          '${_myListings.length}',
+                          Icons.inventory,
+                          Colors.green,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildStatCard(
+                          'Total Penjualan',
+                          'Rp 0',
+                          Icons.monetization_on,
+                          Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Action Buttons
+                  const Text(
+                    'Aksi Cepat',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildActionButton(
+                    context,
+                    IndonesianText.jualSepatu,
+                    'Tambahkan sepatu baru untuk dijual',
+                    Icons.add_box,
+                    Colors.blue,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddListingScreen(),
+                        ),
+                      ).then((_) => _loadMyListings());
                     },
                   ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () => _showItemDialog(),
-              child: Text(
-                'Add Item',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                  const SizedBox(height: 12),
+                  _buildActionButton(
+                    context,
+                    'Produk Saya',
+                    'Lihat dan kelola produk yang sedang dijual',
+                    Icons.list_alt,
+                    Colors.purple,
+                    () {
+                      _showMyListings(context);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildActionButton(
+                    context,
+                    'Riwayat Penjualan',
+                    'Lihat penjualan yang sudah selesai',
+                    Icons.history,
+                    Colors.teal,
+                    () {
+                      // TODO: Navigate to sales history
+                      print('Navigate to sales history');
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Recent Listings
+                  if (_myListings.isNotEmpty) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Produk Terbaru',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        TextButton(
+                          onPressed: () => _showMyListings(context),
+                          child: const Text('Lihat Semua'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 200,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _myListings.take(5).length,
+                        itemBuilder: (context, index) {
+                          final listing = _myListings[index];
+                          return Container(
+                            width: width * 0.7,
+                            margin: const EdgeInsets.only(right: 12),
+                            child: _buildListingCard(listing),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+
+                  // Seller Info Summary
+                  const Text(
+                    'Informasi Akun',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoRow('Nama Lengkap', sellerData['fullName']),
+                          _buildInfoRow('Telepon', '+62 ${sellerData['phone']}'),
+                          _buildInfoRow('Bank', sellerData['bank']),
+                          _buildInfoRow('No. Rekening', sellerData['accountNumber']),
+                          _buildInfoRow('Lokasi', sellerData['province']),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: color, size: 24),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context,
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: color.withOpacity(0.1),
+          child: Icon(icon, color: color),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              '$label:',
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+          Expanded(
+            child: Text(value),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListingCard(SellerListing listing) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                listing.originalProduct.firstPict,
+                height: 80,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    Container(
+                      height: 80,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image_not_supported),
+                    ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              listing.originalProduct.name,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${listing.conditionText} • Size ${listing.selectedSize}',
+              style: TextStyle(
+                fontSize: 10,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              listing.shortPrice,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showMyListings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Produk Saya',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: _myListings.isEmpty
+                  ? const Center(
+                      child: Text('Belum ada produk yang dijual'),
+                    )
+                  : ListView.builder(
+                      itemCount: _myListings.length,
+                      itemBuilder: (context, index) {
+                        final listing = _myListings[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                listing.originalProduct.firstPict,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            title: Text(
+                              listing.originalProduct.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${listing.conditionText} • Size ${listing.selectedSize}',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                Text(
+                                  listing.timeSinceListed,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  listing.shortPrice,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: listing.isActive 
+                                        ? Colors.green 
+                                        : Colors.grey,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    listing.isActive ? 'Aktif' : 'Nonaktif',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
