@@ -110,139 +110,119 @@ class SneakerCard extends StatelessWidget {
               ),
             ),
 
-            // Rest of the product info section remains the same
-            Container(
-              height: 100, // Reduced height from 125 to 100
-              padding: const EdgeInsets.fromLTRB(
-                10,
-                0,
-                10,
-                10,
-              ), // Reduced horizontal padding from 12 to 10
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Brand with fire emoji
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          sneaker.brand,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
+            // Info section - use Expanded instead of fixed height
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Brand with fire emoji
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            sneaker.brand,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
-                        "🔥",
-                        style: TextStyle(fontSize: 12),
-                      ), // Reduced from 14 to 12
-                    ],
-                  ),
-
-                  // Gender badges
-                  Container(
-                    margin: const EdgeInsets.only(top: 2),
-                    child: Wrap(
-                      spacing: 4,
-                      runSpacing: 2,
-                      children:
-                          sneaker.availableGenders.map((gender) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: _getGenderColor(gender),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                gender,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                        const SizedBox(width: 4),
+                        const Text("🔥", style: TextStyle(fontSize: 12)),
+                      ],
                     ),
-                  ),
 
-                  // Product Name
-                  Text(
-                    sneaker.name, // Changed from widget.sneaker.name
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ), // Reduced from 14 to 12
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  // Lowest Ask Label
-                  const Text(
-                    "Lowest Ask",
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.grey,
-                    ), // Reduced from 12 to 10
-                  ),
-
-                  // Spacer to push price info to the bottom
-                  const Spacer(),
-
-                  // Price Section - Same height regardless of discount
-                  SizedBox(
-                    height: 36, // Reduced from 40 to 36
-                    child:
-                        sneaker.discountPrice !=
-                                null // Changed from widget.sneaker.discountPrice
-                            ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Discounted Price
-                                Text(
-                                  currencyFormatter.format(
-                                    sneaker
-                                        .discountPrice, // Changed from widget.sneaker.discountPrice
-                                  ),
+                    // Gender badges
+                    Container(
+                      margin: const EdgeInsets.only(top: 2),
+                      child: Wrap(
+                        spacing: 4,
+                        runSpacing: 2,
+                        children:
+                            sneaker.availableGenders.map((gender) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _getGenderColor(gender),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  gender,
                                   style: const TextStyle(
-                                    fontSize: 14, // Reduced from 15 to 14
+                                    color: Colors.white,
+                                    fontSize: 8,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 2),
-                                // Original Price (strikethrough)
-                                Text(
-                                  currencyFormatter.format(
-                                    sneaker
-                                        .price, // Changed from widget.sneaker.price
+                              );
+                            }).toList(),
+                      ),
+                    ),
+
+                    // Product Name
+                    Text(
+                      sneaker.name,
+                      style: const TextStyle(fontSize: 12),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    // Lowest Ask Label
+                    const Text(
+                      "Lowest Ask",
+                      style: TextStyle(fontSize: 10, color: Colors.grey),
+                    ),
+
+                    const Spacer(),
+
+                    // Price Section
+                    SizedBox(
+                      height: 36,
+                      child:
+                          sneaker.discountPrice != null
+                              ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    currencyFormatter.format(
+                                      sneaker.discountPrice,
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                  style: TextStyle(
-                                    fontSize: 10, // Reduced from 12 to 10
-                                    color: Colors.grey[500],
-                                    decoration: TextDecoration.lineThrough,
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    currencyFormatter.format(sneaker.price),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey[500],
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
                                   ),
+                                ],
+                              )
+                              : Text(
+                                currencyFormatter.format(sneaker.price),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
-                            )
-                            : Text(
-                              currencyFormatter.format(
-                                sneaker.price,
-                              ), // Changed from widget.sneaker.price
-                              style: const TextStyle(
-                                fontSize: 14, // Reduced from 15 to 14
-                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
