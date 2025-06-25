@@ -144,6 +144,36 @@ class SneakerCard extends StatelessWidget {
                     ],
                   ),
 
+                  // Gender badges
+                  Container(
+                    margin: const EdgeInsets.only(top: 2),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 2,
+                      children:
+                          sneaker.availableGenders.map((gender) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _getGenderColor(gender),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                gender,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                    ),
+                  ),
+
                   // Product Name
                   Text(
                     sneaker.name, // Changed from widget.sneaker.name
@@ -234,6 +264,20 @@ class SneakerCard extends StatelessWidget {
         return Colors.green;
       default:
         return Colors.blue;
+    }
+  }
+
+  // Helper method to get color based on gender
+  Color _getGenderColor(String gender) {
+    switch (gender) {
+      case 'Men':
+        return Colors.blue;
+      case 'Women':
+        return Colors.pink;
+      case 'Kids':
+        return Colors.green;
+      default:
+        return Colors.grey;
     }
   }
 }

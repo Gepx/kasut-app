@@ -227,15 +227,14 @@ class _MainScreenState extends State<Main> with TickerProviderStateMixin {
     ),
     _ScreenData(
       appBar:
-          (context) => MarketAppBar(
-            tabController: _marketTabController!,
-            brands: _brands, // Pass brands to MarketAppBar
+          (context) => const PreferredSize(
+            preferredSize: Size.zero,
+            child: SizedBox.shrink(),
           ),
       body:
           (context) => MarketScreen(
-            // Wrap MarketScreen in a WidgetBuilder
             tabController: _marketTabController!,
-            brands: _brands, // Pass brands to MarketScreen
+            brands: _brands,
           ),
       iconData: Icons.search,
       activeIconData: Icons.search_outlined,

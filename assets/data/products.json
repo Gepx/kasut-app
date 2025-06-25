@@ -9,7 +9,7 @@
       "women": [5, 6, 7, 8, 10],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Free Delivery", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 1450000,
     "discountPrice": 1250000,
     "brand": "Adidas",
@@ -28,7 +28,7 @@
       "women": [6, 7, 8, 9],
       "kids": [3, 4, 5, 6]
     },
-    "tags": ["Best Seller", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1550000,
     "brand": "Adidas",
     "description": "Inspired by Argentina's football heritage, the Adidas Samba Team Argentina delivers clean lines and timeless appeal. Its smooth white leather upper is punctuated by sky-blue accents on the signature three stripes and heel tab, reflecting national colors with pride. Released in December 2022 as part of Adidas's World Cup Pack, this special edition features the Argentina national team emblem on the tongue. An EVA midsole with gum rubber outsole ensures lightweight cushioning and reliable grip, honoring the model's turf roots. The refined silhouette is versatile enough for daily wear, while perforated toe detailing enhances breathability. Celebrated for its longevity in sneaker culture, this Samba edition merges sporty lineage with contemporary styling, perfect for both fans and casual wearers.",
@@ -46,7 +46,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Best Seller", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1650000,
     "discountPrice": 1320000,
     "brand": "Adidas",
@@ -83,7 +83,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Best Seller", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1700000,
     "brand": "Adidas",
     "description": "The Adidas Samba OG 'Year of the Snake' celebrates the Chinese zodiac with refined details and symbolic elegance. Released for Chinese New Year 2025, this special edition features a premium white leather upper enhanced with faux snakeskin texture applied to the iconic Three Stripes, paying homage to the Year of the Snake. Light grey suede wraps the toebox for a sophisticated touch, while the heel showcases an embroidered Chinese character for 'fortune', emphasizing prosperity and good luck. A red tongue tag with gold Adidas branding incorporates traditional Chinese colors signifying wealth and happiness. The classic gum rubber outsole provides reliable traction while maintaining the Samba's heritage appeal. With its balance of cultural symbolism and timeless design, this limited edition offers collectors and enthusiasts a meaningful addition to the iconic Samba lineage.",
@@ -101,7 +101,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1800000,
     "discountPrice": 1530000,
     "brand": "Adidas",
@@ -120,7 +120,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Best Seller"],
     "price": 3375000,
     "brand": "Air Jordan",
     "description": "The Air Jordan 4 Retro SB Navy represents the second chapter in the exciting collaboration between Nike Skateboarding and Jordan Brand. Released in March 2025, this highly anticipated follow-up to the Pine Green colorway features premium construction optimized for skate performance. The upper showcases a crisp summit white leather base complemented by light grey suede overlays and striking navy blue accents on the plastic wing eyelets and heel tab. Nike SB branding appears boldly on the heel, while a red Jumpman logo adorns the Flight tongue tag. Skate-specific modifications include enhanced padding, a more flexible construction around the wings and heel tab, and a cushioned Poron forefoot sockliner that balances impact absorption with board feel. The distinctive gum rubber outsole provides reliable traction, completing a silhouette that seamlessly bridges basketball heritage with skateboarding functionality.",
@@ -138,7 +138,7 @@
       "women": [6, 7, 9, 10],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Special Price"],
     "price": 2400000,
     "brand": "Air Jordan",
     "description": "The Air Jordan 1 Retro Low OG 'Year of the Snake' celebrates the Lunar New Year 2025 with sophisticated design and symbolic details. Released on January 29, 2025, this special edition features a premium Summit White leather base complemented by Photon Dust overlays for a refined palette. The standout elements include a scaly, textured Swoosh that subtly references the zodiac animal without being overly literal, and a Barely Green-tinted tongue that adds a distinctive touch. An iridescent Wings logo on the heel tab catches light with a snake-like shimmer, while semi-translucent outsoles complete the elegant aesthetic. The sneaker includes a special black snakeskin Jumpman hangtag and comes in iridescent-inspired packaging that enhances the collector's experience. With its balanced approach to festive theming and everyday wearability, this release represents a masterclass in commemorative sneaker design, delivering cultural celebration through refined aesthetics.",
@@ -175,7 +175,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Free Delivery", "Best Seller"],
+    "tags": ["Best Seller"],
     "price": 3000000,
     "brand": "Air Jordan",
     "description": "The Air Jordan 1 Retro High Element Gore-Tex Sky J Purple combines iconic basketball heritage with advanced weather protection. Released on October 14, 2023, this functional yet stylish iteration features a water-resistant Gore-Tex lining throughout the upper, constructed with a mix of premium textiles and nubuck overlays in rich purple tones. The layered upper is complemented by wheat brown accents on the tongue tag and Gore-Tex branding on the lateral heel. Reflective 3M details enhance visibility in low-light conditions, while the traditional Nike Air logo on the woven tongue maintains the classic AJ1 aesthetic. The signature Gore-Tex membrane provides breathable waterproofing without sacrificing comfort, making this sneaker ideal for unpredictable weather. A blotched translucent rubber outsole completes the design, offering reliable traction on wet surfaces. Perfect for the fashion-conscious wearer who refuses to let the elements dictate their footwear choices.",
@@ -193,7 +193,7 @@
       "women": [],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Most Popular", "Best Seller"],
+    "tags": ["Most Popular"],
     "price": 2800000,
     "brand": "Air Jordan",
     "description": "The Air Jordan 1 Retro High OG 'Lost and Found' pays homage to the golden era of mom-and-pop sports shops and the forgotten treasures often discovered within their stockrooms. This nostalgic release reimagines the iconic 'Chicago' colorway with vintage-inspired details that tell a compelling story of sneaker culture. The premium leather upper features an intentionally aged appearance with cracked leather on the red overlays and a slightly yellowed midsole to evoke decades of storage. The packaging includes a mismatched box with a vintage-style receipt, further enhancing the narrative of a deadstock pair recently unearthed from the back room of an old sports store. The familiar white base with striking University Red and black overlays remains true to the original color blocking that revolutionized basketball footwear in 1985. More than just a sneaker, this release celebrates the history and community that have made the Air Jordan 1 an enduring cultural icon.",
@@ -267,7 +267,7 @@
       "women": [6, 7, 8, 9],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Best Seller"],
     "price": 2250000,
     "brand": "Air Jordan",
     "description": "The Air Jordan 1 Low OG 'Rookie of the Year' pays homage to Michael Jordan's 1984-85 NBA Rookie of the Year award with a design inspired by the original high-top version released in 2018. Released in April 2025, this low-top adaptation features premium materials and meticulous detailing that honor this pivotal moment in Jordan's career. The upper combines smooth white leather with rich golden harvest nubuck overlays and Swoosh, creating a warm, earthy aesthetic reminiscent of the suit MJ wore to receive his award. Traditional Nike Air branding on the tongue and the classic Wings logo on the heel maintain OG specifications, while the black laces add subtle contrast. This thoughtfully executed tribute captures the spirit of Jordan's rookie achievement while offering the more casual, versatile appeal of the low-top silhouette. With its historical significance and wearable colorway, this release appeals to both longtime Jordan enthusiasts and new collectors seeking a piece of basketball heritage.",
@@ -285,7 +285,7 @@
       "women": [6, 7, 8, 9],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 2300000,
     "brand": "Air Jordan",
     "description": "The Air Jordan 1 Low OG Obsidian UNC delivers a refined interpretation of the beloved colorway that pays tribute to Michael Jordan's alma mater, the University of North Carolina. This sought-after release features a premium leather construction that combines a white base with deep obsidian navy and university blue overlays, creating a balanced and instantly recognizable color story. The traditional Nike Air branding on the tongue tag and the embroidered Wings logo on the heel maintain the OG specifications that collectors appreciate. White laces complement the midsole, while the color-blocked outsole mirrors the upper's aesthetic. This low-top edition offers the classic appeal of the iconic UNC palette in a more versatile silhouette suitable for everyday wear. With its combination of heritage colors and quality materials, this release provides a perfect balance of history and modern style, making it a standout addition to any sneaker collection.",
@@ -303,7 +303,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Special Price", "Best Seller"],
+    "tags": ["Special Price"],
     "price": 2250000,
     "brand": "ASICS",
     "description": "The ASICS Gel-NYC Hidden NY collaboration represents a creative fusion between technical running heritage and contemporary digital aesthetics. Released in March 2024, this special edition features a white mesh base with reflective silver synthetic panels that create a sleek, premium look. Hidden NY's signature vibrant green branding provides striking contrast on the vector logos and midsole components, while ASICS' logo receives an innovative pixelated treatment that pays homage to Hidden NY's digital roots. Various elements throughout the upper cleverly reference the design language of digital editing tools, deconstructing the boundary between reality and on-screen visuals. The midsole incorporates GEL-CUMULUS 16 shoe tooling, combining lightweight foams with GEL technology inserts for superior cushioning and comfort. This limited collaboration appeals to both sneaker enthusiasts and designers alike, offering a thoughtful take on how digital culture influences physical product design.",
@@ -321,7 +321,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Most Popular", "Free Delivery"],
+    "tags": ["Most Popular"],
     "price": 1950000,
     "brand": "ASICS",
     "description": "The ASICS Gel-Kayano 14 Unaffected Infinite Wonders Pack Black Silver represents a premium collaboration celebrating technical running heritage with contemporary style. Released in November 2023, this special edition draws clear inspiration from Toshikazu Kayano's iconic running silhouettes of the 2000s. The upper features a sophisticated black base enhanced with metallic silver accents that create a striking contrast across its multi-layered construction. Premium materials including mesh, synthetic overlays, and reflective elements come together to offer both performance benefits and elevated aesthetics. The model's signature visible GEL technology provides exceptional shock absorption and responsive cushioning during all types of physical activity. A multi-colored rubber outsole rounds out the design with reliable traction and durability. Part of the exclusive Infinite Wonders Pack, this collaboration with Japanese brand Unaffected brings a refined, fashion-forward approach to a technical running classic, making it equally appealing to sneaker enthusiasts and performance-minded consumers.",
@@ -376,7 +376,7 @@
       "women": [6, 7, 8, 9, 10],
       "kids": [4, 5, 6]
     },
-    "tags": ["Best Seller", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1850000,
     "brand": "ASICS",
     "description": "The ASICS Gel-NYC Cream Putty delivers a sophisticated, neutral aesthetic that perfectly balances versatility with contemporary style. Released in January 2025, this refined colorway features a premium cream-colored mesh base accented by soft putty overlays that create a cohesive, tonal look with subtle depth. The layered upper construction combines breathable materials with supportive synthetic panels, ensuring both comfort and stability. ASICS' signature GEL cushioning technology is integrated into the midsole, providing superior shock absorption and responsive comfort for all-day wear. The shoe's thoughtful design includes strategically placed flex grooves that promote natural foot movement, while the durable rubber outsole offers excellent traction across various surfaces. With its clean lines and understated palette, this Gel-NYC variation effortlessly transitions from athletic pursuits to everyday casual wear. The cream and putty combination presents a fresh alternative to basic white sneakers while maintaining the same versatile appeal, making it an essential addition to any contemporary footwear collection.",
@@ -412,7 +412,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Special Price"],
     "price": 1950000,
     "discountPrice": 1650000,
     "brand": "ASICS",
@@ -431,7 +431,7 @@
       "women": [6, 7, 8, 9],
       "kids": [4, 5, 6]
     },
-    "tags": ["Free Delivery", "Most Popular"],
+    "tags": ["Free Delivery"],
     "price": 1650000,
     "brand": "ASICS",
     "description": "The ASICS Roadblast Grey Floss delivers an ideal balance of performance technology and contemporary style for versatile running experiences. Released in July 2024, this sleek silhouette features a breathable mesh upper in a sophisticated grey floss colorway with subtle blue accents that add visual interest without overwhelming the design. The engineered mesh construction offers targeted support and ventilation where runners need it most, while maintaining a lightweight feel throughout. At the core of this model is ASICS' innovative FlyteFoam technology in the midsole, providing responsive cushioning that delivers energy return with each stride. The midsole geometry is specifically designed to promote smooth transitions from heel to toe, making this shoe suitable for daily training runs and casual wear alike. A durable rubber outsole with strategic flex grooves completes the package, offering reliable traction and natural movement. With its modern aesthetic and performance-driven features, the Roadblast Grey Floss appeals to both serious runners and lifestyle enthusiasts seeking comfortable, versatile footwear.",
@@ -449,7 +449,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 2250000,
     "brand": "New Balance",
     "description": "The New Balance 2002R Protection Pack 'Rain Cloud' is a standout model from the celebrated Protection Pack series, inspired by designer Yue Wu's concept of 'refined future' through a Y2K aesthetic lens. Originally released in August 2021, this highly sought-after silhouette features intentionally deconstructed panels with raw, frayed edges and a premium hairy suede construction in a sophisticated grey palette. The shoe's distinctive 'worn-in' appearance transforms these sneakers into wearable relics that capture the nostalgic Y2K aesthetic. Built on New Balance's signature 2002R silhouette, it combines retro running heritage with modern comfort technologies, including ABZORB midsole cushioning and N-ergy outsole for exceptional impact absorption. The model's deliberate pre-distressed finishing and artistic approach to deconstruction have elevated it to cult status among collectors, making it one of the most influential sneaker concepts in recent years.",
@@ -467,7 +467,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Special Price", "Most Popular"],
+    "tags": ["Special Price"],
     "price": 2250000,
     "brand": "New Balance",
     "description": "The New Balance 2002R Protection Pack 'Eclipse' delivers another captivating iteration of the celebrated Protection Pack series that has taken the sneaker world by storm. Following the design language established by its predecessors, this 'Eclipse' colorway features a stealthy black palette that accentuates the model's signature deconstructed aesthetic. Premium hairy suede overlays with intentionally raw, frayed edges create a sophisticated depth against the darker mesh base. The shoe's deliberately distressed appearance offers a unique perspective on luxury, embracing imperfection as an artistic expression. Underneath its avant-garde styling, the 2002R maintains its performance heritage with ABZORB midsole cushioning and N-ergy outsole technology for exceptional comfort and support. This darker iteration maintains the collection's conceptual exploration of Y2K aesthetics through a contemporary lens, appealing to fashion-forward collectors and everyday wearers alike who appreciate the intersection of heritage running design with artistic deconstruction.",
@@ -503,7 +503,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1950000,
     "brand": "New Balance",
     "description": "The New Balance 1906R Silver Metallic Nightwatch Green delivers a striking combination of futuristic aesthetics and heritage running DNA. Released in Fall 2024, this eye-catching colorway features reflective silver metallic overlays that create dynamic visual impact, contrasted against deep Nightwatch Green accents strategically placed around the iconic 'N' logo, heel, and sole. The Sea Salt mesh base enhances breathability while providing a neutral foundation that allows the metallic and green elements to stand out. At the core of this model is New Balance's signature N-ERGY cushioning technology, delivering superior impact protection and responsiveness for all-day comfort. The 1906R silhouette successfully resurrects a 2000s running classic with contemporary updates that appeal to both performance enthusiasts and style-conscious consumers. The rubber outsole features a durable tread pattern engineered for excellent grip across various surfaces. With its perfect balance of eye-catching metallics and sophisticated green tones, this colorway offers a versatile yet distinctive addition to any sneaker rotation.",
@@ -521,7 +521,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Best Seller", "Free Delivery"],
+    "tags": ["Best Seller"],
     "price": 1950000,
     "discountPrice": 1750000,
     "brand": "New Balance",
@@ -558,7 +558,7 @@
       "women": [6, 7, 8, 9, 10],
       "kids": [4, 5, 6]
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1600000,
     "discountPrice": 1350000,
     "brand": "New Balance",
@@ -613,7 +613,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Special Price", "Best Seller"],
+    "tags": ["Best Seller"],
     "price": 3200000,
     "brand": "New Balance",
     "description": "The New Balance FuelCell Super Comp Elite V4 Hot Mango delivers a vibrant colorway of the brand's premier marathon racing shoe, designed for competitive runners seeking maximum performance. Released in February 2024, this eye-catching iteration showcases a bright Hot Mango upper that demands attention on race day. The Super Comp Elite V4 marks a significant evolution in New Balance's racing lineup, featuring a new PEBA-based FuelCell foam midsole that delivers exceptional energy return and responsive cushioning. At its core is the innovative Energy Arc technology, incorporating a uniquely curved carbon fiber plate and strategic geometric midsole cutouts that work together to store and release energy with each stride. The engineered mesh upper provides targeted breathability and secure foot containment while maintaining a remarkably lightweight profile. With a stack height approaching the legal limit for competition, this model offers maximum leg-saving cushioning for marathon distances. The tacky rubber outsole provides reliable traction in various conditions. This Hot Mango colorway combines race-day visibility with the SC Elite V4's reputation for delivering a softer, more forgiving ride than many competitors while still maintaining elite racing performance.",
@@ -631,7 +631,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 1550000,
     "discountPrice": 1300000,
     "brand": "Nike",
@@ -650,7 +650,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1850000,
     "discountPrice": 1550000,
     "brand": "Nike",
@@ -669,7 +669,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 2450000,
     "brand": "Nike",
     "description": "The Nike SB Dunk Low Pro Parra Abstract Art represents the second major collaboration between Nike SB and Dutch artist Piet Parra, released on July 31, 2021. This striking design coincided with skateboarding's Olympic debut in Tokyo, with Parra also designing the official uniforms for the Nike SB Olympic teams. The shoe features an off-white nubuck base punctuated by Parra's signature colorful abstract pattern with swirling geometrics in red, pink, and blue tones on the mudguard, eyestays, heel, and tongue trim. This vivid print coordinates with the Olympic uniforms while showcasing Parra's distinctive artistic style. The design includes both Nike Swoosh branding and Parra's logo on the heel, completed with a clean white midsole and gum rubber outsole. Beyond its artistic appeal, the shoe maintains all the skateboard-ready performance elements that have made the SB Dunk a favorite among skaters, blending functional design with Parra's unmistakable aesthetic for a highly collectible release that bridges sport and art.",
@@ -706,7 +706,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Special Price", "Best Seller"],
+    "tags": ["Best Seller"],
     "price": 2100000,
     "brand": "Nike",
     "description": "The Nike Dunk Low Premium CO.JP Brown Snakeskin resurrects a highly coveted Japan-exclusive design from Nike's Concept Japan (CO.JP) series. This premium edition features a luxurious brown leather base complemented by distinctive snakeskin-textured overlays that create a sophisticated, eye-catching aesthetic. The meticulously crafted upper showcases rich, earthy tones with subtle variations that highlight the exotic pattern of the reptilian-inspired material. Nike's attention to detail extends to the premium leather lining and cushioned sockliner for exceptional comfort. The classic Dunk silhouette maintains its iconic shape with perforated toe box, padded tongue, and supportive ankle collar. A clean, white midsole provides contrast against the earthy upper, while the matching brown rubber outsole completes the cohesive design. Part of Nike's celebrated CO.JP collection that originally catered to the Japanese market with exclusive colorways and premium materials, this Brown Snakeskin iteration represents the perfect blend of high-end craftsmanship and street-ready style, appealing to both sneaker collectors and fashion enthusiasts.",
@@ -724,7 +724,7 @@
       "women": [6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Most Popular", "Free Delivery"],
+    "tags": ["Most Popular"],
     "price": 1950000,
     "brand": "Nike",
     "description": "The Nike Shox R4 Black Silver Metallic 2025 edition revives a turn-of-the-millennium classic with its distinctive futuristic design and innovative cushioning system. This iconic silhouette features a sleek black synthetic and mesh upper accented with eye-catching metallic silver details that pay homage to the original Y2K aesthetic. The shoe's defining feature remains the revolutionary Shox cushioning technology—four column-like pillars in the heel that deliver responsive, springy support and unique visual appeal. Originally released in 2000 after years of development, the Shox R4 represented a dramatic departure from conventional cushioning systems, combining mechanical cushioning with a futuristic look that still turns heads today. The 2025 retro version stays true to the original design while incorporating subtle comfort upgrades for the modern wearer. A durable rubber outsole provides excellent traction, while the padded collar and tongue enhance comfort around the ankle. This black and silver colorway offers versatile styling options while celebrating the bold innovation that defined Nike's approach to performance footwear at the dawn of the new millennium.",
@@ -742,7 +742,7 @@
       "women": [6, 7, 8, 9, 10],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1650000,
     "discountPrice": 1400000,
     "brand": "Nike",
@@ -761,7 +761,7 @@
       "women": [6, 7, 8, 9],
       "kids": [4, 5, 6, 7]
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1750000,
     "discountPrice": 1480000,
     "brand": "Nike",
@@ -780,7 +780,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [4, 5, 6, 7, 8]
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 1550000,
     "brand": "Nike",
     "description": "The Nike Air Force 1 Low '07 Triple White, refreshed for 2021, continues the legacy of one of the most iconic sneakers of all time with its clean, versatile design. This edition maintains the classic silhouette introduced in 1982, featuring a premium all-white leather upper with the signature perforated toe box for breathability and style. The monochromatic approach extends to every detail, from the Swoosh logo to the midsole and outsole, creating a pristine, minimalist aesthetic that has become a cultural phenomenon. The '07 designation indicates the modern construction that enhances comfort while preserving the shoe's classic DNA. Nike Air technology remains embedded in the midsole, providing lightweight cushioning that made the original revolutionary, while the padded collar offers additional comfort around the ankle. The star-patterned rubber outsole delivers excellent traction and durability, completing a design that has transcended its basketball origins to become a fashion staple. This triple white colorway represents the ultimate versatile sneaker, easily paired with any outfit and appropriate for virtually any occasion, explaining its enduring popularity across generations and style preferences.",
@@ -798,7 +798,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [4, 5, 6, 7, 8]
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": [ "Most Popular"],
     "price": 1750000,
     "brand": "Nike",
     "description": "The Nike Dunk Low Retro White Black 'Panda' has become one of the most sought-after colorways in recent sneaker history due to its clean, versatile aesthetic. This edition features a classic two-tone color blocking with a crisp white leather base complemented by bold black overlays, creating a timeless, high-contrast look that earned it the 'Panda' nickname. Originally designed as a basketball shoe in 1985, the Dunk Low has evolved into a cultural icon that transcends sports, streetwear, and fashion. The shoe maintains its heritage design elements including the perforated toe box, padded low-cut collar, and classic stitching pattern throughout. The cushioned foam midsole provides comfortable support, while the durable rubber outsole offers excellent traction with its original pivot point pattern. Despite multiple restocks since its modern reintroduction, the Panda Dunk continues to sell out quickly due to its perfect balance of simplicity and style. Its universal appeal makes it an ideal complement to virtually any outfit, explaining its immense popularity among sneaker enthusiasts and casual wearers alike as a modern classic that seems immune to trend cycles.",
@@ -816,7 +816,7 @@
       "women": [5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10],
       "kids": []
     },
-    "tags": ["Best Seller", "Free Delivery"],
+    "tags": ["Best Seller"],
     "price": 1699000,
     "discountPrice": 1499000,
     "brand": "OnClouds",
@@ -835,7 +835,7 @@
       "women": [5.5, 6, 7, 7.5, 8, 8.5, 9, 9.5, 10],
       "kids": []
     },
-    "tags": ["Free Delivery", "Most Popular"],
+    "tags": ["Free Delivery"],
     "price": 1599000,
     "discountPrice": 1399000,
     "brand": "OnClouds",
@@ -854,7 +854,7 @@
       "women": [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10],
       "kids": []
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Special Price"],
     "price": 1499000,
     "discountPrice": 1299000,
     "brand": "OnClouds",
@@ -873,7 +873,7 @@
       "women": [],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 1599000,
     "discountPrice": 1450000,
     "brand": "OnClouds",
@@ -892,7 +892,7 @@
       "women": [],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Best Seller"],
     "price": 1799000,
     "discountPrice": 1650000,
     "brand": "OnClouds",
@@ -911,7 +911,7 @@
       "women": [],
       "kids": []
     },
-    "tags": ["Best Seller", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1899000,
     "discountPrice": 1699000,
     "brand": "OnClouds",
@@ -930,7 +930,7 @@
       "women": [],
       "kids": []
     },
-    "tags": ["Most Popular", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1699000,
     "discountPrice": 1499000,
     "brand": "OnClouds",
@@ -949,7 +949,7 @@
       "women": [],
       "kids": []
     },
-    "tags": ["Free Delivery", "Best Seller"],
+    "tags": ["Free Delivery"],
     "price": 1799000,
     "discountPrice": 1599000,
     "brand": "OnClouds",
@@ -968,7 +968,7 @@
       "women": [],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 1499000,
     "discountPrice": 1350000,
     "brand": "OnClouds",
@@ -987,7 +987,7 @@
       "women": [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10],
       "kids": []
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Free Delivery"],
     "price": 1599000,
     "discountPrice": 1399000,
     "brand": "OnClouds",
@@ -1006,7 +1006,7 @@
       "women": [],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Best Seller"],
     "price": 1799000,
     "discountPrice": 1650000,
     "brand": "OnClouds",
@@ -1025,7 +1025,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Best Seller", "Free Delivery"],
+    "tags": ["Best Seller"],
     "price": 1600000,
     "discountPrice": 1400000,
     "brand": "Onitsuka Tiger",
@@ -1044,7 +1044,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1750000,
     "discountPrice": 1550000,
     "brand": "Onitsuka Tiger",
@@ -1063,7 +1063,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 1650000,
     "discountPrice": 1450000,
     "brand": "Onitsuka Tiger",
@@ -1082,7 +1082,7 @@
       "women": [],
       "kids": [11, 12, 13, 1, 2, 3]
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1200000,
     "discountPrice": 1000000,
     "brand": "Onitsuka Tiger",
@@ -1101,7 +1101,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1550000,
     "discountPrice": 1350000,
     "brand": "Onitsuka Tiger",
@@ -1120,7 +1120,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 1700000,
     "discountPrice": 1500000,
     "brand": "Onitsuka Tiger",
@@ -1139,7 +1139,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1550000,
     "discountPrice": 1350000,
     "brand": "Onitsuka Tiger",
@@ -1158,7 +1158,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1650000,
     "discountPrice": 1450000,
     "brand": "Onitsuka Tiger",
@@ -1177,7 +1177,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Best Seller", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1700000,
     "discountPrice": 1500000,
     "brand": "Onitsuka Tiger",
@@ -1196,7 +1196,7 @@
       "women": [5, 6, 7, 8, 9],
       "kids": []
     },
-    "tags": ["Most Popular", "Free Delivery"],
+    "tags": ["Most Popular"],
     "price": 1550000,
     "discountPrice": 1350000,
     "brand": "Onitsuka Tiger",
@@ -1215,7 +1215,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7, 8]
     },
-    "tags": ["Best Seller", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1450000,
     "discountPrice": 1160000,
     "brand": "Puma",
@@ -1234,7 +1234,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Most Popular", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1850000,
     "discountPrice": 1575000,
     "brand": "Puma",
@@ -1253,7 +1253,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Free Delivery", "Best Seller"],
+    "tags": ["Best Seller"],
     "price": 1950000,
     "brand": "Puma",
     "description": "The Puma Genetics Marcus Smart Thermal Map edition showcases innovative design inspired by the defensive specialist's playing style. Its unique thermal mapping pattern across the upper represents Smart's defensive heat map, highlighting intensity zones with vibrant gradient colors. Featuring PUMA's responsive ProFoam+ midsole and a high-abrasion rubber outsole with multi-directional traction patterns, these shoes deliver the stability and grip needed for lockdown defensive plays. The reinforced lateral support system and dynamic heel stability provide confidence during quick directional changes. Built for players who pride themselves on defensive versatility, this signature model embodies Smart's tenacious approach to the game.",
@@ -1271,7 +1271,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7, 8]
     },
-    "tags": ["Vintage", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1400000,
     "discountPrice": 1120000,
     "brand": "Puma",
@@ -1290,7 +1290,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7, 8]
     },
-    "tags": ["Free Delivery", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 1500000,
     "brand": "Puma",
     "description": "The Puma Palermo Mauve Mist Mint offers a fresh take on the terrace classic with its subtle pastel palette. The soft mauve mist suede upper is complemented by mint green accents on the signature formstrip and heel tab, creating a harmonious spring-inspired colorway. A slimmed-down silhouette stays true to the model's soccer-inspired roots, while the gum rubber sole adds a touch of vintage appeal and reliable traction. Featuring precise stitching, gold-stamped branding, and a cushioned footbed, this iteration balances heritage design with contemporary comfort. Perfect for casual wear, the Palermo's understated elegance and versatile styling make it an essential addition to any sneaker rotation.",
@@ -1308,7 +1308,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Special Price", "Best Seller"],
+    "tags": ["Best Seller"],
     "price": 1750000,
     "discountPrice": 1487500,
     "brand": "Puma",
@@ -1327,7 +1327,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7, 8]
     },
-    "tags": ["Most Popular", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1500000,
     "discountPrice": 1275000,
     "brand": "Puma",
@@ -1346,7 +1346,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7, 8]
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 1550000,
     "brand": "Puma",
     "description": "The Puma Palermo Leather White Cool Light Grey elevates the classic silhouette with premium materials and a clean colorway. Its full-grain leather upper in crisp white provides durability and a sophisticated look, while cool light grey suede accents on the formstrip and heel tab add subtle contrast. The sleek profile stays true to the model's terrace heritage, and precision stitching throughout demonstrates excellent craftsmanship. A cushioned footbed delivers comfort for all-day wear, and the gum rubber outsole offers reliable traction with vintage appeal. Minimalist branding includes a gold foil logo and embossed heel details. Versatile and refined, this leather edition of the Palermo pairs effortlessly with both casual and smart-casual attire.",
@@ -1364,7 +1364,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7, 8]
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": [ "Most Popular"],
     "price": 1550000,
     "discountPrice": 1317500,
     "brand": "Puma",
@@ -1383,7 +1383,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7, 8]
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": [ "Free Delivery"],
     "price": 1500000,
     "discountPrice": 1200000,
     "brand": "Puma",
@@ -1402,7 +1402,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 2100000,
     "discountPrice": 1785000,
     "brand": "Salomon",
@@ -1421,7 +1421,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 2150000,
     "brand": "Salomon",
     "description": "The Salomon XT-6 RECUT Wren Kangaroo reimagines the trail running icon with premium earth-toned materials. Part of the exclusive RECUT series, it features a rich wren brown mesh base with kangaroo tan synthetic overlays, creating a sophisticated outdoor-inspired palette. Built on Salomon's acclaimed XT-6 platform, it includes dual-density EVA cushioning, providing excellent shock absorption and energy return. The advanced Sensifit system cradles the foot precisely, while the lightweight Quicklace closure ensures secure lockdown with minimal effort. Descend control technology delivers confident downhill performance, and the premium cushioned collar enhances comfort for all-day wear. This limited edition combines technical trail heritage with refined colorways for versatile urban styling.",
@@ -1439,7 +1439,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Free Delivery", "Most Popular"],
+    "tags": [ "Most Popular"],
     "price": 2200000,
     "discountPrice": 1870000,
     "brand": "Salomon",
@@ -1458,7 +1458,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Best Seller", "Special Price"],
+    "tags": ["Special Price"],
     "price": 2100000,
     "discountPrice": 1785000,
     "brand": "Salomon",
@@ -1477,7 +1477,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Special Price", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 2450000,
     "discountPrice": 2082500,
     "brand": "Salomon",
@@ -1496,7 +1496,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Free Delivery", "Best Seller"],
+    "tags": [ "Best Seller"],
     "price": 2100000,
     "brand": "Salomon",
     "description": "The Salomon XT-6 Black Coffee delivers understated elegance with its rich, dark brown monochromatic palette. The deep coffee-toned mesh and synthetic upper creates a sophisticated, versatile look that transitions seamlessly from outdoor adventures to urban settings. Featuring Salomon's performance-driven technology, it includes a protective mudguard, reinforced toe cap, and strategically placed rubber outsole with aggressive lugs for multi-terrain traction. The dual-density midsole provides targeted cushioning where needed most, while the quick-lace system ensures a precise, customized fit with minimal effort. Motion control features reduce fatigue during extended wear, and subtle reflective details enhance safety in low-light conditions. This refined colorway balances technical outdoor capabilities with everyday wearability.",
@@ -1514,7 +1514,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Most Popular", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 2100000,
     "discountPrice": 1785000,
     "brand": "Salomon",
@@ -1533,7 +1533,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Special Price", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 2100000,
     "discountPrice": 1680000,
     "brand": "Salomon",
@@ -1552,7 +1552,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Best Seller", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 2100000,
     "brand": "Salomon",
     "description": "The Salomon XT-6 White Lunar Rock presents a clean, minimalist approach to the technical trail runner. Its crisp white mesh base complements subtle lunar rock gray overlays for a versatile, space-inspired aesthetic. The precision-engineered frame provides lateral stability without compromising forefoot flexibility, allowing natural movement with added support. Impact-absorbing cushioning is strategically placed at key strike zones to reduce fatigue during extended wear. The breathable upper construction maximizes airflow while maintaining structural integrity, and the secure quicklace system adjusts with a single pull for convenient fit customization. Water-resistant treatments protect against light moisture, while reflective elements enhance visibility in dim conditions. This refined colorway offers versatile styling with the full technical capability of Salomon's flagship trail model.",
@@ -1570,7 +1570,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Most Popular", "Best Seller"],
+    "tags": ["Best Seller"],
     "price": 3200000,
     "discountPrice": 2720000,
     "brand": "Yeezy",
@@ -1589,7 +1589,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7]
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": [ "Free Delivery"],
     "price": 2800000,
     "discountPrice": 2240000,
     "brand": "Yeezy",
@@ -1608,7 +1608,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7]
     },
-    "tags": ["Best Seller", "Most Popular"],
+    "tags": [ "Most Popular"],
     "price": 3000000,
     "brand": "Yeezy",
     "description": "The Yeezy Boost 350 Turtledove (2022) marks the triumphant return of the inaugural Yeezy Boost 350 colorway. This faithful reissue honors the original with its distinctive pattern—a light gray and white marble-like Primeknit weave that creates subtle visual texture across the upper. The premium construction features a sock-like fit that hugs the foot comfortably, while the absence of a heel tab maintains the minimalist aesthetic of the first release. Full-length adidas Boost technology provides responsive cushioning encased in a lightweight EVA outsole with the signature center stitching detail. The reimagined classic includes slightly updated materials while respecting the groundbreaking design that helped launch the Yeezy phenomenon. Perfect for collectors and new enthusiasts alike, this heritage colorway represents a pivotal moment in contemporary sneaker culture.",
@@ -1626,7 +1626,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7]
     },
-    "tags": ["Free Delivery", "Special Price"],
+    "tags": ["Special Price"],
     "price": 2800000,
     "discountPrice": 2380000,
     "brand": "Yeezy",
@@ -1645,7 +1645,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": []
     },
-    "tags": ["Special Price", "Most Popular"],
+    "tags": ["Most Popular"],
     "price": 2900000,
     "discountPrice": 2465000,
     "brand": "Yeezy",
@@ -1664,7 +1664,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7]
     },
-    "tags": ["Best Seller", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 2100000,
     "brand": "Yeezy",
     "description": "The Yeezy Foam RNNR Stone Sage showcases innovative sustainability with its futuristic one-piece construction. Crafted from a unique algae-based EVA foam blend, this revolutionary footwear concept combines eco-conscious materials with avant-garde design. The marbled stone sage colorway presents an organic, earth-toned appearance with a subtle variance in hue across its sculptural form. Strategically placed perforations throughout the upper provide essential ventilation while creating the distinctive aesthetic that defines this groundbreaking silhouette. The anatomically shaped footbed conforms to the contours of the foot for natural comfort, while the textured outsole delivers surprising traction despite its minimalist appearance. Designed for effortless slip-on wear, this lightweight, waterproof design challenges conventional notions of footwear while delivering extraordinary comfort and distinctive style.",
@@ -1682,7 +1682,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7]
     },
-    "tags": ["Most Popular", "Special Price"],
+    "tags": ["Special Price"],
     "price": 2800000,
     "discountPrice": 2380000,
     "brand": "Yeezy",
@@ -1701,7 +1701,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7]
     },
-    "tags": ["Free Delivery", "Best Seller"],
+    "tags": [ "Best Seller"],
     "price": 3000000,
     "discountPrice": 2550000,
     "brand": "Yeezy",
@@ -1720,7 +1720,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7]
     },
-    "tags": ["Special Price", "Free Delivery"],
+    "tags": ["Free Delivery"],
     "price": 1200000,
     "discountPrice": 1020000,
     "brand": "Yeezy",
@@ -1739,7 +1739,7 @@
       "women": [5, 6, 7, 8, 9, 10],
       "kids": [3, 4, 5, 6, 7]
     },
-    "tags": ["Most Popular", "Best Seller"],
+    "tags": ["Best Seller"],
     "price": 1200000,
     "brand": "Yeezy",
     "description": "The Yeezy Slide Onyx embodies minimalist luxury with its sleek monochromatic design. Crafted from a single piece of injected EVA foam, the deep black finish creates a versatile, sophisticated aesthetic that pairs effortlessly with any outfit. The strategically contoured footbed provides exceptional arch support and cushioning, with a textured surface that prevents foot slippage. The substantial yet lightweight construction offers durability without sacrificing comfort, making these slides ideal for all-day wear. A thick, cushioned strap secures the foot while allowing easy entry, and the deep heel cup provides enhanced stability. The distinctive outsole pattern delivers surprising traction on various surfaces, from poolside to urban environments. This essential colorway has become a cornerstone of the Yeezy footwear collection, representing the perfect balance of comfort, style, and utilitarian design.",

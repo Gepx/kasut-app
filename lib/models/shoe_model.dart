@@ -27,6 +27,21 @@ class Shoe {
     }
   }
 
+  // Get all available genders for this shoe
+  List<String> get availableGenders {
+    List<String> genders = [];
+    if (sizes.containsKey('men') && sizes['men']!.isNotEmpty) {
+      genders.add('Men');
+    }
+    if (sizes.containsKey('women') && sizes['women']!.isNotEmpty) {
+      genders.add('Women');
+    }
+    if (sizes.containsKey('kids') && sizes['kids']!.isNotEmpty) {
+      genders.add('Kids');
+    }
+    return genders;
+  }
+
   List<String> get availableSizes {
     List<String> result = [];
     sizes.forEach((category, sizeList) {
