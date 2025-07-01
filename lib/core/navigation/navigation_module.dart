@@ -49,7 +49,10 @@ class NavigationModule extends ChangeNotifier {
   }
 
   /// Build app bar based on current screen
-  PreferredSizeWidget? buildAppBar(List<String> brands) {
+  PreferredSizeWidget? buildAppBar(
+    List<String> brands, {
+    VoidCallback? onFilterPressed,
+  }) {
     switch (_selectedIndex) {
       case 0: // Home
         if (_homeTabController != null) {
@@ -61,9 +64,11 @@ class NavigationModule extends ChangeNotifier {
         break;
       case 2: // Market
         if (_marketTabController != null) {
+          assert(onFilterPressed != null, 'onFilterPressed callback must be provided for Market screen');
           return MarketAppBar(
             tabController: _marketTabController!,
             brands: brands,
+            onFilterPressed: onFilterPressed!,
           );
         }
         break;
