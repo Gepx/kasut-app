@@ -164,6 +164,25 @@ class Shoe {
 
   // Get main image url (used for compatibility with original code)
   String get imageUrl => firstPict;
+
+  // Convert Shoe to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'brand': brand,
+      'price': price,
+      'discountPrice': discountPrice,
+      'firstPict': firstPict,
+      'secondPict': secondPict,
+      'thirdPict': thirdPict,
+      'sizes': sizes,
+      'tags': tags,
+      'description': description,
+      'color': color,
+      'sku': sku,
+      'releaseDate': releaseDate,
+    };
+  }
 }
 
 // ShoeData class provides methods to load shoes from JSON

@@ -15,29 +15,24 @@ class SellerPage extends StatefulWidget {
 }
 
 class _SellerPageState extends State<SellerPage> {
-  // Controllers to capture seller form inputs
-  final TextEditingController _npwpController = TextEditingController();
-  final TextEditingController _ktpController = TextEditingController();
+  // Simplified controllers
   final TextEditingController _fullNameController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _accountHolderController =
-      TextEditingController();
-  final TextEditingController _accountNumberController =
-      TextEditingController();
+  final TextEditingController _idNumberController = TextEditingController();
+  final TextEditingController _accountNumberController = TextEditingController();
 
-  bool hasNpwp = true;
   final _formKey = GlobalKey<FormState>();
   String? selectedBank;
-  String? selectedProvince;
-  Uint8List? _webImage;
+  Uint8List? _idImage;
   bool _isLoggedIn = false;
+  bool _isLoading = false;
 
-  List<String> banks = ["Bank BCA", "Bank BNI", "Bank BRI"];
-  List<String> provinces = [
-    "Sumatera Utara",
-    "Sumatera Barat",
-    "Sumatera Timur",
+  final List<String> banks = [
+    "Bank BCA",
+    "Bank BNI", 
+    "Bank BRI",
+    "Bank Mandiri",
+    "Bank CIMB Niaga"
   ];
 
   @override
@@ -48,26 +43,21 @@ class _SellerPageState extends State<SellerPage> {
 
   @override
   void dispose() {
-    // Dispose controllers
-    _npwpController.dispose();
-    _ktpController.dispose();
     _fullNameController.dispose();
-    _addressController.dispose();
     _phoneController.dispose();
-    _accountHolderController.dispose();
+    _idNumberController.dispose();
     _accountNumberController.dispose();
     super.dispose();
   }
 
   void _checkLoginStatus() {
-    // Check if user is logged in
     final currentUser = AuthService.currentUser;
     setState(() {
       _isLoggedIn = currentUser != null;
     });
   }
 
-  Future<void> _pickImageFromWeb() async {
+  Future<void> _pickImage() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       withData: true,
@@ -75,388 +65,172 @@ class _SellerPageState extends State<SellerPage> {
 
     if (result != null && result.files.single.bytes != null) {
       setState(() {
-        _webImage = result.files.single.bytes!;
+        _idImage = result.files.single.bytes!;
       });
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // If not logged in, show login prompt
-    if (!_isLoggedIn) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text("Sell With Us"),
-          shape: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.account_circle, size: 80, color: Colors.grey),
-              SizedBox(height: 20),
-              Text(
-                "Please login to continue",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Text(
-                "You need to be logged in to sell your products",
-                style: TextStyle(color: Colors.grey),
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                ),
-                child: Text("Login Now"),
-              ),
-            ],
-          ),
-        ),
-      );
+  void _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+    
+    if (_idImage == null) {
+      _showSnackBar('Please upload your ID card', isError: true);
+      return;
     }
 
-    // If seller data already saved, go to seller logic directly
+    setState(() => _isLoading = true);
+
+    try {
+      // Save seller data
+      SellerService.saveSeller({
+        'fullName': _fullNameController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'idNumber': _idNumberController.text.trim(),
+        'accountNumber': _accountNumberController.text.trim(),
+        'bank': selectedBank,
+        'imageBytes': _idImage,
+      });
+
+      _showSnackBar('Registration successful! Welcome to our seller program.');
+      
+      await Future.delayed(const Duration(seconds: 1));
+      
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Main(initialIndex: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      _showSnackBar('Registration failed. Please try again.', isError: true);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red[600] : Colors.green[600],
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isLoggedIn) {
+      return _buildLoginPrompt();
+    }
+
     if (SellerService.currentSeller != null) {
       return SellerLogic();
     }
 
-    // Original seller form content if logged in
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text("Sell With Us"),
-        shape: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
+        title: const Text("Become a Seller", style: TextStyle(fontWeight: FontWeight.w600)),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: Colors.grey[200]),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                "Do you have NPWP?",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              _buildWelcomeCard(),
+              const SizedBox(height: 24),
+              _buildPersonalInfoCard(),
+              const SizedBox(height: 20),
+              _buildBankInfoCard(),
+              const SizedBox(height: 20),
+              _buildIdVerificationCard(),
+              const SizedBox(height: 32),
+              _buildSubmitButton(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginPrompt() {
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text("Sell With Us"),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+      ),
+      body: Center(
+        child: Container(
+          margin: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<bool>(
-                      title: Text("I have NPWP"),
-                      value: true,
-                      groupValue: hasNpwp,
-                      onChanged: (value) => setState(() => hasNpwp = value!),
-                    ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<bool>(
-                      title: Text("I don't have NPWP"),
-                      value: false,
-                      groupValue: hasNpwp,
-                      onChanged: (value) => setState(() => hasNpwp = value!),
-                    ),
-                  ),
-                ],
-              ),
-              if (hasNpwp) ...[
-                _buildLabel('NPWP Number *'),
-                TextFormField(
-                  controller: _npwpController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: '00.000.000.0-000.000',
-                    errorStyle: TextStyle(color: Colors.red),
-                  ),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'NPWP Number is required';
-                    }
-                    final pattern = RegExp(
-                      r'^\d{2}\.\d{3}\.\d{3}\.\d-\d{3}\.\d{3}',
-                    );
-                    if (!pattern.hasMatch(value)) {
-                      return 'Invalid NPWP format';
-                    }
-                    return null;
-                  },
-                ),
-              ] else ...[
-                _buildLabel('KTP Number *'),
-                TextFormField(
-                  controller: _ktpController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: '0000000000000000',
-                    errorStyle: TextStyle(color: Colors.red),
-                  ),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'KTP Number is required';
-                    }
-                    final pattern = RegExp(r'^\d{16}');
-                    if (!pattern.hasMatch(value)) {
-                      return 'Invalid KTP format';
-                    }
-                    return null;
-                  },
-                ),
-              ],
-              _buildLabel('Full Name *'),
-              TextFormField(
-                controller: _fullNameController,
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Full Name',
-                  errorStyle: TextStyle(color: Colors.red),
-                ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Full Name is required';
-                  }
-                  if (value.length < 3) {
-                    return 'Full Name must be at least 3 characters';
-                  }
-                  if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(value)) {
-                    return 'Full Name can only contain letters and spaces';
-                  }
-                  return null;
-                },
-              ),
-              _buildLabel('Address *'),
-              TextFormField(
-                controller: _addressController,
-                keyboardType: TextInputType.streetAddress,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Address',
-                  errorStyle: TextStyle(color: Colors.red),
-                ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Address is required';
-                  }
-                  if (value.length < 5) {
-                    return 'Address must be at least 5 characters';
-                  }
-                  return null;
-                },
-              ),
-              _buildLabel(hasNpwp ? 'NPWP Card *' : 'KTP Card *'),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Container(
-                height: 300,
-                color: Colors.grey[300],
-                child:
-                    _webImage == null
-                        ? Align(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            onPressed: _pickImageFromWeb,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.upload_file),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Browse Files",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                        : Image.memory(_webImage!, fit: BoxFit.cover),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.store, size: 48, color: Colors.blue[600]),
               ),
-              _buildLabel('Mobile Number *'),
+              const SizedBox(height: 24),
+              const Text(
+                "Join Our Seller Community",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
               Text(
-                'Make sure to input active number connected with SMS or Whatsapp...',
-                style: TextStyle(color: Colors.grey),
+                "Sign in to start selling your products and reach thousands of customers",
+                style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                textAlign: TextAlign.center,
               ),
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          '../assets/seller/indonesia_flag.png',
-                          width: 24,
-                        ),
-                        SizedBox(width: 5),
-                        Text('+62'),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Phone Number',
-                        errorStyle: TextStyle(color: Colors.red),
-                      ),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Phone Number is required';
-                        }
-                        if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                          return 'Invalid phone number';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              _buildLabel("Account Holder's Name *"),
-              TextFormField(
-                controller: _accountHolderController,
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Account Holder's Name",
-                  errorStyle: TextStyle(color: Colors.red),
-                ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Account Holder's Name is required";
-                  }
-                  if (value.length < 3) {
-                    return "Name must be at least 3 characters";
-                  }
-                  if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(value)) {
-                    return "Name can only contain letters and spaces";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              _buildLabel("Account Number *"),
-              TextFormField(
-                controller: _accountNumberController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Account Number',
-                  errorStyle: TextStyle(color: Colors.red),
-                ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Account Number is required';
-                  }
-                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                    return 'Account Number must be numeric';
-                  }
-                  if (value.length < 6) {
-                    return 'Account Number must be at least 6 digits';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              _buildLabel("Bank Name *"),
-              DropdownButtonFormField<String>(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                value: selectedBank,
-                hint: Text("Select Bank Name"),
-                items:
-                    banks
-                        .map(
-                          (bank) =>
-                              DropdownMenuItem(value: bank, child: Text(bank)),
-                        )
-                        .toList(),
-                onChanged: (value) => setState(() => selectedBank = value),
-                validator: (value) => value == null ? "Required" : null,
-              ),
-              SizedBox(height: 16),
-              _buildLabel("Seller Location *"),
-              DropdownButtonFormField<String>(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                value: selectedProvince,
-                hint: Text("Select Province"),
-                items:
-                    provinces
-                        .map(
-                          (province) => DropdownMenuItem(
-                            value: province,
-                            child: Text(province),
-                          ),
-                        )
-                        .toList(),
-                onChanged: (value) => setState(() => selectedProvince = value),
-                validator: (value) => value == null ? "Required" : null,
-              ),
-              SizedBox(height: 20),
+              const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Ensure file upload
-                      if (_webImage == null) {
-                        final docType = hasNpwp ? 'NPWP Card' : 'KTP Card';
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please upload $docType')),
-                        );
-                        return;
-                      }
-                      // Save seller data
-                      SellerService.saveSeller({
-                        'hasNpwp': hasNpwp,
-                        'npwp': _npwpController.text,
-                        'ktp': _ktpController.text,
-                        'fullName': _fullNameController.text,
-                        'address': _addressController.text,
-                        'phone': _phoneController.text,
-                        'accountHolder': _accountHolderController.text,
-                        'accountNumber': _accountNumberController.text,
-                        'bank': selectedBank,
-                        'province': selectedProvince,
-                        'imageBytes': _webImage,
-                      });
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Form Submitted Successfully")),
-                      );
-
-                      Future.delayed(Duration(seconds: 1), () {
-                        // Return to main app with Selling tab selected
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Main(initialIndex: 3),
-                          ),
-                        );
-                      });
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey.shade400,
+                  onPressed: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
                   ),
-                  child: Text("Submit"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[600],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Sign In to Continue", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                 ),
               ),
             ],
@@ -466,26 +240,538 @@ class _SellerPageState extends State<SellerPage> {
     );
   }
 
-  Widget _buildLabel(String text) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
-  );
-
-  Widget _buildTextField(
-    String hint, {
-    TextInputType type = TextInputType.text,
-  }) {
-    return TextFormField(
-      keyboardType: type,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        hintText: hint,
-        errorStyle: TextStyle(color: Colors.red),
+  Widget _buildWelcomeCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blue[600]!, Colors.blue[400]!],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
       ),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator:
-          (value) =>
-              (value == null || value.isEmpty) ? "$hint is required" : null,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.storefront, color: Colors.white, size: 32),
+          const SizedBox(height: 12),
+          const Text(
+            "Start Your Selling Journey",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Complete your seller profile to start listing products",
+            style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPersonalInfoCard() {
+    return _buildCard(
+      title: "Personal Information",
+      icon: Icons.person_outline,
+      children: [
+        _buildTextField(
+          controller: _fullNameController,
+          label: "Full Name",
+          hint: "Enter your full name",
+          icon: Icons.person,
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) return 'Full name is required';
+            if (value.trim().length < 3) return 'Name must be at least 3 characters';
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        _buildPhoneField(),
+        const SizedBox(height: 16),
+        _buildTextField(
+          controller: _idNumberController,
+          label: "ID Number (KTP/Passport)",
+          hint: "Enter your ID number",
+          icon: Icons.badge,
+          keyboardType: TextInputType.text,
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) return 'ID number is required';
+            if (value.trim().length < 10) return 'Please enter a valid ID number';
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBankInfoCard() {
+    return _buildCard(
+      title: "Bank Information",
+      icon: Icons.account_balance,
+      children: [
+        _buildDropdown(
+          value: selectedBank,
+          label: "Bank Name",
+          hint: "Select your bank",
+          items: banks,
+          onChanged: (value) => setState(() => selectedBank = value),
+          validator: (value) => value == null ? 'Please select a bank' : null,
+        ),
+        const SizedBox(height: 16),
+        _buildTextField(
+          controller: _accountNumberController,
+          label: "Account Number",
+          hint: "Enter your account number",
+          icon: Icons.credit_card,
+          keyboardType: TextInputType.number,
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) return 'Account number is required';
+            if (value.trim().length < 6) return 'Please enter a valid account number';
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIdVerificationCard() {
+    return _buildCard(
+      title: "ID Verification",
+      icon: Icons.verified_user,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.blue[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.blue[100]!, width: 1),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.info_outline, color: Colors.blue[600], size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  "Please upload a clear, well-lit photo of your government-issued ID (KTP, Passport, or Driver's License)",
+                  style: TextStyle(
+                    color: Colors.blue[700],
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          height: _idImage == null ? 220 : 250,
+          decoration: BoxDecoration(
+            color: _idImage == null ? Colors.grey[50] : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _idImage == null ? Colors.grey[300]! : Colors.green[300]!,
+              width: _idImage == null ? 2 : 3,
+            ),
+            boxShadow: _idImage != null ? [
+              BoxShadow(
+                color: Colors.green.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ] : null,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: _pickImage,
+              child: _idImage == null
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[100],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.cloud_upload_outlined,
+                            size: 32,
+                            color: Colors.blue[600],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Tap to upload ID card",
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "JPG, PNG • Max 10MB",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildTip(Icons.check_circle_outline, "High quality"),
+                            const SizedBox(width: 16),
+                            _buildTip(Icons.visibility_outlined, "Clear text"),
+                            const SizedBox(width: 16),
+                            _buildTip(Icons.light_mode_outlined, "Good lighting"),
+                          ],
+                        ),
+                      ],
+                    )
+                  : Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          padding: const EdgeInsets.all(8),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.memory(
+                              _idImage!,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.green[600],
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 12,
+                          left: 12,
+                          right: 12,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  "Tap to change image",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTip(IconData icon, String text) {
+    return Column(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey[500]),
+        const SizedBox(height: 4),
+        Text(
+          text,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCard({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: Colors.blue[600], size: 24),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hint,
+            prefixIcon: Icon(icon, color: Colors.grey[400]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.blue[600]!, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.grey[50],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Phone Number",
+          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 20,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "🇮🇩",
+                        style: TextStyle(fontSize: 10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text("+62", style: TextStyle(fontWeight: FontWeight.w500)),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) return 'Phone number is required';
+                  if (!RegExp(r'^[0-9]{9,13}$').hasMatch(value.trim())) return 'Enter a valid phone number';
+                  return null;
+                },
+                decoration: InputDecoration(
+                  hintText: "Phone number",
+                  border: OutlineInputBorder(
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                    borderSide: BorderSide(color: Colors.blue[600]!, width: 2),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdown({
+    required String? value,
+    required String label,
+    required String hint,
+    required List<String> items,
+    required void Function(String?) onChanged,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: value,
+          hint: Text(hint),
+          items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+          onChanged: onChanged,
+          validator: validator,
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.account_balance, color: Colors.grey[400]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.blue[600]!, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.grey[50],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      height: 56,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _submitForm,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[600],
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 0,
+        ),
+        child: _isLoading
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+              )
+            : const Text(
+                "Complete Registration",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+      ),
     );
   }
 }

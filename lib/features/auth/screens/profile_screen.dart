@@ -12,6 +12,8 @@ import 'package:kasut/features/profile/screens/seller_credit_screen.dart'; // Pl
 import 'package:kasut/features/profile/screens/kasut_points_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/my_voucher_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/wishlist_screen.dart'; // Placeholder
+import 'package:kasut/features/profile/screens/addresses_screen.dart';
+import 'package:kasut/features/profile/screens/payment_methods_screen.dart';
 import 'package:kasut/features/profile/screens/invite_friend_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/settings_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/faq_screen.dart'; // Placeholder
@@ -280,6 +282,82 @@ class ProfileScreen extends StatelessWidget {
               icon: Iconsax.shop,
               title: 'Selling',
               routeName: SellingScreen.routeName,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddressesScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      child: Row(
+                        children: [
+                          Icon(Iconsax.location, color: Colors.black87, size: 24),
+                          const SizedBox(width: 16),
+                          const Expanded(
+                            child: Text(
+                              'My Addresses',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: Colors.grey,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(height: 1, thickness: 0.5, indent: 56),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PaymentMethodsScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      child: Row(
+                        children: [
+                          Icon(Iconsax.card, color: Colors.black87, size: 24),
+                          const SizedBox(width: 16),
+                          const Expanded(
+                            child: Text(
+                              'Payment Methods',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: Colors.grey,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(height: 1, thickness: 0.5, indent: 56),
+                  ],
+                ),
+              ),
             ),
             _buildMenuItem(
               context: context,
