@@ -50,10 +50,11 @@ class _SellerLogicState extends State<SellerLogic> {
         
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Seller Dashboard'),
+            title: const Text('Seller Dashboard', style: TextStyle(color: Colors.black)),
+            iconTheme: const IconThemeData(color: Colors.black),
             backgroundColor: Colors.white,
             elevation: 0,
-            shape: const Border(bottom: BorderSide(color: Colors.grey, width: 1)),
+            shape: const Border(bottom: BorderSide(color: Colors.black, width: 1)),
           ),
           body: RefreshIndicator(
             onRefresh: () async {
@@ -69,9 +70,9 @@ class _SellerLogicState extends State<SellerLogic> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: Colors.white,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey[300]!),
+              border: Border.all(color: Colors.black, width: 1),
             ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,6 +235,11 @@ class _SellerLogicState extends State<SellerLogic> {
     Color color,
   ) {
     return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: const BorderSide(color: Colors.black, width: 1),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -241,7 +247,7 @@ class _SellerLogicState extends State<SellerLogic> {
           children: [
             Row(
               children: [
-                Icon(icon, color: color, size: 24),
+                Icon(icon, color: Colors.black, size: 24),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -277,10 +283,15 @@ class _SellerLogicState extends State<SellerLogic> {
     VoidCallback onTap,
   ) {
     return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: const BorderSide(color: Colors.black, width: 1),
+      ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.1),
-          child: Icon(icon, color: color),
+          backgroundColor: Colors.white,
+          child: Icon(icon, color: Colors.black),
         ),
         title: Text(
           title,
@@ -293,7 +304,7 @@ class _SellerLogicState extends State<SellerLogic> {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, dynamic value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -307,7 +318,7 @@ class _SellerLogicState extends State<SellerLogic> {
             ),
           ),
           Expanded(
-            child: Text(value),
+            child: Text(value?.toString() ?? '-'),
           ),
         ],
       ),
@@ -316,6 +327,11 @@ class _SellerLogicState extends State<SellerLogic> {
 
   Widget _buildListingCard(SellerListing listing) {
     return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: const BorderSide(color: Colors.black, width: 1),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -360,7 +376,7 @@ class _SellerLogicState extends State<SellerLogic> {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
-                color: Colors.green,
+                color: Colors.black,
               ),
             ),
           ],
@@ -409,6 +425,11 @@ class _SellerLogicState extends State<SellerLogic> {
                         final listing = _myListings[index];
                         return Card(
                           margin: const EdgeInsets.only(bottom: 8),
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: const BorderSide(color: Colors.black, width: 1),
+                          ),
                           child: ListTile(
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
@@ -452,7 +473,7 @@ class _SellerLogicState extends State<SellerLogic> {
                                   listing.shortPrice,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.green,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 Container(
@@ -462,7 +483,7 @@ class _SellerLogicState extends State<SellerLogic> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: listing.isActive 
-                                        ? Colors.green 
+                                        ? Colors.black 
                                         : Colors.grey,
                                     borderRadius: BorderRadius.circular(10),
                                   ),

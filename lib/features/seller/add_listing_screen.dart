@@ -262,6 +262,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
         style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
+          color: Colors.black,
         ),
       ),
     );
@@ -420,9 +421,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected ? Colors.black : Colors.white,
-              border: Border.all(
-                color: isSelected ? Colors.black : Colors.grey[300]!,
-              ),
+              border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -444,6 +443,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
         return RadioListTile<ProductCondition>(
           value: condition,
           groupValue: _selectedCondition,
+          activeColor: Colors.black,
           onChanged: (value) => setState(() {
             _selectedCondition = value!;
             // Adjust suggested price based on condition
@@ -591,6 +591,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+        filled: true,
+        fillColor: Colors.white,
       ),
     );
   }
