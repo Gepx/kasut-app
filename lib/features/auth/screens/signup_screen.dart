@@ -56,7 +56,10 @@ class _SignupScreenState extends State<SignupScreen> {
       if (success) {
         // Show success message (optional)
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Signup successful! Please login.')),
+          const SnackBar(
+            content: Text('Signup successful! Please login.'),
+            backgroundColor: Colors.black,
+          ),
         );
         // Navigate to Login Screen, replacing the signup screen
         Navigator.pushNamedAndRemoveUntil(
@@ -76,7 +79,20 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'Sign Up',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -94,13 +110,17 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Enter your details below',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 16, 
+                        color: Colors.grey[600],
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 32),
@@ -109,9 +129,19 @@ class _SignupScreenState extends State<SignupScreen> {
                       decoration: InputDecoration(
                         labelText: 'Email',
                         hintText: 'Enter your email address',
-                        prefixIcon: const Icon(Icons.email_outlined),
+                        prefixIcon: const Icon(Icons.email_outlined, color: Colors.black54),
+                        labelStyle: const TextStyle(color: Colors.black54),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black26),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black26),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
                         ),
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -131,9 +161,19 @@ class _SignupScreenState extends State<SignupScreen> {
                       decoration: InputDecoration(
                         labelText: 'Username',
                         hintText: 'Choose a username',
-                        prefixIcon: const Icon(Icons.person_outline),
+                        prefixIcon: const Icon(Icons.person_outline, color: Colors.black54),
+                        labelStyle: const TextStyle(color: Colors.black54),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black26),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black26),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
                         ),
                       ),
                       validator: (value) {
@@ -149,9 +189,19 @@ class _SignupScreenState extends State<SignupScreen> {
                       decoration: InputDecoration(
                         labelText: 'Password',
                         hintText: 'Create a password',
-                        prefixIcon: const Icon(Icons.lock_outline),
+                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.black54),
+                        labelStyle: const TextStyle(color: Colors.black54),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black26),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black26),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
                         ),
                       ),
                       obscureText: true,
@@ -171,26 +221,32 @@ class _SignupScreenState extends State<SignupScreen> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Text(
                           _errorMessage!,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
+                          style: const TextStyle(
+                            color: Colors.red,
                             fontSize: 14,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
                     _isLoading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const Center(child: CircularProgressIndicator(color: Colors.black))
                         : ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            elevation: 0,
                           ),
                           onPressed: _signup,
                           child: const Text(
                             'Sign Up',
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                     const SizedBox(height: 16),
@@ -204,7 +260,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                   context,
                                 ); // Go back to the previous screen (Login)
                               },
-                      child: const Text('Already have an account? Login'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.black,
+                      ),
+                      child: const Text(
+                        'Already have an account? Login',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
                     ),
                   ],
                 ),

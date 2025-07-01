@@ -68,14 +68,14 @@ class SellerCreditScreen extends StatelessWidget {
                       icon: const Icon(Iconsax.money_send),
                       label: const Text('Cash Out'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.blue,
+                        foregroundColor: Colors.black,
                         side: const BorderSide(
-                          color: Colors.blue,
-                        ), // Example colors
+                          color: Colors.black,
+                        ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 12,
-                        ), // Adjust padding if needed
+                        ),
                       ),
                     ),
                   ),

@@ -493,7 +493,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
               ] else ...[
                 ...orderProvider.paymentMethods.map((paymentMethod) {
                   return _buildPaymentMethodCard(paymentMethod);
-                }).toList(),
+                }),
                 
                 // Add Cash on Delivery option
                 _buildPaymentMethodCard(

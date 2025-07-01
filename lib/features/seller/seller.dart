@@ -135,9 +135,15 @@ class _SellerPageState extends State<SellerPage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Become a Seller", style: TextStyle(fontWeight: FontWeight.w600)),
+        title: const Text(
+          "Become a Seller", 
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -171,9 +177,12 @@ class _SellerPageState extends State<SellerPage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Sell With Us"),
+        title: const Text(
+          "Sell With Us",
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0,
       ),
       body: Center(
@@ -197,10 +206,10 @@ class _SellerPageState extends State<SellerPage> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50],
+                  color: Colors.grey[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.store, size: 48, color: Colors.blue[600]),
+                child: const Icon(Icons.store, size: 48, color: Colors.black),
               ),
               const SizedBox(height: 24),
               const Text(
@@ -223,12 +232,13 @@ class _SellerPageState extends State<SellerPage> {
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
+                    backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                    elevation: 0,
                   ),
                   child: const Text("Sign In to Continue", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                 ),
@@ -244,8 +254,8 @@ class _SellerPageState extends State<SellerPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blue[600]!, Colors.blue[400]!],
+        gradient: const LinearGradient(
+          colors: [Colors.black, Colors.grey],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -347,19 +357,19 @@ class _SellerPageState extends State<SellerPage> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.blue[50],
+            color: Colors.grey[100],
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.blue[100]!, width: 1),
+            border: Border.all(color: Colors.grey[300]!, width: 1),
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.blue[600], size: 20),
+              Icon(Icons.info_outline, color: Colors.grey[700], size: 20),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   "Please upload a clear, well-lit photo of your government-issued ID (KTP, Passport, or Driver's License)",
                   style: TextStyle(
-                    color: Colors.blue[700],
+                    color: Colors.grey[700],
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -376,12 +386,12 @@ class _SellerPageState extends State<SellerPage> {
             color: _idImage == null ? Colors.grey[50] : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: _idImage == null ? Colors.grey[300]! : Colors.green[300]!,
+              color: _idImage == null ? Colors.grey[300]! : Colors.black,
               width: _idImage == null ? 2 : 3,
             ),
             boxShadow: _idImage != null ? [
               BoxShadow(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -399,13 +409,13 @@ class _SellerPageState extends State<SellerPage> {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.blue[100],
+                            color: Colors.grey[200],
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.cloud_upload_outlined,
                             size: 32,
-                            color: Colors.blue[600],
+                            color: Colors.grey[600],
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -466,7 +476,7 @@ class _SellerPageState extends State<SellerPage> {
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Colors.green[600],
+                              color: Colors.black,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -610,7 +620,7 @@ class _SellerPageState extends State<SellerPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.blue[600]!, width: 2),
+              borderSide: const BorderSide(color: Colors.black, width: 2),
             ),
             filled: true,
             fillColor: Colors.grey[50],
@@ -688,13 +698,13 @@ class _SellerPageState extends State<SellerPage> {
                     ),
                     borderSide: BorderSide(color: Colors.grey[300]!),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
+                                      focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                      ),
+                      borderSide: BorderSide(color: Colors.black, width: 2),
                     ),
-                    borderSide: BorderSide(color: Colors.blue[600]!, width: 2),
-                  ),
                   filled: true,
                   fillColor: Colors.grey[50],
                 ),
@@ -740,7 +750,7 @@ class _SellerPageState extends State<SellerPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.blue[600]!, width: 2),
+              borderSide: const BorderSide(color: Colors.black, width: 2),
             ),
             filled: true,
             fillColor: Colors.grey[50],
@@ -756,7 +766,7 @@ class _SellerPageState extends State<SellerPage> {
       child: ElevatedButton(
         onPressed: _isLoading ? null : _submitForm,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[600],
+          backgroundColor: Colors.black,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           elevation: 0,

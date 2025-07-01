@@ -65,14 +65,14 @@ class _SellerLogicState extends State<SellerLogic> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Welcome Section
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.blue[50],
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.blue[200]!),
-                    ),
+                            // Welcome Section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -96,23 +96,23 @@ class _SellerLogicState extends State<SellerLogic> {
                   // Quick Stats
                   Row(
                     children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          'Produk Aktif',
-                          '${_myListings.length}',
-                          Icons.inventory,
-                          Colors.green,
+                                              Expanded(
+                          child: _buildStatCard(
+                            'Produk Aktif',
+                            '${_myListings.length}',
+                            Icons.inventory,
+                            Colors.black,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildStatCard(
-                          'Total Penjualan',
-                          'Rp 0',
-                          Icons.monetization_on,
-                          Colors.orange,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildStatCard(
+                            'Total Penjualan',
+                            'Rp 0',
+                            Icons.monetization_on,
+                            Colors.grey,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -128,7 +128,7 @@ class _SellerLogicState extends State<SellerLogic> {
                     IndonesianText.jualSepatu,
                     'Tambahkan sepatu baru untuk dijual',
                     Icons.add_box,
-                    Colors.blue,
+                    Colors.black,
                     () {
                       Navigator.push(
                         context,
@@ -144,7 +144,7 @@ class _SellerLogicState extends State<SellerLogic> {
                     'Produk Saya',
                     'Lihat dan kelola produk yang sedang dijual',
                     Icons.list_alt,
-                    Colors.purple,
+                    Colors.grey[600]!,
                     () {
                       _showMyListings(context);
                     },
@@ -155,7 +155,7 @@ class _SellerLogicState extends State<SellerLogic> {
                     'Riwayat Penjualan',
                     'Lihat penjualan yang sudah selesai',
                     Icons.history,
-                    Colors.teal,
+                    Colors.grey[500]!,
                     () {
                       // TODO: Navigate to sales history
                       print('Navigate to sales history');
