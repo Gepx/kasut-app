@@ -13,12 +13,14 @@ class NavigationManager extends ChangeNotifier {
   TabController? _homeTabController;
   TabController? _marketTabController;
   List<String> _brands = [];
+  final GlobalKey<MarketScreenState>? marketScreenKey;
 
   NavigationManager({
     required TickerProvider vsync,
     int initialIndex = 0,
-  }) : _vsync = vsync,
-       _selectedIndex = initialIndex;
+    this.marketScreenKey,
+  })  : _vsync = vsync,
+        _selectedIndex = initialIndex;
 
   int get selectedIndex => _selectedIndex;
   List<String> get brands => _brands;
@@ -62,9 +64,11 @@ class NavigationManager extends ChangeNotifier {
     )),
     ScreenData.blog((context) => const Blog()),
     ScreenData.market((context) => MarketScreen(
-      tabController: _marketTabController!,
-      brands: _brands,
-    )),
+          key: marketScreenKey,
+          tabController: _marketTabController!,
+          brands: _brands,
+          standalone: false,
+        )),
     ScreenData.seller((context) => const SellerPage()),
     ScreenData.profile((context) => const ProfileScreen()),
   ];

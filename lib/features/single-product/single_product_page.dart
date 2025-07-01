@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import '../../models/shoe_model.dart';
 import '../../widgets/image_loader.dart';
 import 'buy_product_page.dart';
+import 'package:kasut/features/auth/services/auth_service.dart';
+import 'package:kasut/features/auth/screens/login_screen.dart';
 
 class SingleProductPage extends StatefulWidget {
   final Shoe shoe;
@@ -465,20 +467,27 @@ class _SingleProductPageState extends State<SingleProductPage> {
                 ],
               ),
               child: ElevatedButton(
-                onPressed:
-                    _selectedSize != null
-                        ? () {
+                onPressed: _selectedSize != null
+                    ? () {
+                        final currentUser = AuthService.currentUser;
+                        if (currentUser == null) {
+                          // Not logged in, redirect to login
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ));
+                        } else {
+                          // Logged in, proceed to purchase
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder:
-                                  (context) => BuyProductPage(
-                                    shoe: widget.shoe,
-                                    selectedSize: _selectedSize!,
-                                  ),
+                              builder: (context) => BuyProductPage(
+                                shoe: widget.shoe,
+                                selectedSize: _selectedSize!,
+                              ),
                             ),
                           );
                         }
-                        : null,
+                      }
+                    : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,

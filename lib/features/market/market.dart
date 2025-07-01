@@ -128,11 +128,12 @@ class MarketScreen extends StatefulWidget {
   });
 
   @override
-  State<MarketScreen> createState() => _MarketScreenState();
+  State<MarketScreen> createState() => MarketScreenState();
 }
 
-class _MarketScreenState extends State<MarketScreen> {
+class MarketScreenState extends State<MarketScreen> {
   List<Shoe> filteredShoes = [];
+  String _searchQuery = '';
 
   // Filter state
   Set<String> selectedTags = {};
@@ -350,6 +351,12 @@ class _MarketScreenState extends State<MarketScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = MarketAppBar(
+      tabController: widget.tabController,
+      brands: widget.brands,
+      onFilterPressed: _showFilterModal,
+    );
+
     if (!widget.standalone) {
       // Embedded mode – the parent already supplies an AppBar & Scaffold.
       return _buildBody(context);
@@ -357,70 +364,7 @@ class _MarketScreenState extends State<MarketScreen> {
 
     // Stand-alone mode (e.g. deep-link or tests)
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(135),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          toolbarHeight: 80,
-          automaticallyImplyLeading: false,
-          flexibleSpace: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      const Expanded(child: HomeSearchBar()),
-                      IconButton(
-                        icon: const Icon(Icons.filter_alt_outlined, size: 25),
-                        onPressed: _showFilterModal,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                ],
-              ),
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(35),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.grey.shade300, width: 0.1),
-                ),
-              ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final isDesktop = constraints.maxWidth >= 900;
-
-                  return TabBar(
-                    isScrollable: true,
-                    tabAlignment:
-                        isDesktop ? TabAlignment.center : TabAlignment.start,
-                    controller: widget.tabController,
-                    labelStyle: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    tabs:
-                        widget.brands.map((brand) => Tab(text: brand)).toList(),
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicatorColor: Colors.black,
-                    labelPadding: EdgeInsets.symmetric(
-                      horizontal: isDesktop ? 24.0 : 8.0,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
+      appBar: appBar,
       body: _buildBody(context),
     );
   }
@@ -435,6 +379,10 @@ class _MarketScreenState extends State<MarketScreen> {
       ),
       builder: (context) => FilterModal(marketState: this),
     );
+  }
+
+  void showFilterModal() {
+    _showFilterModal();
   }
 }
 
@@ -476,7 +424,7 @@ String _normalizeBrandName(String brand) {
 }
 
 class FilterModal extends StatefulWidget {
-  final _MarketScreenState marketState;
+  final MarketScreenState marketState;
 
   const FilterModal({super.key, required this.marketState});
 

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:kasut/models/shoe_model.dart';
 import 'package:kasut/models/seller_listing_model.dart';
 import 'package:kasut/services/seller_listing_service.dart';
@@ -8,6 +9,7 @@ import 'package:kasut/utils/indonesian_utils.dart';
 import 'package:kasut/utils/responsive_utils.dart';
 import 'package:kasut/features/auth/services/auth_service.dart';
 import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
 class AddListingScreen extends StatefulWidget {
   const AddListingScreen({super.key});
@@ -25,9 +27,17 @@ class _AddListingScreenState extends State<AddListingScreen> {
   Shoe? _selectedProduct;
   ProductCondition _selectedCondition = ProductCondition.brandNew;
   String? _selectedSize;
+  String _selectedCategory = 'men'; // Default to 'men'
   List<Uint8List> _uploadedImages = [];
   List<Shoe> _searchResults = [];
   bool _isSearching = false;
+
+  // Master lists for shoe sizes
+  final Map<String, List<double>> _masterSizes = {
+    'men': List.generate(13, (i) => 6.0 + i * 0.5), // UK 6 to 12
+    'women': List.generate(13, (i) => 3.0 + i * 0.5), // UK 3 to 9
+    'kids': List.generate(25, (i) => 1.0 + i * 0.5), // UK 1 to 13
+  };
 
   @override
   void dispose() {
@@ -75,10 +85,11 @@ class _AddListingScreenState extends State<AddListingScreen> {
       _searchResults = [];
       
       // Set suggested price (80% of original for used items)
+      final priceFormat = NumberFormat.decimalPattern('id');
       if (_selectedCondition != ProductCondition.brandNew) {
-        _priceController.text = (product.price * 0.8).round().toString();
+        _priceController.text = priceFormat.format((product.price * 0.8).round());
       } else {
-        _priceController.text = product.price.round().toString();
+        _priceController.text = priceFormat.format(product.price.round());
       }
     });
   }
@@ -115,7 +126,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
   bool _validatePrice() {
     if (_selectedProduct == null) return false;
     
-    final price = double.tryParse(_priceController.text);
+    final priceString = _priceController.text.replaceAll('.', '');
+    final price = double.tryParse(priceString);
     if (price == null) return false;
     
     return price <= _selectedProduct!.price;
@@ -153,7 +165,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
       sellerName: currentUser['username'] ?? 'Anonymous',
       originalProduct: _selectedProduct!,
       condition: _selectedCondition,
-      sellerPrice: double.parse(_priceController.text),
+      sellerPrice: double.parse(_priceController.text.replaceAll('.', '')),
       selectedSize: _selectedSize!,
       sellerImages: _uploadedImages.map((bytes) => 'data:image/jpeg;base64,${bytes.toString()}').toList(),
       conditionNotes: _notesController.text.isEmpty ? null : _notesController.text,
@@ -215,9 +227,11 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   
                   SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.lg)),
                   
-                  // Size Selection
+                  // Size and Category Selection
                   if (_selectedProduct != null) ...[
-                    _buildSectionTitle(IndonesianText.ukuran),
+                    _buildSectionTitle('Kategori & Ukuran'),
+                    _buildCategorySelection(),
+                    const SizedBox(height: 16),
                     _buildSizeSelection(),
                     SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.lg)),
                   ],
@@ -403,37 +417,86 @@ class _AddListingScreenState extends State<AddListingScreen> {
   }
 
   Widget _buildSizeSelection() {
-    if (_selectedProduct == null) return const SizedBox();
-    
-    final availableSizes = <String>[];
-    _selectedProduct!.sizes.forEach((gender, sizes) {
-      availableSizes.addAll(sizes.map((size) => size.toString()));
-    });
+    if (_selectedProduct == null) return const SizedBox.shrink();
+
+    final availableSizes = _masterSizes[_selectedCategory] ?? [];
+
+    if (availableSizes.isEmpty) {
+      return Text(
+        'Tidak ada ukuran tersedia untuk kategori ini.',
+        style: TextStyle(color: Colors.grey[600]),
+      );
+    }
 
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 8.0,
+      runSpacing: 8.0,
       children: availableSizes.map((size) {
-        final isSelected = _selectedSize == size;
-        return GestureDetector(
-          onTap: () => setState(() => _selectedSize = size),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.black : Colors.white,
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              size,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+        final sizeString = size.toString().endsWith('.0') ? size.toInt().toString() : size.toString();
+        final isSelected = _selectedSize == sizeString;
+        return ChoiceChip(
+          label: Text(sizeString),
+          selected: isSelected,
+          onSelected: (selected) {
+            setState(() {
+              if (selected) {
+                _selectedSize = sizeString;
+              }
+            });
+          },
+          selectedColor: Colors.black,
+          labelStyle: TextStyle(
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: isSelected ? Colors.black : Colors.grey.shade300,
             ),
           ),
         );
       }).toList(),
+    );
+  }
+  
+  Widget _buildCategorySelection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        _buildCategoryChip('men', 'Men'),
+        const SizedBox(width: 8),
+        _buildCategoryChip('women', 'Women'),
+        const SizedBox(width: 8),
+        _buildCategoryChip('kids', 'Kids'),
+      ],
+    );
+  }
+
+  Widget _buildCategoryChip(String key, String label) {
+    final isSelected = _selectedCategory == key;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (selected) {
+        if (selected) {
+          setState(() {
+            _selectedCategory = key;
+            _selectedSize = null; // Reset size when category changes
+          });
+        }
+      },
+      selectedColor: Colors.black,
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.black,
+      ),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: isSelected ? Colors.black : Colors.grey.shade300,
+        ),
+      ),
     );
   }
 
@@ -463,7 +526,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   suggestionMultiplier = 0.7;
                   break;
               }
-              _priceController.text = (_selectedProduct!.price * suggestionMultiplier).round().toString();
+              _priceController.text = (suggestionMultiplier * _selectedProduct!.price).round().toString();
             }
           }),
           title: Text(condition.label),
@@ -544,23 +607,26 @@ class _AddListingScreenState extends State<AddListingScreen> {
         TextFormField(
           controller: _priceController,
           keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            ThousandsSeparatorInputFormatter(),
+          ],
           decoration: InputDecoration(
-            labelText: '${IndonesianText.harga} (Rp)',
-            hintText: 'Masukkan harga jual',
+            prefixText: 'Rp ',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.black),
             ),
-            prefixText: 'Rp ',
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.black, width: 2),
+            ),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Harga harus diisi';
+              return 'Harga tidak boleh kosong';
             }
-            final price = double.tryParse(value);
-            if (price == null || price <= 0) {
-              return 'Harga tidak valid';
-            }
-            if (_selectedProduct != null && price > _selectedProduct!.price) {
+            if (!_validatePrice()) {
               return IndonesianText.maksHarga;
             }
             return null;
@@ -568,13 +634,10 @@ class _AddListingScreenState extends State<AddListingScreen> {
         ),
         if (_selectedProduct != null)
           Padding(
-            padding: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              'Harga Brand New: ${IndonesianUtils.formatRupiah(_selectedProduct!.price)}',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              'Harga asli: ${IndonesianText.formatPrice(_selectedProduct!.price)}',
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
             ),
           ),
       ],
@@ -618,6 +681,41 @@ class _AddListingScreenState extends State<AddListingScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  static const separator = '.'; // Change this to ',' for other locales
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Short-circuit if the new value is empty
+    if (newValue.text.isEmpty) {
+      return newValue.copyWith(text: '');
+    }
+
+    // Handle "deletion" of separator character
+    String oldValueText = oldValue.text.replaceAll(separator, '');
+    String newValueText = newValue.text.replaceAll(separator, '');
+
+    if (oldValue.text.endsWith(separator) &&
+        oldValue.text.length == newValue.text.length + 1) {
+      newValueText = newValueText.substring(0, newValueText.length - 1);
+    }
+
+    // Only process if the new value is a number
+    if (newValueText.isEmpty || int.tryParse(newValueText) == null) {
+      return oldValue;
+    }
+
+    final formatter = NumberFormat('#,###', 'id_ID');
+    final newString = formatter.format(int.parse(newValueText));
+
+    return newValue.copyWith(
+      text: newString,
+      selection: TextSelection.collapsed(offset: newString.length),
     );
   }
 } 
