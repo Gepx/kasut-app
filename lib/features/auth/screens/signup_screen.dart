@@ -131,6 +131,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         hintText: 'Enter your email address',
                         prefixIcon: const Icon(Icons.email_outlined, color: Colors.black54),
                         labelStyle: const TextStyle(color: Colors.black54),
+                        hintStyle: TextStyle(color: Colors.grey[500]),
+                        errorStyle: const TextStyle(color: Colors.red),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                           borderSide: const BorderSide(color: Colors.black26),
@@ -142,6 +144,14 @@ class _SignupScreenState extends State<SignupScreen> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                           borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.red, width: 1),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.red, width: 2),
                         ),
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -163,6 +173,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         hintText: 'Choose a username',
                         prefixIcon: const Icon(Icons.person_outline, color: Colors.black54),
                         labelStyle: const TextStyle(color: Colors.black54),
+                        hintStyle: TextStyle(color: Colors.grey[500]),
+                        errorStyle: const TextStyle(color: Colors.red),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                           borderSide: const BorderSide(color: Colors.black26),
@@ -174,6 +186,14 @@ class _SignupScreenState extends State<SignupScreen> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                           borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.red, width: 1),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.red, width: 2),
                         ),
                       ),
                       validator: (value) {
@@ -191,6 +211,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         hintText: 'Create a password',
                         prefixIcon: const Icon(Icons.lock_outline, color: Colors.black54),
                         labelStyle: const TextStyle(color: Colors.black54),
+                        hintStyle: TextStyle(color: Colors.grey[500]),
+                        errorStyle: const TextStyle(color: Colors.red),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                           borderSide: const BorderSide(color: Colors.black26),
@@ -202,6 +224,14 @@ class _SignupScreenState extends State<SignupScreen> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                           borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.red, width: 1),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.red, width: 2),
                         ),
                       ),
                       obscureText: true,
