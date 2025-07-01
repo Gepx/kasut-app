@@ -10,6 +10,7 @@ class AppBarFactory {
     required ScreenType screenType,
     TabController? tabController,
     List<String>? brands,
+    VoidCallback? onFilterPressed,
   }) {
     switch (screenType) {
       case ScreenType.home:
@@ -22,10 +23,11 @@ class AppBarFactory {
         return null;
         
       case ScreenType.market:
-        if (tabController != null && brands != null) {
+        if (tabController != null && brands != null && onFilterPressed != null) {
           return MarketAppBar(
             tabController: tabController,
             brands: brands,
+            onFilterPressed: onFilterPressed,
           );
         }
         return null;

@@ -5,6 +5,7 @@ import 'package:kasut/core/components/main_container.dart';
 import 'package:kasut/providers/wishlist_provider.dart';
 import 'package:kasut/providers/order_provider.dart';
 import 'package:kasut/providers/seller_provider.dart';
+import 'package:kasut/utils/no_glow_scroll_behavior.dart';
 
 void main() {
   // Keep default (hash) web URL strategy for stability in dev server.
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Kasut App',
         theme: AppCore.theme,
+        scrollBehavior: NoGlowScrollBehavior(),
         routes: AppCore.routes,
         debugShowCheckedModeBanner: false,
       ),
