@@ -113,12 +113,15 @@ class SneakerCard extends StatelessWidget {
                           ),
                           if (sneaker.discountPrice != null) ...[
                             const SizedBox(width: 8),
-                            Text(
-                              fmt.format(sneaker.price),
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    decoration: TextDecoration.lineThrough,
-                                    color: Colors.grey[500],
-                                  ),
+                            Flexible(
+                              child: Text(
+                                fmt.format(sneaker.price),
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                      decoration: TextDecoration.lineThrough,
+                                      color: Colors.grey[500],
+                                    ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ],
