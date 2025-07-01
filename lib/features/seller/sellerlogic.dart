@@ -6,6 +6,9 @@ import 'package:kasut/services/seller_listing_service.dart';
 import 'package:kasut/features/auth/services/auth_service.dart';
 import 'package:kasut/utils/indonesian_utils.dart';
 import 'package:kasut/utils/responsive_utils.dart';
+import 'package:provider/provider.dart';
+import 'package:kasut/providers/seller_provider.dart';
+import 'package:kasut/features/profile/screens/selling_screen.dart';
 
 class SellerLogic extends StatefulWidget {
   const SellerLogic({super.key});
@@ -15,214 +18,240 @@ class SellerLogic extends StatefulWidget {
 }
 
 class _SellerLogicState extends State<SellerLogic> {
-  List<SellerListing> _myListings = [];
-
   @override
   void initState() {
     super.initState();
-    _loadMyListings();
+    _loadSellerData();
   }
 
-  void _loadMyListings() {
+  void _loadSellerData() async {
     final currentUser = AuthService.currentUser;
     if (currentUser != null) {
-      setState(() {
-        _myListings = SellerListingService.getListingsBySeller(currentUser['email']);
-      });
+      final sellerProfile = SellerService.currentSeller;
+      final myListings = SellerListingService.getListingsBySeller(currentUser['email']);
+
+      if (mounted) {
+        final sellerProvider = Provider.of<SellerProvider>(context, listen: false);
+        if (sellerProfile != null) {
+          sellerProvider.setProfile(sellerProfile);
+        }
+        sellerProvider.replaceListings(myListings);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final sellerData = SellerService.currentSeller;
+    return Consumer<SellerProvider>(
+      builder: (context, sellerProvider, child) {
+        final sellerData = sellerProvider.profile;
+        final myListings = sellerProvider.listings;
 
-    if (sellerData == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text('No seller data found'),
-        ),
-      );
-    }
-
-    return ResponsiveBuilder(
-      builder: (context, deviceType, width) {
-        final padding = ResponsiveUtils.getResponsivePadding(width);
-        
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Seller Dashboard', style: TextStyle(color: Colors.black)),
-            iconTheme: const IconThemeData(color: Colors.black),
-            backgroundColor: Colors.white,
-            elevation: 0,
-            shape: const Border(bottom: BorderSide(color: Colors.black, width: 1)),
-          ),
-          body: RefreshIndicator(
-            onRefresh: () async {
-              _loadMyListings();
-            },
-            child: SingleChildScrollView(
-              padding: padding,
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                            // Welcome Section
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.black, width: 1),
+        if (sellerData == null) {
+          return const Scaffold(
+            body: Center(
+              child: Text('No seller data found'),
             ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Selamat datang, ${sellerData['fullName']}!',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Akun seller Anda sudah aktif. Mulai jual sepatu Anda sekarang.',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+          );
+        }
 
-                  // Quick Stats
-                  Row(
+        return ResponsiveBuilder(
+          builder: (context, deviceType, width) {
+            final padding = ResponsiveUtils.getResponsivePadding(width);
+            
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Seller Dashboard', style: TextStyle(color: Colors.black)),
+                iconTheme: const IconThemeData(color: Colors.black),
+                backgroundColor: Colors.white,
+                elevation: 0,
+                shape: const Border(bottom: BorderSide(color: Colors.black, width: 1)),
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  _loadSellerData();
+                },
+                child: SingleChildScrollView(
+                  padding: padding,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                                              Expanded(
-                          child: _buildStatCard(
-                            'Produk Aktif',
-                            '${_myListings.length}',
-                            Icons.inventory,
-                            Colors.black,
-                          ),
+                                // Welcome Section
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.black, width: 1),
+                ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Selamat datang, ${sellerData['fullName']}!',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Akun seller Anda sudah aktif. Mulai jual sepatu Anda sekarang.',
+                              style: TextStyle(color: Colors.black87),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildStatCard(
-                            'Total Penjualan',
-                            'Rp 0',
-                            Icons.monetization_on,
-                            Colors.grey,
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
+                      ),
+                      const SizedBox(height: 24),
 
-                  // Action Buttons
-                  const Text(
-                    'Aksi Cepat',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildActionButton(
-                    context,
-                    IndonesianText.jualSepatu,
-                    'Tambahkan sepatu baru untuk dijual',
-                    Icons.add_box,
-                    Colors.black,
-                    () {
-                      Navigator.push(
+                      // Quick Stats
+                      Row(
+                        children: [
+                                                  Expanded(
+                              child: _buildStatCard(
+                                'Produk Aktif',
+                                '${myListings.length}',
+                                Icons.inventory,
+                                Colors.black,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _buildStatCard(
+                                'Total Penjualan',
+                                'Rp ${IndonesianText.formatPriceWithoutSymbol(sellerProvider.listings.fold(0.0, (sum, item) => sum + item.sellerPrice))}',
+                                Icons.monetization_on,
+                                Colors.black,
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Action Buttons
+                      const Text(
+                        'Aksi Cepat',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildActionButton(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddListingScreen(),
-                        ),
-                      ).then((_) => _loadMyListings());
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  _buildActionButton(
-                    context,
-                    'Produk Saya',
-                    'Lihat dan kelola produk yang sedang dijual',
-                    Icons.list_alt,
-                    Colors.grey[600]!,
-                    () {
-                      _showMyListings(context);
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  _buildActionButton(
-                    context,
-                    'Riwayat Penjualan',
-                    'Lihat penjualan yang sudah selesai',
-                    Icons.history,
-                    Colors.grey[500]!,
-                    () {
-                      // TODO: Navigate to sales history
-                      print('Navigate to sales history');
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Recent Listings
-                  if (_myListings.isNotEmpty) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Produk Terbaru',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        TextButton(
-                          onPressed: () => _showMyListings(context),
-                          child: const Text('Lihat Semua'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      height: 200,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _myListings.take(5).length,
-                        itemBuilder: (context, index) {
-                          final listing = _myListings[index];
-                          return Container(
-                            width: width * 0.7,
-                            margin: const EdgeInsets.only(right: 12),
-                            child: _buildListingCard(listing),
+                        IndonesianText.jualSepatu,
+                        'Tambahkan sepatu baru untuk dijual',
+                        Icons.add_box,
+                        Colors.black,
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddListingScreen(),
+                            ),
+                          ).then((_) => _loadSellerData());
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildActionButton(
+                        context,
+                        'Produk Saya',
+                        'Lihat dan kelola produk yang sedang dijual',
+                        Icons.list_alt,
+                        Colors.black,
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SellingScreen(),
+                            ),
                           );
                         },
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // Seller Info Summary
-                  const Text(
-                    'Informasi Akun',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildInfoRow('Nama Lengkap', sellerData['fullName']),
-                          _buildInfoRow('Telepon', '+62 ${sellerData['phone']}'),
-                          _buildInfoRow('Bank', sellerData['bank']),
-                          _buildInfoRow('No. Rekening', sellerData['accountNumber']),
-                          _buildInfoRow('Lokasi', sellerData['province']),
-                        ],
+                      const SizedBox(height: 12),
+                      _buildActionButton(
+                        context,
+                        'Riwayat Penjualan',
+                        'Lihat penjualan yang sudah selesai',
+                        Icons.history,
+                        Colors.black,
+                        () {
+                          print('Navigate to sales history');
+                        },
                       ),
-                    ),
+                      const SizedBox(height: 24),
+
+                      // Recent Listings
+                      if (myListings.isNotEmpty) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Produk Terbaru',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SellingScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text('Lihat Semua'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          height: 200,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: myListings.take(5).length,
+                            itemBuilder: (context, index) {
+                              final listing = myListings[index];
+                              return Container(
+                                width: width * 0.7,
+                                margin: const EdgeInsets.only(right: 12),
+                                child: _buildListingCard(listing),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Seller Info Summary
+                      const Text(
+                        'Informasi Akun',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 16),
+                      Card(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: const BorderSide(color: Colors.black, width: 1),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildInfoRow('Nama Lengkap', sellerData['fullName']),
+                              _buildInfoRow('Telepon', '+62 ${sellerData['phone']??'-'}'),
+                              _buildInfoRow('Bank', sellerData['bank'] ?? '-'),
+                              _buildInfoRow('No. Rekening', sellerData['accountNumber'] ?? '-'),
+                              _buildInfoRow('Lokasi', sellerData['province'] ?? '-'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -386,124 +415,10 @@ class _SellerLogicState extends State<SellerLogic> {
   }
 
   void _showMyListings(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Produk Saya',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: _myListings.isEmpty
-                  ? const Center(
-                      child: Text('Belum ada produk yang dijual'),
-                    )
-                  : ListView.builder(
-                      itemCount: _myListings.length,
-                      itemBuilder: (context, index) {
-                        final listing = _myListings[index];
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: const BorderSide(color: Colors.black, width: 1),
-                          ),
-                          child: ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                listing.originalProduct.firstPict,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            title: Text(
-                              listing.originalProduct.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${listing.conditionText} • Size ${listing.selectedSize}',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                Text(
-                                  listing.timeSinceListed,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  listing.shortPrice,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: listing.isActive 
-                                        ? Colors.black 
-                                        : Colors.grey,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    listing.isActive ? 'Aktif' : 'Nonaktif',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SellingScreen(),
       ),
     );
   }

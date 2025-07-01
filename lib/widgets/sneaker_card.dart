@@ -98,23 +98,31 @@ class SneakerCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       // Price row
-                      Text(
-                        sneaker.discountPrice != null
-                            ? fmt.format(sneaker.discountPrice!)
-                            : fmt.format(sneaker.price),
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: sneaker.discountPrice != null ? Colors.red : Colors.black,
-                        ),
-                      ),
-                      if (sneaker.discountPrice != null)
-                        Text(
-                          fmt.format(sneaker.price),
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            decoration: TextDecoration.lineThrough,
-                            color: Colors.grey[500],
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            sneaker.discountPrice != null
+                                ? fmt.format(sneaker.discountPrice!)
+                                : fmt.format(sneaker.price),
+                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: sneaker.discountPrice != null ? Colors.red : Colors.black,
+                                ),
                           ),
-                        ),
+                          if (sneaker.discountPrice != null) ...[
+                            const SizedBox(width: 8),
+                            Text(
+                              fmt.format(sneaker.price),
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    decoration: TextDecoration.lineThrough,
+                                    color: Colors.grey[500],
+                                  ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ],
                   ),
                 ),
