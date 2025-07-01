@@ -170,6 +170,12 @@ class _MainContainerState extends State<MainContainer>
     });
   }
 
+  void _onFilterPressed() {
+    // TODO: Implement filter functionality for market screen
+    // This could show a filter modal or navigate to a filter screen
+    print('Filter button pressed');
+  }
+
   List<ScreenData> get _bottomNavScreens => [
     ScreenData(
       appBar: (context) => HomeAppBar(
@@ -198,10 +204,12 @@ class _MainContainerState extends State<MainContainer>
       appBar: (context) => MarketAppBar(
         tabController: _marketTabController!,
         brands: _brands,
+        onFilterPressed: _onFilterPressed,
       ),
       body: (context) => MarketScreen(
         tabController: _marketTabController!,
         brands: _brands,
+        standalone: false,
       ),
       iconData: Icons.search,
       activeIconData: Icons.search_outlined,

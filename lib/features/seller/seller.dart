@@ -5,7 +5,7 @@ import 'package:kasut/features/seller/sellerlogic.dart';
 import 'package:kasut/features/auth/services/auth_service.dart';
 import 'package:kasut/features/auth/screens/login_screen.dart';
 import 'package:kasut/features/seller/seller_service.dart';
-import 'package:kasut/main.dart';
+import 'package:kasut/core/components/main_container.dart';
 
 class SellerPage extends StatefulWidget {
   const SellerPage({super.key});
@@ -99,7 +99,7 @@ class _SellerPageState extends State<SellerPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Main(initialIndex: 3),
+            builder: (context) => const MainContainer(initialIndex: 3),
           ),
         );
       }
@@ -114,7 +114,7 @@ class _SellerPageState extends State<SellerPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red[600] : Colors.green[600],
+        backgroundColor: isError ? Colors.red[600] : Colors.black,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -572,7 +572,7 @@ class _SellerPageState extends State<SellerPage> {
         children: [
           Row(
             children: [
-              Icon(icon, color: Colors.blue[600], size: 24),
+              Icon(icon, color: Colors.black, size: 24),
               const SizedBox(width: 12),
               Text(
                 title,
@@ -609,7 +609,9 @@ class _SellerPageState extends State<SellerPage> {
           validator: validator,
           decoration: InputDecoration(
             hintText: hint,
+            hintStyle: TextStyle(color: Colors.grey[500]),
             prefixIcon: Icon(icon, color: Colors.grey[400]),
+            errorStyle: const TextStyle(color: Colors.red),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.grey[300]!),
@@ -621,6 +623,14 @@ class _SellerPageState extends State<SellerPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Colors.black, width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red, width: 1),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
             filled: true,
             fillColor: Colors.grey[50],
@@ -684,6 +694,8 @@ class _SellerPageState extends State<SellerPage> {
                 },
                 decoration: InputDecoration(
                   hintText: "Phone number",
+                  hintStyle: TextStyle(color: Colors.grey[500]),
+                  errorStyle: const TextStyle(color: Colors.red),
                   border: OutlineInputBorder(
                     borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(12),
@@ -698,13 +710,27 @@ class _SellerPageState extends State<SellerPage> {
                     ),
                     borderSide: BorderSide(color: Colors.grey[300]!),
                   ),
-                                      focusedBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                      borderSide: BorderSide(color: Colors.black, width: 2),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
                     ),
+                    borderSide: BorderSide(color: Colors.black, width: 2),
+                  ),
+                  errorBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                    borderSide: BorderSide(color: Colors.red, width: 1),
+                  ),
+                  focusedErrorBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                    borderSide: BorderSide(color: Colors.red, width: 2),
+                  ),
                   filled: true,
                   fillColor: Colors.grey[50],
                 ),
@@ -740,6 +766,7 @@ class _SellerPageState extends State<SellerPage> {
           validator: validator,
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.account_balance, color: Colors.grey[400]),
+            errorStyle: const TextStyle(color: Colors.red),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.grey[300]!),
@@ -751,6 +778,14 @@ class _SellerPageState extends State<SellerPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Colors.black, width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red, width: 1),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
             filled: true,
             fillColor: Colors.grey[50],

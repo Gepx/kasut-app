@@ -113,13 +113,19 @@ class MarketAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 class MarketScreen extends StatefulWidget {
   final TabController tabController;
-  final List<String> brands; // Add brands parameter
+  final List<String> brands;
+
+  /// If true, this widget wraps its content in a full Scaffold with its own
+  /// AppBar. Set to false when it is already embedded in a parent Scaffold
+  /// that provides the MarketAppBar (e.g. via [MainContainer]).
+  final bool standalone;
 
   const MarketScreen({
     super.key,
     required this.tabController,
     required this.brands,
-  }); // Require brands
+    this.standalone = true,
+  });
 
   @override
   State<MarketScreen> createState() => _MarketScreenState();
@@ -278,8 +284,78 @@ class _MarketScreenState extends State<MarketScreen> {
     super.dispose();
   }
 
+  Widget _buildBody(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Calculate number of columns based on available width
+          int crossAxisCount = 2; // Default for phones
+          double childAspectRatio = 0.7;
+
+          // Responsive grid layout based on screen width
+          if (constraints.maxWidth > 600 && constraints.maxWidth < 900) {
+            crossAxisCount = 4; // Tablets
+            childAspectRatio = 0.65;
+          } else if (constraints.maxWidth >= 900) {
+            crossAxisCount = 8; // Desktops
+            childAspectRatio = 0.6;
+          }
+
+          return Column(
+            children: [
+              // Grid of shoes
+              Expanded(
+                child: filteredShoes.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.close, size: 64, color: Colors.grey[400]),
+                            const SizedBox(height: 16),
+                            Text('No Product Found', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey[600])),
+                            const SizedBox(height: 8),
+                            Text('Try adjusting your filters', style: TextStyle(fontSize: 14, color: Colors.grey[500])),
+                          ],
+                        ),
+                      )
+                    : GridView.builder(
+                        itemCount: filteredShoes.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: childAspectRatio,
+                        ),
+                        itemBuilder: (context, index) {
+                          final shoe = filteredShoes[index];
+                          return SneakerCard(
+                            sneaker: shoe,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => SingleProductPage(shoe: shoe)),
+                              );
+                            },
+                          );
+                        },
+                      ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!widget.standalone) {
+      // Embedded mode – the parent already supplies an AppBar & Scaffold.
+      return _buildBody(context);
+    }
+
+    // Stand-alone mode (e.g. deep-link or tests)
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(135),
@@ -345,90 +421,7 @@ class _MarketScreenState extends State<MarketScreen> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Calculate number of columns based on available width
-            int crossAxisCount = 2; // Default for phones
-            double childAspectRatio = 0.7;
-
-            // Responsive grid layout based on screen width
-            if (constraints.maxWidth > 600 && constraints.maxWidth < 900) {
-              crossAxisCount = 4; // Tablets
-              childAspectRatio = 0.65;
-            } else if (constraints.maxWidth >= 900) {
-              crossAxisCount = 8; // Desktops - increased to 8 columns
-              childAspectRatio = 0.6;
-            }
-
-            return Column(
-              children: [
-                // Grid of shoes
-                Expanded(
-                  child:
-                      filteredShoes.isEmpty
-                          ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.close,
-                                  size: 64,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No Product Found',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Try adjusting your filters',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                          : GridView.builder(
-                            itemCount: filteredShoes.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  mainAxisSpacing: 16,
-                                  crossAxisSpacing: 16,
-                                  childAspectRatio: childAspectRatio,
-                                ),
-                            itemBuilder: (context, index) {
-                              final shoe = filteredShoes[index];
-                              return SneakerCard(
-                                sneaker: shoe,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              SingleProductPage(shoe: shoe),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+      body: _buildBody(context),
     );
   }
 

@@ -14,6 +14,7 @@ import 'package:kasut/features/profile/screens/wishlist_screen.dart';
 import 'package:kasut/features/profile/screens/invite_friend_screen.dart';
 import 'package:kasut/features/profile/screens/settings_screen.dart';
 import 'package:kasut/features/profile/screens/faq_screen.dart';
+import 'package:kasut/core/components/main_container.dart';
 
 /// Core application module containing theme and routing configuration
 class AppCore {
@@ -30,7 +31,7 @@ class AppCore {
   /// Application routes
   static Map<String, WidgetBuilder> get routes => {
     SplashScreen.routeName: (context) => const SplashScreen(),
-    '/home': (context) => const MainRefactored(),
+    '/home': (context) => const MainContainer(),
     LoginScreen.routeName: (context) => const LoginScreen(),
     SignupScreen.routeName: (context) => const SignupScreen(),
     ProfileScreen.routeName: (context) => const ProfileScreen(),
