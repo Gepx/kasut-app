@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kasut/models/shoe_model.dart';
 import 'package:kasut/widgets/sneaker_card.dart';
 import 'package:kasut/features/home/home_search_bar.dart';
+import 'package:kasut/features/single-product/single_product_page.dart';
+import 'package:kasut/features/market/filtered_sneakers.dart';
 
 // Define the list of brands
 final List<String> _brands = [
@@ -25,11 +27,13 @@ final List<String> _brands = [
 class MarketAppBar extends StatelessWidget implements PreferredSizeWidget {
   final TabController tabController;
   final List<String> brands; // Add brands parameter
+  final VoidCallback onFilterPressed; // Add callback for filter button
 
   const MarketAppBar({
     super.key,
     required this.tabController,
     required this.brands, // Require brands
+    required this.onFilterPressed, // Require callback
   });
 
   @override
@@ -54,18 +58,7 @@ class MarketAppBar extends StatelessWidget implements PreferredSizeWidget {
                   IconButton(
                     // Use IconButton for better semantics
                     icon: const Icon(Icons.filter_alt_outlined, size: 25),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
-                        ),
-                        builder: (context) => const FilterModal(),
-                      );
-                    },
+                    onPressed: onFilterPressed,
                   ),
                 ],
               ),
@@ -138,7 +131,7 @@ class _MarketScreenState extends State<MarketScreen> {
   // Filter state
   Set<String> selectedTags = {};
   Set<String> selectedGenders = {};
-  Map<String, Set<String>> selectedSizes = {'Men': {}, 'Women': {}, 'Kids': {}};
+  Map<String, Set<String>> selectedSizes = {'men': {}, 'women': {}, 'kids': {}};
 
   @override
   void initState() {
@@ -175,11 +168,6 @@ class _MarketScreenState extends State<MarketScreen> {
     // Apply additional filters (tags, gender, size)
     setState(() {
       filteredShoes = _applyFilters(brandFilteredShoes);
-
-      // Debug print to check results
-      print(
-        'Filtered ${filteredShoes.length} shoes for brand: $selectedBrand with additional filters',
-      );
     });
   }
 
@@ -210,7 +198,16 @@ class _MarketScreenState extends State<MarketScreen> {
 
       // Filter by gender if any genders are selected
       if (selectedGenders.isNotEmpty) {
-        if (!selectedGenders.contains(shoe.gender)) {
+        // Check if the shoe has sizes for any of the selected genders
+        bool hasMatchingGender = false;
+        for (var gender in selectedGenders) {
+          if (shoe.sizes.containsKey(gender) &&
+              shoe.sizes[gender]!.isNotEmpty) {
+            hasMatchingGender = true;
+            break;
+          }
+        }
+        if (!hasMatchingGender) {
           return false;
         }
       }
@@ -223,18 +220,24 @@ class _MarketScreenState extends State<MarketScreen> {
         // Check if any selected size matches the shoe's available sizes
         for (var gender in selectedSizes.keys) {
           if (selectedSizes[gender]!.isNotEmpty) {
-            for (var size in selectedSizes[gender]!) {
-              if (shoe.availableSizes.contains('$gender-$size')) {
-                sizeMatch = true;
-                break;
+            if (shoe.sizes.containsKey(gender)) {
+              for (var sizeStr in selectedSizes[gender]!) {
+                double size = double.tryParse(sizeStr) ?? 0.0;
+                if (shoe.sizes[gender]!.contains(size)) {
+                  sizeMatch = true;
+                  break;
+                }
               }
             }
             if (sizeMatch) break;
           }
         }
+        if (!sizeMatch) {
+          return false;
+        }
       }
 
-      return sizeMatch;
+      return true;
     }).toList();
   }
 
@@ -252,6 +255,23 @@ class _MarketScreenState extends State<MarketScreen> {
     });
   }
 
+  // Method to navigate to filtered page
+  void navigateToFilteredPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => FilteredSneakersPage(
+              filteredShoes: filteredShoes,
+              selectedTags: selectedTags,
+              selectedGenders: selectedGenders,
+              selectedSizes: selectedSizes,
+              selectedBrand: widget.brands[widget.tabController.index],
+            ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     widget.tabController.removeListener(_handleTabChange);
@@ -260,138 +280,167 @@ class _MarketScreenState extends State<MarketScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Calculate number of columns based on available width
-          int crossAxisCount = 2; // Default for phones
-          double childAspectRatio = 0.7;
-
-          // Responsive grid layout based on screen width
-          if (constraints.maxWidth > 600 && constraints.maxWidth < 900) {
-            crossAxisCount = 4; // Tablets
-            childAspectRatio = 0.65;
-          } else if (constraints.maxWidth >= 900) {
-            crossAxisCount = 8; // Desktops - increased to 8 columns
-            childAspectRatio = 0.6;
-          }
-
-          return Column(
-            children: [
-              // Active filters display
-              if (selectedTags.isNotEmpty ||
-                  selectedGenders.isNotEmpty ||
-                  selectedSizes.values.any((sizes) => sizes.isNotEmpty))
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: _buildActiveFilters(),
-                ),
-
-              // Grid of shoes
-              Expanded(
-                child:
-                    filteredShoes.isEmpty
-                        ? const Center(
-                          child: Text('No shoes match your filters'),
-                        )
-                        : GridView.builder(
-                          itemCount: filteredShoes.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                mainAxisSpacing: 16,
-                                crossAxisSpacing: 16,
-                                childAspectRatio: childAspectRatio,
-                              ),
-                          itemBuilder: (context, index) {
-                            final shoe = filteredShoes[index];
-                            return SneakerCard(sneaker: shoe);
-                          },
-                        ),
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(135),
+        child: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          toolbarHeight: 80,
+          automaticallyImplyLeading: false,
+          flexibleSpace: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const Expanded(child: HomeSearchBar()),
+                      IconButton(
+                        icon: const Icon(Icons.filter_alt_outlined, size: 25),
+                        onPressed: _showFilterModal,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
               ),
-            ],
-          );
-        },
-      ),
-    );
-  }
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(35),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Colors.grey.shade300, width: 0.1),
+                ),
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isDesktop = constraints.maxWidth >= 900;
 
-  // Widget to display active filters with option to remove them
-  Widget _buildActiveFilters() {
-    List<Widget> filterChips = [];
-
-    // Add tag filters
-    for (var tag in selectedTags) {
-      filterChips.add(
-        _buildFilterChip(tag, () {
-          setState(() {
-            selectedTags.remove(tag);
-            _filterShoes();
-          });
-        }),
-      );
-    }
-
-    // Add gender filters
-    for (var gender in selectedGenders) {
-      filterChips.add(
-        _buildFilterChip(gender, () {
-          setState(() {
-            selectedGenders.remove(gender);
-            _filterShoes();
-          });
-        }),
-      );
-    }
-
-    // Add size filters
-    for (var gender in selectedSizes.keys) {
-      for (var size in selectedSizes[gender]!) {
-        filterChips.add(
-          _buildFilterChip('$gender $size', () {
-            setState(() {
-              selectedSizes[gender]!.remove(size);
-              _filterShoes();
-            });
-          }),
-        );
-      }
-    }
-
-    // Add clear all option if there are filters
-    if (filterChips.isNotEmpty) {
-      filterChips.add(
-        TextButton(
-          onPressed: () {
-            setState(() {
-              selectedTags.clear();
-              selectedGenders.clear();
-              for (var gender in selectedSizes.keys) {
-                selectedSizes[gender]!.clear();
-              }
-              _filterShoes();
-            });
-          },
-          child: const Text('Clear All'),
+                  return TabBar(
+                    isScrollable: true,
+                    tabAlignment:
+                        isDesktop ? TabAlignment.center : TabAlignment.start,
+                    controller: widget.tabController,
+                    labelStyle: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    tabs:
+                        widget.brands.map((brand) => Tab(text: brand)).toList(),
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    indicatorColor: Colors.black,
+                    labelPadding: EdgeInsets.symmetric(
+                      horizontal: isDesktop ? 24.0 : 8.0,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
         ),
-      );
-    }
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Calculate number of columns based on available width
+            int crossAxisCount = 2; // Default for phones
+            double childAspectRatio = 0.7;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(children: filterChips),
+            // Responsive grid layout based on screen width
+            if (constraints.maxWidth > 600 && constraints.maxWidth < 900) {
+              crossAxisCount = 4; // Tablets
+              childAspectRatio = 0.65;
+            } else if (constraints.maxWidth >= 900) {
+              crossAxisCount = 8; // Desktops - increased to 8 columns
+              childAspectRatio = 0.6;
+            }
+
+            return Column(
+              children: [
+                // Grid of shoes
+                Expanded(
+                  child:
+                      filteredShoes.isEmpty
+                          ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.close,
+                                  size: 64,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No Product Found',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Try adjusting your filters',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                          : GridView.builder(
+                            itemCount: filteredShoes.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                  childAspectRatio: childAspectRatio,
+                                ),
+                            itemBuilder: (context, index) {
+                              final shoe = filteredShoes[index];
+                              return SneakerCard(
+                                sneaker: shoe,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              SingleProductPage(shoe: shoe),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 
-  Widget _buildFilterChip(String label, VoidCallback onRemove) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: Chip(
-        label: Text(label),
-        deleteIcon: const Icon(Icons.close, size: 16),
-        onDeleted: onRemove,
+  // Method to show filter modal
+  void _showFilterModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      builder: (context) => FilterModal(marketState: this),
     );
   }
 }
@@ -434,7 +483,9 @@ String _normalizeBrandName(String brand) {
 }
 
 class FilterModal extends StatefulWidget {
-  const FilterModal({super.key});
+  final _MarketScreenState marketState;
+
+  const FilterModal({super.key, required this.marketState});
 
   @override
   State<FilterModal> createState() => _FilterModalState();
@@ -451,22 +502,22 @@ class _FilterModalState extends State<FilterModal>
     'Most Popular',
     'Special Price',
   ];
-  final List<String> genders = ['Men', 'Women', 'Kids'];
+  final List<String> genders = ['men', 'women', 'kids'];
 
   // Split sizes for Men, Women, and Kids
   final Map<String, List<String>> sizes = {
-    'Men': ['6', '7', '8', '9', '10', '11', '12'],
-    'Women': ['5', '6', '7', '8', '9', '10'],
-    'Kids': ['3', '4', '5', '6', '7', '8'],
+    'men': ['6', '7', '8', '9', '10', '11', '12'],
+    'women': ['5', '6', '7', '8', '9', '10'],
+    'kids': ['3', '4', '5', '6', '7', '8'],
   };
 
   // Selections
   final Set<String> selectedTags = {};
   final Set<String> selectedGenders = {};
   final Map<String, Set<String>> selectedSizes = {
-    'Men': {},
-    'Women': {},
-    'Kids': {},
+    'men': {},
+    'women': {},
+    'kids': {},
   };
 
   @override
@@ -477,15 +528,12 @@ class _FilterModalState extends State<FilterModal>
       vsync: this,
     ); // Fixed length to match tabs
 
-    // Get current filters from parent if available
-    final marketState = context.findAncestorStateOfType<_MarketScreenState>();
-    if (marketState != null) {
-      selectedTags.addAll(marketState.selectedTags);
-      selectedGenders.addAll(marketState.selectedGenders);
+    // Get current filters from parent
+    selectedTags.addAll(widget.marketState.selectedTags);
+    selectedGenders.addAll(widget.marketState.selectedGenders);
 
-      for (var gender in selectedSizes.keys) {
-        selectedSizes[gender]!.addAll(marketState.selectedSizes[gender]!);
-      }
+    for (var gender in selectedSizes.keys) {
+      selectedSizes[gender]!.addAll(widget.marketState.selectedSizes[gender]!);
     }
   }
 
@@ -551,7 +599,7 @@ class _FilterModalState extends State<FilterModal>
                 controller: _tabController,
                 children: [
                   _buildChipTab(tags, selectedTags),
-                  _buildChipTab(genders, selectedGenders),
+                  _buildGenderChipTab(),
                   _buildSizeTabs(),
                 ],
               ),
@@ -589,23 +637,31 @@ class _FilterModalState extends State<FilterModal>
                         ),
                       ),
                       onPressed: () {
+                        print('Apply button pressed');
                         // Apply filters and close modal
-                        final marketState =
-                            context
-                                .findAncestorStateOfType<_MarketScreenState>();
-                        if (marketState != null) {
-                          marketState.updateFilters(
-                            tags: Set.from(selectedTags),
-                            genders: Set.from(selectedGenders),
-                            sizes: Map.fromEntries(
-                              selectedSizes.entries.map(
-                                (entry) =>
-                                    MapEntry(entry.key, Set.from(entry.value)),
-                              ),
+                        print('Selected tags: $selectedTags');
+                        print('Selected genders: $selectedGenders');
+                        print('Selected sizes: $selectedSizes');
+
+                        // Update the filters first
+                        widget.marketState.updateFilters(
+                          tags: Set.from(selectedTags),
+                          genders: Set.from(selectedGenders),
+                          sizes: Map.fromEntries(
+                            selectedSizes.entries.map(
+                              (entry) =>
+                                  MapEntry(entry.key, Set.from(entry.value)),
                             ),
-                          );
-                        }
+                          ),
+                        );
+
+                        print(
+                          'Filters updated, filtered shoes count: ${widget.marketState.filteredShoes.length}',
+                        );
+
+                        // Close the modal
                         Navigator.pop(context);
+                        print('Modal closed');
                       },
                       child: const Text('Apply'),
                     ),
@@ -636,7 +692,11 @@ class _FilterModalState extends State<FilterModal>
                       Padding(
                         padding: const EdgeInsets.only(bottom: 12.0, top: 8.0),
                         child: Text(
-                          category,
+                          category == 'men'
+                              ? 'Men'
+                              : category == 'women'
+                              ? 'Women'
+                              : 'Kids',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -716,6 +776,49 @@ class _FilterModalState extends State<FilterModal>
                         selectedSet.add(option);
                       } else {
                         selectedSet.remove(option);
+                      }
+                    });
+                  },
+                );
+              }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // Improved gender chip tab with better spacing and alignment
+  Widget _buildGenderChipTab() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Wrap(
+          spacing: 10, // Increased spacing
+          runSpacing: 10, // Increased spacing
+          alignment: WrapAlignment.start,
+          children:
+              genders.map((gender) {
+                final isSelected = selectedGenders.contains(gender);
+                return ChoiceChip(
+                  label: Text(
+                    gender == 'men'
+                        ? 'Men'
+                        : gender == 'women'
+                        ? 'Women'
+                        : 'Kids',
+                  ),
+                  selected: isSelected,
+                  selectedColor: Colors.black.withOpacity(0.8),
+                  labelStyle: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                  onSelected: (selected) {
+                    setState(() {
+                      if (selected) {
+                        selectedGenders.add(gender);
+                      } else {
+                        selectedGenders.remove(gender);
                       }
                     });
                   },
