@@ -31,11 +31,16 @@ class _SellerLogicState extends State<SellerLogic> {
       final myListings = SellerListingService.getListingsBySeller(currentUser['email']);
 
       if (mounted) {
-        final sellerProvider = Provider.of<SellerProvider>(context, listen: false);
-        if (sellerProfile != null) {
-          sellerProvider.setProfile(sellerProfile);
-        }
-        sellerProvider.replaceListings(myListings);
+        // Defer provider updates to the end of the current frame to avoid
+        // "setState() or markNeedsBuild() called during build" assertions.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          final sellerProvider = Provider.of<SellerProvider>(context, listen: false);
+          if (sellerProfile != null) {
+            sellerProvider.setProfile(sellerProfile);
+          }
+          sellerProvider.replaceListings(myListings);
+        });
       }
     }
   }
