@@ -83,7 +83,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Colors.black,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Text(
@@ -224,16 +224,8 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   }
 
   Color _getPaymentMethodColor(PaymentMethod type) {
-    switch (type) {
-      case PaymentMethod.creditCard:
-        return Colors.blue;
-      case PaymentMethod.eWallet:
-        return Colors.green;
-      case PaymentMethod.bankTransfer:
-        return Colors.orange;
-      case PaymentMethod.cod:
-        return Colors.purple;
-    }
+    // Unified black theme for all payment method types
+    return Colors.black;
   }
 
   String _getPaymentMethodSubtitle(PaymentMethodDetails paymentMethod) {
@@ -412,7 +404,7 @@ class _PaymentMethodFormSheetState extends State<PaymentMethodFormSheet> {
                           });
                         },
                       );
-                    }).toList(),
+                    }),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _nicknameController,
@@ -784,7 +776,7 @@ class _PaymentMethodFormSheetState extends State<PaymentMethodFormSheet> {
                   ? 'Payment method updated successfully' 
                   : 'Payment method added successfully',
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.black,
           ),
         );
       } catch (e) {

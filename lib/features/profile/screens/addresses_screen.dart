@@ -76,7 +76,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Colors.black,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Text(
@@ -506,7 +506,7 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                   ? 'Address updated successfully' 
                   : 'Address added successfully',
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.black,
           ),
         );
       } catch (e) {
