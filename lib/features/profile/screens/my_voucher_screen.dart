@@ -42,6 +42,191 @@ class _MyVoucherScreenState extends State<MyVoucherScreen> {
   List<Voucher> get _active => _vouchers.where((v) => v.expiry.isAfter(DateTime.now()) && !v.isUsed).toList();
   List<Voucher> get _expired => _vouchers.where((v) => v.expiry.isBefore(DateTime.now()) || v.isUsed).toList();
 
+  void _showVoucherInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Iconsax.ticket_discount,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Voucher Information',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildInfoSection(
+                'How to Use Vouchers',
+                [
+                  'Tap "Use" button on any active voucher',
+                  'Vouchers are automatically applied to your next purchase',
+                  'Only one voucher can be used per order',
+                  'Vouchers cannot be combined with other offers',
+                ],
+                Iconsax.info_circle,
+              ),
+              const SizedBox(height: 16),
+              _buildInfoSection(
+                'Getting More Vouchers',
+                [
+                  'Complete your first purchase (WELCOME50)',
+                  'Follow our social media for flash sales',
+                  'Refer friends to earn discount vouchers',
+                  'Join our loyalty program for exclusive offers',
+                ],
+                Iconsax.gift,
+              ),
+              const SizedBox(height: 16),
+              _buildInfoSection(
+                'Important Notes',
+                [
+                  'Vouchers expire on the date shown',
+                  'Used vouchers cannot be reactivated',
+                  'Swipe left on active vouchers to remove them',
+                  'Minimum purchase amount may apply',
+                ],
+                Iconsax.warning_2,
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Iconsax.message_question,
+                      color: Colors.grey[600],
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Need more help? Contact our customer support team.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[600],
+            ),
+            child: const Text('Close'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Navigate to support or contact page
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Contact support feature coming soon!'),
+                  backgroundColor: Colors.black,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('Contact Support'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(String title, List<String> points, IconData icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18, color: Colors.black),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...points.map((point) => Padding(
+          padding: const EdgeInsets.only(left: 26, bottom: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 6),
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  point,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )).toList(),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -55,7 +240,10 @@ class _MyVoucherScreenState extends State<MyVoucherScreen> {
           backgroundColor: Colors.white,
           elevation: 0,
           actions: [
-            IconButton(icon: const Icon(Iconsax.message_question), onPressed: () {/* help */}),
+            IconButton(
+              icon: const Icon(Iconsax.message_question), 
+              onPressed: () => _showVoucherInfo(context),
+            ),
           ],
           bottom: const TabBar(
             labelColor: Colors.black,
