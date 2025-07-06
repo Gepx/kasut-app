@@ -13,37 +13,56 @@ class _AddressesScreenState extends State<AddressesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('My Addresses'),
+        title: const Text(
+          'My Addresses',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: Colors.grey[200]),
+        ),
       ),
       body: Consumer<OrderProvider>(
         builder: (context, orderProvider, child) {
           if (orderProvider.addresses.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.location_off,
-                    size: 64,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'No addresses found',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.location_on_outlined,
+                      size: 48,
+                      color: Colors.grey[400],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'No Addresses Yet',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Text(
-                    'Add your first delivery address',
-                    style: TextStyle(color: Colors.grey),
+                    'Add your first delivery address to get started',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -55,62 +74,109 @@ class _AddressesScreenState extends State<AddressesScreen> {
             itemCount: orderProvider.addresses.length,
             itemBuilder: (context, index) {
               final address = orderProvider.addresses[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: ListTile(
-                  contentPadding: const EdgeInsets.all(16),
-                  title: Row(
+                  contentPadding: const EdgeInsets.all(20),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              address.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          if (address.isDefault) ...[
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                'Default',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 8),
                       Text(
-                        address.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        address.phone,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      if (address.isDefault) ...[
-                        const SizedBox(width: 8),
+                      const SizedBox(height: 4),
+                      Text(
+                        address.fullAddress,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                          height: 1.3,
+                        ),
+                      ),
+                      if (address.notes != null) ...[
+                        const SizedBox(height: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                          child: const Text(
-                            'Default',
+                          child: Text(
+                            'Note: ${address.notes}',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.grey[500],
+                              fontSize: 12,
                             ),
                           ),
                         ),
                       ],
                     ],
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
-                      Text(address.phone),
-                      const SizedBox(height: 4),
-                      Text(address.fullAddress),
-                      if (address.notes != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          'Note: ${address.notes}',
-                          style: const TextStyle(
-                            fontStyle: FontStyle.italic,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
                   trailing: PopupMenuButton(
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.more_vert,
+                        color: Colors.grey[700],
+                        size: 20,
+                      ),
+                    ),
                     onSelected: (value) async {
                       switch (value) {
                         case 'edit':
@@ -194,7 +260,13 @@ class _AddressesScreenState extends State<AddressesScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddressForm(context, null),
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Icon(Icons.add, size: 24),
       ),
     );
   }
@@ -263,42 +335,49 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         children: [
           Container(
             width: 40,
             height: 4,
-            margin: const EdgeInsets.symmetric(vertical: 12),
+            margin: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
               color: Colors.grey[300],
               borderRadius: BorderRadius.circular(2),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   widget.existingAddress != null ? 'Edit Address' : 'Add New Address',
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
                   ),
                 ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close, color: Colors.grey[700]),
+                  ),
                 ),
               ],
             ),
           ),
-          const Divider(),
+          Container(height: 1, color: Colors.grey[200], margin: const EdgeInsets.only(top: 16)),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(24),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -306,9 +385,22 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                   children: [
                     TextFormField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Full Name',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -320,10 +412,23 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _phoneController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Phone Number',
-                        border: OutlineInputBorder(),
                         prefixText: '+62 ',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
                       ),
                       keyboardType: TextInputType.phone,
                       validator: (value) {
@@ -336,9 +441,22 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: _selectedProvince,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Province',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
                       ),
                       items: orderProvider.provinces
                           .map((province) => DropdownMenuItem(
@@ -362,9 +480,22 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: _selectedCity,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'City',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
                       ),
                       items: _selectedProvince != null
                           ? orderProvider
@@ -390,9 +521,22 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _addressController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Street Address',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
                       ),
                       maxLines: 3,
                       validator: (value) {
@@ -405,9 +549,22 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _postalCodeController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Postal Code',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -423,26 +580,56 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _notesController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Delivery Notes (Optional)',
-                        border: OutlineInputBorder(),
                         hintText: 'e.g., Ring the bell twice, Building B entrance',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
                       ),
                       maxLines: 2,
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _isDefault,
-                          onChanged: (value) {
-                            setState(() {
-                              _isDefault = value ?? false;
-                            });
-                          },
-                        ),
-                        const Text('Set as default address'),
-                      ],
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: _isDefault,
+                            activeColor: Colors.black,
+                            onChanged: (value) {
+                              setState(() {
+                                _isDefault = value ?? false;
+                              });
+                            },
+                          ),
+                          const Expanded(
+                            child: Text(
+                              'Set as default address',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -450,20 +637,32 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(color: Colors.grey[200]!, width: 1),
+              ),
+            ),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _saveAddress,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: Text(
                   widget.existingAddress != null ? 'Update Address' : 'Save Address',
-                  style: const TextStyle(fontSize: 16),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -507,13 +706,21 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                   : 'Address added successfully',
             ),
             backgroundColor: Colors.black,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.red[600],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       }
