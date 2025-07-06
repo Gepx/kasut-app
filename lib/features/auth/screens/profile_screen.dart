@@ -6,7 +6,6 @@ import 'package:kasut/features/auth/services/auth_service.dart';
 import 'package:kasut/features/auth/screens/login_screen.dart';
 import 'package:kasut/features/profile/screens/buying_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/selling_screen.dart'; // Placeholder
-import 'package:kasut/features/profile/screens/consignment_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/kasut_credit_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/seller_credit_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/kasut_points_screen.dart'; // Placeholder
@@ -358,12 +357,6 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-            _buildMenuItem(
-              context: context,
-              icon: Iconsax.box, // Box icon for Consignment
-              title: 'Consignment',
-              routeName: ConsignmentScreen.routeName,
             ),
             _buildMenuItem(
               context: context,

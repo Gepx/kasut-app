@@ -5,7 +5,6 @@ import 'package:kasut/features/auth/screens/signup_screen.dart';
 import 'package:kasut/features/auth/screens/profile_screen.dart';
 import 'package:kasut/features/profile/screens/buying_screen.dart';
 import 'package:kasut/features/profile/screens/selling_screen.dart';
-import 'package:kasut/features/profile/screens/consignment_screen.dart';
 import 'package:kasut/features/profile/screens/kasut_credit_screen.dart';
 import 'package:kasut/features/profile/screens/seller_credit_screen.dart';
 import 'package:kasut/features/profile/screens/kasut_points_screen.dart';
@@ -37,7 +36,6 @@ class AppCore {
     ProfileScreen.routeName: (context) => const ProfileScreen(),
     BuyingScreen.routeName: (context) => const BuyingScreen(),
     SellingScreen.routeName: (context) => const SellingScreen(),
-    ConsignmentScreen.routeName: (context) => const ConsignmentScreen(),
     KasutCreditScreen.routeName: (context) => const KasutCreditScreen(),
     SellerCreditScreen.routeName: (context) => const SellerCreditScreen(),
     KasutPointsScreen.routeName: (context) => const KasutPointsScreen(),
