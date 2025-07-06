@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import '../models/shoe_model.dart';
-import '../models/notification_model.dart';
 
 enum OrderStatus { active, completed, cancelled }
 enum PaymentMethod { creditCard, bankTransfer, eWallet, cod }

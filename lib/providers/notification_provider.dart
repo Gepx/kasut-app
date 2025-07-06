@@ -2,9 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:math';
 import '../models/notification_model.dart';
 import '../providers/order_provider.dart';
-import '../providers/seller_provider.dart';
 import '../features/seller/seller_service.dart';
-import '../features/auth/services/auth_service.dart';
 
 class NotificationProvider extends ChangeNotifier {
   final List<AppNotification> _notifications = [];
