@@ -5,6 +5,7 @@ import '../../widgets/image_loader.dart';
 import 'buy_product_page.dart';
 import 'package:kasut/features/auth/services/auth_service.dart';
 import 'package:kasut/features/auth/screens/login_screen.dart';
+import 'package:flutter/services.dart';
 
 class SingleProductPage extends StatefulWidget {
   final Shoe shoe;
@@ -111,7 +112,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
               color: Colors.black,
               size: 24,
             ),
-            onPressed: () {},
+            onPressed: _shareProduct,
           ),
           const SizedBox(width: 8),
         ],
@@ -510,6 +511,19 @@ class _SingleProductPageState extends State<SingleProductPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _shareProduct() {
+    final productUrl = 'https://kasut.app/product/${widget.shoe.sku}';
+    Clipboard.setData(ClipboardData(text: productUrl));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Product link copied to clipboard'),
+        backgroundColor: Colors.black,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
