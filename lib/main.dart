@@ -6,6 +6,7 @@ import 'package:kasut/providers/wishlist_provider.dart';
 import 'package:kasut/providers/order_provider.dart';
 import 'package:kasut/providers/seller_provider.dart';
 import 'package:kasut/providers/credit_provider.dart';
+import 'package:kasut/providers/notification_provider.dart';
 import 'package:kasut/utils/no_glow_scroll_behavior.dart';
 
 void main() {
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => OrderProvider()),
         ChangeNotifierProvider(create: (context) => SellerProvider()),
         ChangeNotifierProvider(create: (context) => KasutCreditProvider()),
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
       ],
       child: MaterialApp(
         title: 'Kasut App',

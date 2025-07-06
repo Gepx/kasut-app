@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../models/shoe_model.dart';
+import '../models/notification_model.dart';
 
 enum OrderStatus { active, completed, cancelled }
 enum PaymentMethod { creditCard, bankTransfer, eWallet, cod }
@@ -251,13 +252,26 @@ class Order {
 }
 
 class OrderProvider with ChangeNotifier {
-  List<Order> _orders = [];
+  final List<Order> _orders = [];
   List<DeliveryAddress> _addresses = [];
   List<PaymentMethodDetails> _paymentMethods = [];
+  
+  // Callback to notify when orders change
+  Function(List<Order>)? _onOrdersChanged;
 
   List<Order> get orders => _orders;
   List<DeliveryAddress> get addresses => _addresses;
   List<PaymentMethodDetails> get paymentMethods => _paymentMethods;
+  
+  // Set callback for order changes
+  void setOrdersChangedCallback(Function(List<Order>) callback) {
+    _onOrdersChanged = callback;
+  }
+  
+  // Notify about order changes
+  void _notifyOrdersChanged() {
+    _onOrdersChanged?.call(_orders);
+  }
 
   List<Order> get activeOrders => _orders.where((order) => order.status == OrderStatus.active).toList();
   List<Order> get completedOrders => _orders.where((order) => order.status == OrderStatus.completed).toList();
@@ -355,6 +369,7 @@ class OrderProvider with ChangeNotifier {
   void addOrder(Order order) {
     _orders.insert(0, order);
     notifyListeners();
+    _notifyOrdersChanged();
   }
 
   void updateOrderStatus(String orderId, OrderStatus newStatus) {
@@ -376,6 +391,7 @@ class OrderProvider with ChangeNotifier {
         trackingNumber: order.trackingNumber,
       );
       notifyListeners();
+      _notifyOrdersChanged();
     }
   }
 

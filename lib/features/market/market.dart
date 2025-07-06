@@ -133,8 +133,6 @@ class MarketScreen extends StatefulWidget {
 
 class MarketScreenState extends State<MarketScreen> {
   List<Shoe> filteredShoes = [];
-  String _searchQuery = '';
-
   // Filter state
   Set<String> selectedTags = {};
   Set<String> selectedGenders = {};

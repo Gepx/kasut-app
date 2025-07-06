@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:kasut/core/data/brand_loader.dart';
 import 'package:kasut/core/navigation/app_bar_factory.dart';
 import 'package:kasut/core/navigation/bottom_navigation_bar.dart';
 import 'package:kasut/core/navigation/navigation_manager.dart';
 import 'package:kasut/features/market/market.dart';
-import 'package:kasut/features/blog/blog.dart';
-import 'package:kasut/features/home/home_page.dart';
-import 'package:kasut/features/seller/seller.dart';
-import 'package:kasut/features/auth/screens/profile_screen.dart';
+import 'package:kasut/providers/order_provider.dart';
+import 'package:kasut/providers/notification_provider.dart';
 
 /// Main container component following micro-frontend architecture
 class MainContainer extends StatefulWidget {
@@ -34,6 +33,7 @@ class _MainContainerState extends State<MainContainer>
   void initState() {
     super.initState();
     _initializeData();
+    _setupNotificationIntegration();
   }
 
   Future<void> _initializeData() async {
@@ -44,6 +44,22 @@ class _MainContainerState extends State<MainContainer>
       if (mounted) {
         _navigationManager.initializeControllers(_brandLoader.brands);
       }
+    });
+  }
+
+  void _setupNotificationIntegration() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final orderProvider = Provider.of<OrderProvider>(context, listen: false);
+      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+      
+      // Set up callback to generate notifications when orders change
+      orderProvider.setOrdersChangedCallback((orders) {
+        notificationProvider.generateNotificationsFromOrders(orders);
+      });
+      
+      // Generate initial notifications from existing orders
+      notificationProvider.generateNotificationsFromOrders(orderProvider.orders);
     });
   }
 
