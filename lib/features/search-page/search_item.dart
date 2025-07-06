@@ -216,7 +216,7 @@ class _SearchPageState extends State<SearchPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: List.generate(
-                                5,
+                                _popularSearches.length >= 5 ? 5 : _popularSearches.length,
                                 (index) => _buildSearchItem(index),
                               ),
                             ),
@@ -226,7 +226,7 @@ class _SearchPageState extends State<SearchPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: List.generate(
-                                5,
+                                _popularSearches.length > 5 ? _popularSearches.length - 5 : 0,
                                 (index) => _buildSearchItem(index + 5),
                               ),
                             ),
@@ -406,7 +406,7 @@ class _SearchPageState extends State<SearchPage> {
                 cursor: SystemMouseCursors.click,
                 child: GestureDetector(
                   onTap: () {
-                    _searchController.text = _popularSearches[index];
+                    _searchController.text = brand.name;
                     _filterShoes();
                   },
                   child: Container(
@@ -451,7 +451,9 @@ class _SearchPageState extends State<SearchPage> {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () {
-            _searchController.text = _popularSearches[index];
+            if (index < _popularSearches.length) {
+              _searchController.text = _popularSearches[index];
+            }
             _filterShoes();
           },
           child: Row(
@@ -468,7 +470,7 @@ class _SearchPageState extends State<SearchPage> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  _popularSearches[index],
+                  index < _popularSearches.length ? _popularSearches[index] : '',
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
