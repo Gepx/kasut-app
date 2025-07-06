@@ -13,6 +13,7 @@ import 'package:kasut/features/profile/screens/wishlist_screen.dart';
 import 'package:kasut/features/profile/screens/invite_friend_screen.dart';
 import 'package:kasut/features/profile/screens/settings_screen.dart';
 import 'package:kasut/features/profile/screens/faq_screen.dart';
+import 'package:kasut/features/profile/screens/edit_profile_screen.dart';
 import 'package:kasut/core/main_navigation.dart';
 
 /// Centralized application router following micro-frontend architecture
@@ -22,6 +23,7 @@ class AppRouter {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String profile = '/profile';
+  static const String editProfile = '/edit-profile';
   static const String buying = '/buying';
   static const String selling = '/selling';
   static const String kasutCredit = '/kasut-credit';
@@ -39,6 +41,7 @@ class AppRouter {
     login: (context) => const LoginScreen(),
     signup: (context) => const SignupScreen(),
     profile: (context) => const ProfileScreen(),
+    editProfile: (context) => const EditProfileScreen(),
     buying: (context) => const BuyingScreen(),
     selling: (context) => const SellingScreen(),
     kasutCredit: (context) => const KasutCreditScreen(),

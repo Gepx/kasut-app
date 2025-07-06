@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:kasut/features/auth/screens/login_screen.dart';
+import 'package:kasut/features/profile/screens/edit_profile_screen.dart';
 import 'package:kasut/features/auth/services/auth_service.dart';
 import 'package:kasut/providers/wishlist_provider.dart';
 
@@ -34,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.person),
             title: const Text('Edit Profile'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => Navigator.pushNamed(context, '/profile'),
+            onTap: () => Navigator.pushNamed(context, EditProfileScreen.routeName),
           ),
           _buildDivider(),
           _buildSectionHeader('Preferences'),

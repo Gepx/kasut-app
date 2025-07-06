@@ -14,6 +14,7 @@ import 'package:kasut/features/profile/screens/invite_friend_screen.dart';
 import 'package:kasut/features/profile/screens/settings_screen.dart';
 import 'package:kasut/features/profile/screens/faq_screen.dart';
 import 'package:kasut/core/components/main_container.dart';
+import 'package:kasut/features/profile/screens/edit_profile_screen.dart';
 
 /// Core application module containing theme and routing configuration
 class AppCore {
@@ -44,6 +45,7 @@ class AppCore {
     InviteFriendScreen.routeName: (context) => const InviteFriendScreen(),
     SettingsScreen.routeName: (context) => const SettingsScreen(),
     FaqScreen.routeName: (context) => const FaqScreen(),
+    EditProfileScreen.routeName: (context) => const EditProfileScreen(),
   };
 }
 
