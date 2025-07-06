@@ -21,6 +21,8 @@ class _SearchPageState extends State<SearchPage> {
   bool _showBorder = false;
   List<Shoe> _filteredShoes = [];
   bool _showResults = false;
+  List<String> _popularSearches = [];
+  List<BrandLogo> _availableBrandLogos = [];
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     _searchController.addListener(_filterShoes);
+    _generateDynamicData();
   }
 
   @override
@@ -111,6 +114,27 @@ class _SearchPageState extends State<SearchPage> {
 
     final maxLength = s1.length > s2.length ? s1.length : s2.length;
     return 1.0 - (matrix[s1.length][s2.length] / maxLength.toDouble());
+  }
+
+  void _generateDynamicData() {
+    // Generate popular searches based on available shoes (first 10)
+    final shoes = ShoeData.shoes;
+    if (shoes.isNotEmpty) {
+      final names = shoes.map((s) => s.name).toList();
+      _popularSearches = names.take(10).toList();
+    } else {
+      // Fallback to static list but filter items that exist in dataset
+      _popularSearches = SearchData.popularSearches
+          .where((name) => ShoeData.shoes.any((s) => s.name.toLowerCase() == name.toLowerCase()))
+          .toList();
+    }
+
+    // Generate available brand logos based on brands present in shoes
+    final availableBrands = ShoeData.shoes.map((s) => s.brand.toLowerCase()).toSet();
+    _availableBrandLogos = SearchData.brandLogos
+        .where((logo) => availableBrands.contains(logo.name.toLowerCase()))
+        .toList();
+    if (mounted) setState(() {});
   }
 
   @override
@@ -371,9 +395,9 @@ class _SearchPageState extends State<SearchPage> {
         mainAxisSpacing: 12,
         childAspectRatio: 1.0,
       ),
-      itemCount: SearchData.brandLogos.length,
+      itemCount: _availableBrandLogos.length,
       itemBuilder: (context, index) {
-        final brand = SearchData.brandLogos[index];
+        final brand = _availableBrandLogos[index];
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -382,7 +406,7 @@ class _SearchPageState extends State<SearchPage> {
                 cursor: SystemMouseCursors.click,
                 child: GestureDetector(
                   onTap: () {
-                    _searchController.text = brand.name;
+                    _searchController.text = _popularSearches[index];
                     _filterShoes();
                   },
                   child: Container(
@@ -427,7 +451,7 @@ class _SearchPageState extends State<SearchPage> {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () {
-            _searchController.text = SearchData.popularSearches[index];
+            _searchController.text = _popularSearches[index];
             _filterShoes();
           },
           child: Row(
@@ -444,7 +468,7 @@ class _SearchPageState extends State<SearchPage> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  SearchData.popularSearches[index],
+                  _popularSearches[index],
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
