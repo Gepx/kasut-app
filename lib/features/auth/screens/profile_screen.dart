@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart'; // Import iconsax
 import 'package:provider/provider.dart'; // Add this import
 import 'package:kasut/providers/wishlist_provider.dart'; // Add this import
+import 'package:kasut/providers/profile_provider.dart';
+import 'package:kasut/providers/credit_provider.dart';
+import 'package:kasut/providers/seller_provider.dart'; // Added for SellerCredit
 import 'package:kasut/features/auth/services/auth_service.dart';
 import 'package:kasut/features/auth/screens/login_screen.dart';
 import 'package:kasut/features/profile/screens/buying_screen.dart'; // Placeholder
@@ -17,6 +20,7 @@ import 'package:kasut/features/profile/screens/invite_friend_screen.dart'; // Pl
 import 'package:kasut/features/profile/screens/settings_screen.dart'; // Placeholder
 import 'package:kasut/features/profile/screens/faq_screen.dart'; // Placeholder
 import 'signup_screen.dart'; // Use relative import for SignupScreen
+import 'dart:io'; // Added for File
 
 // Profile Screen now uses AuthService for state
 class ProfileScreen extends StatelessWidget {
@@ -34,14 +38,17 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = AuthService.currentUser;
-
-    // The Scaffold and AppBar are handled in main.dart
-    return Scaffold(
-      body:
-          currentUser != null
-              ? _buildLoggedInView(context, currentUser)
-              : _buildLoggedOutView(context),
+    // Use ProfileProvider for profile data
+    return Consumer<ProfileProvider>(
+      builder: (context, profileProvider, _) {
+        final hasProfile = profileProvider.username.isNotEmpty;
+        return Scaffold(
+          body:
+              hasProfile
+                  ? _buildLoggedInView(context, profileProvider)
+                  : _buildLoggedOutView(context),
+        );
+      },
     );
   }
 
@@ -158,26 +165,20 @@ class ProfileScreen extends StatelessWidget {
   // --- Logged In View (Updated Implementation) ---
   Widget _buildLoggedInView(
     BuildContext context,
-    Map<String, dynamic>
-    currentUser, // Changed from Map<String, String> to Map<String, dynamic>
+    ProfileProvider profileProvider,
   ) {
     final textTheme = Theme.of(context).textTheme;
-
-    // Placeholder data - replace with actual data later
-    final String username =
-        currentUser['username']?.toString() ??
-        ''; // Added toString() for safety
-    final String email =
-        currentUser['email']?.toString() ?? ''; // Added toString() for safety
-    const String kasutCredit = 'IDR 0'; // Placeholder
-    const String sellerCredit = 'IDR 0'; // Placeholder
-    const String kasutPoints = 'KP 0'; // Placeholder
-    const String version = 'Version 5.0.13'; // Static version
+    final String username = profileProvider.username;
+    final String? profileImagePath = profileProvider.profileImagePath;
+    const String kasutCredit = 'IDR 0';
+    const String sellerCredit = 'IDR 0';
+    const String kasutPoints = 'KP 0';
+    const String version = 'Version 5.0.13';
 
     return Container(
-      color: Colors.white, // Ensure white background for the whole profile page
+      color: Colors.white,
       child: ListView(
-        padding: EdgeInsets.zero, // Remove default padding
+        padding: EdgeInsets.zero,
         children: [
           // --- Top User Info Section ---
           Container(
@@ -186,18 +187,25 @@ class ProfileScreen extends StatelessWidget {
               bottom: 20,
               left: 16,
               right: 16,
-            ), // Adjust padding for status bar
-            color: Colors.white, // White background for header
+            ),
+            color: Colors.white,
             child: Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.black, // Black background for avatar
-                  child: Icon(
-                    Iconsax.user, // User icon
-                    color: Colors.white,
-                    size: 30,
-                  ),
+                  backgroundColor: Colors.black,
+                  backgroundImage:
+                      profileImagePath != null && profileImagePath.isNotEmpty
+                          ? FileImage(File(profileImagePath))
+                          : null,
+                  child:
+                      profileImagePath == null || profileImagePath.isEmpty
+                          ? const Icon(
+                            Iconsax.user,
+                            color: Colors.white,
+                            size: 30,
+                          )
+                          : null,
                 ),
                 const SizedBox(width: 16),
                 Column(
@@ -207,13 +215,6 @@ class ProfileScreen extends StatelessWidget {
                       username,
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      email,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey.shade600,
                       ),
                     ),
                   ],
@@ -235,7 +236,16 @@ class ProfileScreen extends StatelessWidget {
                         icon: Iconsax.wallet_3, // Wallet icon
                         iconColor: Colors.orange, // Example color
                         title: 'Kasut Credit',
-                        value: kasutCredit,
+                        valueWidget: Consumer<KasutCreditProvider>(
+                          builder: (context, creditProvider, _) {
+                            return Text(
+                              'IDR ${creditProvider.balance.toStringAsFixed(0)}',
+                              style: textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
                         routeName:
                             KasutCreditScreen.routeName, // Navigation route
                       ),
@@ -247,7 +257,22 @@ class ProfileScreen extends StatelessWidget {
                         icon: Iconsax.money_recive, // Money receive icon
                         iconColor: Colors.green, // Example color
                         title: 'Seller Credit',
-                        value: sellerCredit,
+                        valueWidget: Consumer<SellerProvider>(
+                          builder: (context, sellerProvider, _) {
+                            final sellerCredit =
+                                sellerProvider.profile != null &&
+                                        sellerProvider.profile!['credit'] !=
+                                            null
+                                    ? sellerProvider.profile!['credit']
+                                    : 0;
+                            return Text(
+                              'IDR ${sellerCredit.toString()}',
+                              style: textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
                         routeName:
                             SellerCreditScreen.routeName, // Navigation route
                       ),
@@ -260,7 +285,16 @@ class ProfileScreen extends StatelessWidget {
                   icon: Iconsax.star1, // Star icon
                   iconColor: Colors.blue, // Example color
                   title: 'Kasut Points',
-                  value: kasutPoints,
+                  valueWidget: Consumer<KasutPointsProvider>(
+                    builder: (context, pointsProvider, _) {
+                      return Text(
+                        'KP ${pointsProvider.points.toString()}',
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    },
+                  ),
                   isFullWidth: true,
                   routeName: KasutPointsScreen.routeName, // Navigation route
                 ),
@@ -299,7 +333,11 @@ class ProfileScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 12.0),
                       child: Row(
                         children: [
-                          Icon(Iconsax.location, color: Colors.black87, size: 24),
+                          Icon(
+                            Iconsax.location,
+                            color: Colors.black87,
+                            size: 24,
+                          ),
                           const SizedBox(width: 16),
                           const Expanded(
                             child: Text(
@@ -501,7 +539,7 @@ class ProfileScreen extends StatelessWidget {
     required IconData icon,
     required Color iconColor,
     required String title,
-    required String value,
+    required Widget valueWidget, // Changed from String value
     bool isFullWidth = false,
     required String routeName, // Added routeName for navigation
   }) {
@@ -543,12 +581,7 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                valueWidget, // Use the new valueWidget
               ],
             ),
             Icon(

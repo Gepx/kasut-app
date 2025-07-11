@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Add this import
 import 'package:kasut/providers/wishlist_provider.dart'; // Add this import
+import 'package:kasut/providers/profile_provider.dart';
 import 'signup_screen.dart'; // Navigate to signup
 import '../services/auth_service.dart'; // Use AuthService
 
@@ -56,6 +57,12 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         await wishlistProvider.initializeWithUser(user['email']);
 
+        // Update ProfileProvider with user data
+        Provider.of<ProfileProvider>(
+          context,
+          listen: false,
+        ).setProfile(user['username'] ?? '', user['profileImagePath']);
+
         // Navigate to Home screen on successful login, replacing the login screen
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -78,10 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: const Text(
           'Login',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -114,10 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'Please login to your account',
-                      style: TextStyle(
-                        fontSize: 16, 
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 32),
@@ -126,7 +127,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         labelText: 'Email',
                         hintText: 'Enter your email address',
-                        prefixIcon: const Icon(Icons.email_outlined, color: Colors.black54),
+                        prefixIcon: const Icon(
+                          Icons.email_outlined,
+                          color: Colors.black54,
+                        ),
                         labelStyle: const TextStyle(color: Colors.black54),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -138,7 +142,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -159,7 +166,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         labelText: 'Password',
                         hintText: 'Enter your password',
-                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.black54),
+                        prefixIcon: const Icon(
+                          Icons.lock_outline,
+                          color: Colors.black54,
+                        ),
                         labelStyle: const TextStyle(color: Colors.black54),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -171,7 +181,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
                       ),
                       obscureText: true,
@@ -200,7 +213,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     _isLoading
-                        ? const Center(child: CircularProgressIndicator(color: Colors.black))
+                        ? const Center(
+                          child: CircularProgressIndicator(color: Colors.black),
+                        )
                         : ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,

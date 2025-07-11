@@ -7,11 +7,26 @@ import 'package:kasut/providers/order_provider.dart';
 import 'package:kasut/providers/seller_provider.dart';
 import 'package:kasut/providers/credit_provider.dart';
 import 'package:kasut/providers/notification_provider.dart';
+import 'package:kasut/providers/profile_provider.dart';
+import 'package:kasut/providers/kasut_points_provider.dart';
 import 'package:kasut/utils/no_glow_scroll_behavior.dart';
 
 void main() {
   // Keep default (hash) web URL strategy for stability in dev server.
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (context) => WishlistProvider()),
+        ChangeNotifierProvider(create: (context) => OrderProvider()),
+        ChangeNotifierProvider(create: (context) => SellerProvider()),
+        ChangeNotifierProvider(create: (context) => KasutCreditProvider()),
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => KasutPointsProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -53,4 +68,4 @@ class _MainRefactoredState extends State<MainRefactored> {
   Widget build(BuildContext context) {
     return MainContainer(initialIndex: widget.initialIndex);
   }
-} 
+}

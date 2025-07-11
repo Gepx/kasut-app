@@ -23,7 +23,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Settings'),
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         foregroundColor: Colors.black,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -35,7 +38,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.person),
             title: const Text('Edit Profile'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => Navigator.pushNamed(context, EditProfileScreen.routeName),
+            onTap:
+                () => Navigator.pushNamed(context, EditProfileScreen.routeName),
           ),
           _buildDivider(),
           _buildSectionHeader('Preferences'),
@@ -60,12 +64,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.info_outline),
             title: const Text('About Kasut'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => showAboutDialog(
-              context: context,
-              applicationName: 'Kasut',
-              applicationVersion: '5.0.13',
-              applicationLegalese: '© 2024 Kasut',
-            ),
+            onTap:
+                () => showAboutDialog(
+                  context: context,
+                  applicationName: 'Kasut',
+                  applicationVersion: '5.0.13',
+                  applicationLegalese: '© 2024 Kasut',
+                ),
           ),
           const SizedBox(height: 24),
           ListTile(
@@ -81,7 +86,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -90,16 +98,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _selectLanguage() {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(title: const Text('English'), onTap: () => _setLang('English')),
-            ListTile(title: const Text('Bahasa Indonesia'), onTap: () => _setLang('Bahasa Indonesia')),
-          ],
-        ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      builder:
+          (_) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('English'),
+                  onTap: () => _setLang('English'),
+                ),
+                ListTile(
+                  title: const Text(
+                    'Bahasa Indonesia (Coming Soon)',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  enabled: false,
+                ),
+              ],
+            ),
+          ),
     );
   }
 
@@ -114,6 +134,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       Provider.of<WishlistProvider>(context, listen: false).clearWishlist();
     } catch (_) {}
     AuthService.logout();
-    Navigator.pushNamedAndRemoveUntil(context, LoginScreen.routeName, (r) => false);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      LoginScreen.routeName,
+      (r) => false,
+    );
   }
 }

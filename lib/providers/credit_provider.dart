@@ -6,8 +6,10 @@ class KasutCreditProvider with ChangeNotifier {
   double _balance = 0;
 
   List<CreditTxn> get transactions => List.unmodifiable(_transactions);
-  List<CreditTxn> get creditIn => _transactions.where((t) => t.amount > 0).toList();
-  List<CreditTxn> get creditOut => _transactions.where((t) => t.amount < 0).toList();
+  List<CreditTxn> get creditIn =>
+      _transactions.where((t) => t.amount > 0).toList();
+  List<CreditTxn> get creditOut =>
+      _transactions.where((t) => t.amount < 0).toList();
   double get balance => _balance;
 
   /// Add credit to the wallet (top-up)
@@ -35,4 +37,24 @@ class KasutCreditProvider with ChangeNotifier {
     _balance -= amount;
     notifyListeners();
   }
-} 
+}
+
+class KasutPointsProvider extends ChangeNotifier {
+  int _points = 0;
+  int get points => _points;
+
+  void setPoints(int value) {
+    _points = value;
+    notifyListeners();
+  }
+
+  void addPoints(int value) {
+    _points += value;
+    notifyListeners();
+  }
+
+  void subtractPoints(int value) {
+    _points -= value;
+    notifyListeners();
+  }
+}
