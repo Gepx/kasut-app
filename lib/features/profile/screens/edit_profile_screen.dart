@@ -71,10 +71,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       backgroundImage:
                           _profileImage != null
                               ? FileImage(_profileImage!)
-                              : const AssetImage(
-                                    'assets/images/default_avatar.png',
-                                  )
-                                  as ImageProvider,
+                              : null,
+                      child:
+                          _profileImage == null
+                              ? const Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: 30,
+                              )
+                              : null,
                     ),
                     Positioned(
                       bottom: 0,

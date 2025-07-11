@@ -8,7 +8,6 @@ import 'package:kasut/providers/seller_provider.dart';
 import 'package:kasut/providers/credit_provider.dart';
 import 'package:kasut/providers/notification_provider.dart';
 import 'package:kasut/providers/profile_provider.dart';
-import 'package:kasut/providers/kasut_points_provider.dart';
 import 'package:kasut/utils/no_glow_scroll_behavior.dart';
 
 void main() {
@@ -22,7 +21,9 @@ void main() {
         ChangeNotifierProvider(create: (context) => SellerProvider()),
         ChangeNotifierProvider(create: (context) => KasutCreditProvider()),
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
-        ChangeNotifierProvider(create: (_) => KasutPointsProvider()),
+        ChangeNotifierProvider(
+          create: (_) => KasutPointsProvider(),
+        ), // Add this back
       ],
       child: const MyApp(),
     ),
