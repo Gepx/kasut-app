@@ -2,8 +2,11 @@ import 'package:flutter/foundation.dart';
 import '../models/shoe_model.dart';
 
 enum OrderStatus { active, completed, cancelled }
+
 enum PaymentMethod { creditCard, bankTransfer, eWallet, cod }
+
 enum EWalletType { gopay, ovo, dana, shopeepay }
+
 enum CardType { visa, mastercard, jcb, amex }
 
 class PaymentMethodDetails {
@@ -11,18 +14,18 @@ class PaymentMethodDetails {
   final PaymentMethod type;
   final String nickname; // e.g., "My BCA Card", "Work GoPay"
   final bool isDefault;
-  
+
   // For Credit/Debit Cards
   final String? maskedCardNumber; // e.g., "**** **** **** 1234"
   final String? cardHolderName;
   final String? expiryDate;
   final CardType? cardType;
-  
+
   // For E-Wallets
   final EWalletType? eWalletType;
   final String? phoneNumber;
   final String? accountName;
-  
+
   // For Bank Transfer
   final String? bankName;
   final String? accountNumber;
@@ -73,8 +76,12 @@ class PaymentMethodDetails {
       maskedCardNumber: json['maskedCardNumber'],
       cardHolderName: json['cardHolderName'],
       expiryDate: json['expiryDate'],
-      cardType: json['cardType'] != null ? CardType.values[json['cardType']] : null,
-      eWalletType: json['eWalletType'] != null ? EWalletType.values[json['eWalletType']] : null,
+      cardType:
+          json['cardType'] != null ? CardType.values[json['cardType']] : null,
+      eWalletType:
+          json['eWalletType'] != null
+              ? EWalletType.values[json['eWalletType']]
+              : null,
       phoneNumber: json['phoneNumber'],
       accountName: json['accountName'],
       bankName: json['bankName'],
@@ -127,8 +134,10 @@ class PaymentMethodDetails {
   }
 
   String _maskAccountNumber() {
-    if (accountNumber == null || accountNumber!.length <= 4) return accountNumber ?? '';
-    return '*' * (accountNumber!.length - 4) + accountNumber!.substring(accountNumber!.length - 4);
+    if (accountNumber == null || accountNumber!.length <= 4)
+      return accountNumber ?? '';
+    return '*' * (accountNumber!.length - 4) +
+        accountNumber!.substring(accountNumber!.length - 4);
   }
 }
 
@@ -243,7 +252,10 @@ class Order {
       paymentMethod: PaymentMethodDetails.fromJson(json['paymentMethod']),
       deliveryAddress: DeliveryAddress.fromJson(json['deliveryAddress']),
       orderDate: DateTime.parse(json['orderDate']),
-      deliveryDate: json['deliveryDate'] != null ? DateTime.parse(json['deliveryDate']) : null,
+      deliveryDate:
+          json['deliveryDate'] != null
+              ? DateTime.parse(json['deliveryDate'])
+              : null,
       status: OrderStatus.values[json['status']],
       trackingNumber: json['trackingNumber'],
     );
@@ -254,27 +266,30 @@ class OrderProvider with ChangeNotifier {
   final List<Order> _orders = [];
   List<DeliveryAddress> _addresses = [];
   List<PaymentMethodDetails> _paymentMethods = [];
-  
+
   // Callback to notify when orders change
   Function(List<Order>)? _onOrdersChanged;
 
   List<Order> get orders => _orders;
   List<DeliveryAddress> get addresses => _addresses;
   List<PaymentMethodDetails> get paymentMethods => _paymentMethods;
-  
+
   // Set callback for order changes
   void setOrdersChangedCallback(Function(List<Order>) callback) {
     _onOrdersChanged = callback;
   }
-  
+
   // Notify about order changes
   void _notifyOrdersChanged() {
     _onOrdersChanged?.call(_orders);
   }
 
-  List<Order> get activeOrders => _orders.where((order) => order.status == OrderStatus.active).toList();
-  List<Order> get completedOrders => _orders.where((order) => order.status == OrderStatus.completed).toList();
-  List<Order> get cancelledOrders => _orders.where((order) => order.status == OrderStatus.cancelled).toList();
+  List<Order> get activeOrders =>
+      _orders.where((order) => order.status == OrderStatus.active).toList();
+  List<Order> get completedOrders =>
+      _orders.where((order) => order.status == OrderStatus.completed).toList();
+  List<Order> get cancelledOrders =>
+      _orders.where((order) => order.status == OrderStatus.cancelled).toList();
 
   DeliveryAddress? get defaultAddress {
     try {
@@ -294,19 +309,95 @@ class OrderProvider with ChangeNotifier {
 
   // Indonesian provinces and cities data
   static const Map<String, List<String>> indonesianLocations = {
-    'DKI Jakarta': ['Jakarta Pusat', 'Jakarta Utara', 'Jakarta Selatan', 'Jakarta Timur', 'Jakarta Barat', 'Kepulauan Seribu'],
-    'Jawa Barat': ['Bandung', 'Bekasi', 'Bogor', 'Cirebon', 'Depok', 'Sukabumi', 'Tasikmalaya', 'Banjar', 'Cimahi'],
-    'Jawa Tengah': ['Semarang', 'Solo', 'Yogyakarta', 'Magelang', 'Pekalongan', 'Purwokerto', 'Tegal', 'Salatiga'],
-    'Jawa Timur': ['Surabaya', 'Malang', 'Kediri', 'Blitar', 'Madiun', 'Mojokerto', 'Pasuruan', 'Probolinggo'],
-    'Banten': ['Tangerang', 'Tangerang Selatan', 'Serang', 'Cilegon', 'Pandeglang', 'Lebak'],
-    'Bali': ['Denpasar', 'Badung', 'Gianyar', 'Tabanan', 'Klungkung', 'Bangli', 'Karangasem', 'Buleleng', 'Jembrana'],
-    'Sumatera Utara': ['Medan', 'Binjai', 'Pematangsiantar', 'Tanjungbalai', 'Sibolga', 'Tebing Tinggi', 'Padangsidimpuan'],
-    'Sumatera Barat': ['Padang', 'Bukittinggi', 'Padang Panjang', 'Payakumbuh', 'Sawahlunto', 'Solok', 'Pariaman'],
-    'Riau': ['Pekanbaru', 'Dumai', 'Kampar', 'Rokan Hulu', 'Bengkalis', 'Indragiri Hulu', 'Kuantan Singingi'],
+    'DKI Jakarta': [
+      'Jakarta Pusat',
+      'Jakarta Utara',
+      'Jakarta Selatan',
+      'Jakarta Timur',
+      'Jakarta Barat',
+      'Kepulauan Seribu',
+    ],
+    'Jawa Barat': [
+      'Bandung',
+      'Bekasi',
+      'Bogor',
+      'Cirebon',
+      'Depok',
+      'Sukabumi',
+      'Tasikmalaya',
+      'Banjar',
+      'Cimahi',
+    ],
+    'Jawa Tengah': [
+      'Semarang',
+      'Solo',
+      'Yogyakarta',
+      'Magelang',
+      'Pekalongan',
+      'Purwokerto',
+      'Tegal',
+      'Salatiga',
+    ],
+    'Jawa Timur': [
+      'Surabaya',
+      'Malang',
+      'Kediri',
+      'Blitar',
+      'Madiun',
+      'Mojokerto',
+      'Pasuruan',
+      'Probolinggo',
+    ],
+    'Banten': [
+      'Tangerang',
+      'Tangerang Selatan',
+      'Serang',
+      'Cilegon',
+      'Pandeglang',
+      'Lebak',
+    ],
+    'Bali': [
+      'Denpasar',
+      'Badung',
+      'Gianyar',
+      'Tabanan',
+      'Klungkung',
+      'Bangli',
+      'Karangasem',
+      'Buleleng',
+      'Jembrana',
+    ],
+    'Sumatera Utara': [
+      'Medan',
+      'Binjai',
+      'Pematangsiantar',
+      'Tanjungbalai',
+      'Sibolga',
+      'Tebing Tinggi',
+      'Padangsidimpuan',
+    ],
+    'Sumatera Barat': [
+      'Padang',
+      'Bukittinggi',
+      'Padang Panjang',
+      'Payakumbuh',
+      'Sawahlunto',
+      'Solok',
+      'Pariaman',
+    ],
+    'Riau': [
+      'Pekanbaru',
+      'Dumai',
+      'Kampar',
+      'Rokan Hulu',
+      'Bengkalis',
+      'Indragiri Hulu',
+      'Kuantan Singingi',
+    ],
   };
 
   List<String> get provinces => indonesianLocations.keys.toList();
-  
+
   List<String> getCitiesByProvince(String province) {
     return indonesianLocations[province] ?? [];
   }
@@ -317,52 +408,9 @@ class OrderProvider with ChangeNotifier {
   }
 
   void _initializeSampleData() {
-    _addresses = [
-      DeliveryAddress(
-        id: '1',
-        name: 'John Doe',
-        phone: '+6281234567890',
-        address: 'Jl. Sudirman No. 123, Apartment ABC, Unit 45',
-        city: 'Jakarta Selatan',
-        province: 'DKI Jakarta',
-        postalCode: '12190',
-        notes: 'Ring the bell twice',
-        isDefault: true,
-      ),
-      DeliveryAddress(
-        id: '2',
-        name: 'John Doe',
-        phone: '+6281234567890',
-        address: 'Jl. Gatot Subroto No. 456, Office Building XYZ',
-        city: 'Jakarta Pusat',
-        province: 'DKI Jakarta',
-        postalCode: '10270',
-        notes: 'Office hours: 9 AM - 6 PM',
-        isDefault: false,
-      ),
-    ];
-
-    _paymentMethods = [
-      PaymentMethodDetails(
-        id: '1',
-        type: PaymentMethod.creditCard,
-        nickname: 'My BCA Card',
-        isDefault: true,
-        maskedCardNumber: '**** **** **** 1234',
-        cardHolderName: 'JOHN DOE',
-        expiryDate: '12/25',
-        cardType: CardType.visa,
-      ),
-      PaymentMethodDetails(
-        id: '2',
-        type: PaymentMethod.eWallet,
-        nickname: 'Work GoPay',
-        isDefault: false,
-        eWalletType: EWalletType.gopay,
-        phoneNumber: '+6281234567890',
-        accountName: 'John Doe',
-      ),
-    ];
+    // Remove dummy data - users should add their own addresses and payment methods
+    _addresses = [];
+    _paymentMethods = [];
   }
 
   void addOrder(Order order) {
@@ -385,7 +433,10 @@ class OrderProvider with ChangeNotifier {
         paymentMethod: order.paymentMethod,
         deliveryAddress: order.deliveryAddress,
         orderDate: order.orderDate,
-        deliveryDate: newStatus == OrderStatus.completed ? DateTime.now() : order.deliveryDate,
+        deliveryDate:
+            newStatus == OrderStatus.completed
+                ? DateTime.now()
+                : order.deliveryDate,
         status: newStatus,
         trackingNumber: order.trackingNumber,
       );
@@ -394,20 +445,42 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
+  /// Cancel an order and update its status to cancelled
+  void cancelOrder(String orderId, {Function(int)? onPointsDeducted}) {
+    final orderIndex = _orders.indexWhere((order) => order.id == orderId);
+    if (orderIndex != -1) {
+      final order = _orders[orderIndex];
+
+      // Calculate points that were earned from this order (price / 100)
+      final pointsToDeduct = (order.itemPrice / 100).round();
+
+      // Update order status
+      updateOrderStatus(orderId, OrderStatus.cancelled);
+
+      // Notify about points that should be deducted
+      onPointsDeducted?.call(pointsToDeduct);
+    }
+  }
+
   // Address management
   void addAddress(DeliveryAddress address) {
     if (address.isDefault) {
-      _addresses = _addresses.map((addr) => DeliveryAddress(
-        id: addr.id,
-        name: addr.name,
-        phone: addr.phone,
-        address: addr.address,
-        city: addr.city,
-        province: addr.province,
-        postalCode: addr.postalCode,
-        notes: addr.notes,
-        isDefault: false,
-      )).toList();
+      _addresses =
+          _addresses
+              .map(
+                (addr) => DeliveryAddress(
+                  id: addr.id,
+                  name: addr.name,
+                  phone: addr.phone,
+                  address: addr.address,
+                  city: addr.city,
+                  province: addr.province,
+                  postalCode: addr.postalCode,
+                  notes: addr.notes,
+                  isDefault: false,
+                ),
+              )
+              .toList();
     }
     _addresses.add(address);
     notifyListeners();
@@ -417,17 +490,25 @@ class OrderProvider with ChangeNotifier {
     final index = _addresses.indexWhere((addr) => addr.id == updatedAddress.id);
     if (index != -1) {
       if (updatedAddress.isDefault) {
-        _addresses = _addresses.map((addr) => addr.id != updatedAddress.id ? DeliveryAddress(
-          id: addr.id,
-          name: addr.name,
-          phone: addr.phone,
-          address: addr.address,
-          city: addr.city,
-          province: addr.province,
-          postalCode: addr.postalCode,
-          notes: addr.notes,
-          isDefault: false,
-        ) : addr).toList();
+        _addresses =
+            _addresses
+                .map(
+                  (addr) =>
+                      addr.id != updatedAddress.id
+                          ? DeliveryAddress(
+                            id: addr.id,
+                            name: addr.name,
+                            phone: addr.phone,
+                            address: addr.address,
+                            city: addr.city,
+                            province: addr.province,
+                            postalCode: addr.postalCode,
+                            notes: addr.notes,
+                            isDefault: false,
+                          )
+                          : addr,
+                )
+                .toList();
       }
       _addresses[index] = updatedAddress;
       notifyListeners();
@@ -437,17 +518,19 @@ class OrderProvider with ChangeNotifier {
   void deleteAddress(String addressId) {
     _addresses.removeWhere((addr) => addr.id == addressId);
     if (_addresses.isNotEmpty && !_addresses.any((addr) => addr.isDefault)) {
-      updateAddress(DeliveryAddress(
-        id: _addresses.first.id,
-        name: _addresses.first.name,
-        phone: _addresses.first.phone,
-        address: _addresses.first.address,
-        city: _addresses.first.city,
-        province: _addresses.first.province,
-        postalCode: _addresses.first.postalCode,
-        notes: _addresses.first.notes,
-        isDefault: true,
-      ));
+      updateAddress(
+        DeliveryAddress(
+          id: _addresses.first.id,
+          name: _addresses.first.name,
+          phone: _addresses.first.phone,
+          address: _addresses.first.address,
+          city: _addresses.first.city,
+          province: _addresses.first.province,
+          postalCode: _addresses.first.postalCode,
+          notes: _addresses.first.notes,
+          isDefault: true,
+        ),
+      );
     }
     notifyListeners();
   }
@@ -457,49 +540,64 @@ class OrderProvider with ChangeNotifier {
     if (_paymentMethods.length >= 3) {
       throw Exception('Maximum 3 payment methods allowed');
     }
-    
+
     if (paymentMethod.isDefault) {
-      _paymentMethods = _paymentMethods.map((method) => PaymentMethodDetails(
-        id: method.id,
-        type: method.type,
-        nickname: method.nickname,
-        isDefault: false,
-        maskedCardNumber: method.maskedCardNumber,
-        cardHolderName: method.cardHolderName,
-        expiryDate: method.expiryDate,
-        cardType: method.cardType,
-        eWalletType: method.eWalletType,
-        phoneNumber: method.phoneNumber,
-        accountName: method.accountName,
-        bankName: method.bankName,
-        accountNumber: method.accountNumber,
-        accountHolderName: method.accountHolderName,
-      )).toList();
+      _paymentMethods =
+          _paymentMethods
+              .map(
+                (method) => PaymentMethodDetails(
+                  id: method.id,
+                  type: method.type,
+                  nickname: method.nickname,
+                  isDefault: false,
+                  maskedCardNumber: method.maskedCardNumber,
+                  cardHolderName: method.cardHolderName,
+                  expiryDate: method.expiryDate,
+                  cardType: method.cardType,
+                  eWalletType: method.eWalletType,
+                  phoneNumber: method.phoneNumber,
+                  accountName: method.accountName,
+                  bankName: method.bankName,
+                  accountNumber: method.accountNumber,
+                  accountHolderName: method.accountHolderName,
+                ),
+              )
+              .toList();
     }
     _paymentMethods.add(paymentMethod);
     notifyListeners();
   }
 
   void updatePaymentMethod(PaymentMethodDetails updatedPaymentMethod) {
-    final index = _paymentMethods.indexWhere((method) => method.id == updatedPaymentMethod.id);
+    final index = _paymentMethods.indexWhere(
+      (method) => method.id == updatedPaymentMethod.id,
+    );
     if (index != -1) {
       if (updatedPaymentMethod.isDefault) {
-        _paymentMethods = _paymentMethods.map((method) => method.id != updatedPaymentMethod.id ? PaymentMethodDetails(
-          id: method.id,
-          type: method.type,
-          nickname: method.nickname,
-          isDefault: false,
-          maskedCardNumber: method.maskedCardNumber,
-          cardHolderName: method.cardHolderName,
-          expiryDate: method.expiryDate,
-          cardType: method.cardType,
-          eWalletType: method.eWalletType,
-          phoneNumber: method.phoneNumber,
-          accountName: method.accountName,
-          bankName: method.bankName,
-          accountNumber: method.accountNumber,
-          accountHolderName: method.accountHolderName,
-        ) : method).toList();
+        _paymentMethods =
+            _paymentMethods
+                .map(
+                  (method) =>
+                      method.id != updatedPaymentMethod.id
+                          ? PaymentMethodDetails(
+                            id: method.id,
+                            type: method.type,
+                            nickname: method.nickname,
+                            isDefault: false,
+                            maskedCardNumber: method.maskedCardNumber,
+                            cardHolderName: method.cardHolderName,
+                            expiryDate: method.expiryDate,
+                            cardType: method.cardType,
+                            eWalletType: method.eWalletType,
+                            phoneNumber: method.phoneNumber,
+                            accountName: method.accountName,
+                            bankName: method.bankName,
+                            accountNumber: method.accountNumber,
+                            accountHolderName: method.accountHolderName,
+                          )
+                          : method,
+                )
+                .toList();
       }
       _paymentMethods[index] = updatedPaymentMethod;
       notifyListeners();
@@ -508,23 +606,26 @@ class OrderProvider with ChangeNotifier {
 
   void deletePaymentMethod(String paymentMethodId) {
     _paymentMethods.removeWhere((method) => method.id == paymentMethodId);
-    if (_paymentMethods.isNotEmpty && !_paymentMethods.any((method) => method.isDefault)) {
-      updatePaymentMethod(PaymentMethodDetails(
-        id: _paymentMethods.first.id,
-        type: _paymentMethods.first.type,
-        nickname: _paymentMethods.first.nickname,
-        isDefault: true,
-        maskedCardNumber: _paymentMethods.first.maskedCardNumber,
-        cardHolderName: _paymentMethods.first.cardHolderName,
-        expiryDate: _paymentMethods.first.expiryDate,
-        cardType: _paymentMethods.first.cardType,
-        eWalletType: _paymentMethods.first.eWalletType,
-        phoneNumber: _paymentMethods.first.phoneNumber,
-        accountName: _paymentMethods.first.accountName,
-        bankName: _paymentMethods.first.bankName,
-        accountNumber: _paymentMethods.first.accountNumber,
-        accountHolderName: _paymentMethods.first.accountHolderName,
-      ));
+    if (_paymentMethods.isNotEmpty &&
+        !_paymentMethods.any((method) => method.isDefault)) {
+      updatePaymentMethod(
+        PaymentMethodDetails(
+          id: _paymentMethods.first.id,
+          type: _paymentMethods.first.type,
+          nickname: _paymentMethods.first.nickname,
+          isDefault: true,
+          maskedCardNumber: _paymentMethods.first.maskedCardNumber,
+          cardHolderName: _paymentMethods.first.cardHolderName,
+          expiryDate: _paymentMethods.first.expiryDate,
+          cardType: _paymentMethods.first.cardType,
+          eWalletType: _paymentMethods.first.eWalletType,
+          phoneNumber: _paymentMethods.first.phoneNumber,
+          accountName: _paymentMethods.first.accountName,
+          bankName: _paymentMethods.first.bankName,
+          accountNumber: _paymentMethods.first.accountNumber,
+          accountHolderName: _paymentMethods.first.accountHolderName,
+        ),
+      );
     }
     notifyListeners();
   }
@@ -565,4 +666,4 @@ class OrderProvider with ChangeNotifier {
     if (cardNumber.length <= 4) return cardNumber;
     return '**** **** **** ${cardNumber.substring(cardNumber.length - 4)}';
   }
-} 
+}

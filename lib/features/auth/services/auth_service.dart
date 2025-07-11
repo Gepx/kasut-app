@@ -142,6 +142,44 @@ class AuthService {
         (_currentUser!['registeredAsSeller'] ?? false);
   }
 
+  /// Register current user as seller
+  static void registerAsSeller() {
+    if (_currentUser != null) {
+      _currentUser!['registeredAsSeller'] = true;
+      // Also update in the users map
+      final email = _currentUser!['email'];
+      if (email != null && _users.containsKey(email)) {
+        _users[email]!['registeredAsSeller'] = true;
+      }
+      debugPrint('AuthService: User registered as seller.');
+    }
+  }
+
+  /// Update user credit balances
+  static void updateUserCredits({
+    double? kasutCredit,
+    double? sellCredit,
+    int? kasutPoints,
+  }) {
+    if (_currentUser != null) {
+      final email = _currentUser!['email'];
+      if (email != null && _users.containsKey(email)) {
+        if (kasutCredit != null) {
+          _currentUser!['kasutCredit'] = kasutCredit;
+          _users[email]!['kasutCredit'] = kasutCredit;
+        }
+        if (sellCredit != null) {
+          _currentUser!['sellCredit'] = sellCredit;
+          _users[email]!['sellCredit'] = sellCredit;
+        }
+        if (kasutPoints != null) {
+          _currentUser!['kasutPoints'] = kasutPoints;
+          _users[email]!['kasutPoints'] = kasutPoints;
+        }
+      }
+    }
+  }
+
   // Static method to clear wishlist from any context
   static void clearWishlistFromProvider(BuildContext context) {
     final wishlistProvider = Provider.of<WishlistProvider>(

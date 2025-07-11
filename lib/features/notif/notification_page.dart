@@ -25,9 +25,12 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   void _loadNotifications() {
-    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+    final notificationProvider = Provider.of<NotificationProvider>(
+      context,
+      listen: false,
+    );
     final orderProvider = Provider.of<OrderProvider>(context, listen: false);
-    
+
     // Generate notifications from existing orders
     notificationProvider.generateNotificationsFromOrders(orderProvider.orders);
   }
@@ -50,6 +53,33 @@ class _NotificationPageState extends State<NotificationPage> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
+          actions: [
+            Consumer<NotificationProvider>(
+              builder: (context, notificationProvider, child) {
+                if (notificationProvider.unreadCount > 0) {
+                  return TextButton(
+                    onPressed: () {
+                      notificationProvider.markAllAsRead();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('All notifications marked as read'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Read All',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
             child: Consumer<NotificationProvider>(
@@ -100,7 +130,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                 shape: BoxShape.circle,
                               ),
                               child: Text(
-                                notificationProvider.unreadPurchaseCount.toString(),
+                                notificationProvider.unreadPurchaseCount
+                                    .toString(),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
@@ -126,7 +157,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                 shape: BoxShape.circle,
                               ),
                               child: Text(
-                                notificationProvider.unreadSellerCount.toString(),
+                                notificationProvider.unreadSellerCount
+                                    .toString(),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
@@ -166,7 +198,7 @@ class NotificationContent extends StatelessWidget {
     return Consumer<NotificationProvider>(
       builder: (context, notificationProvider, child) {
         List<AppNotification> notifications;
-        
+
         switch (category) {
           case NotificationCategory.all:
             notifications = notificationProvider.allNotifications;
@@ -185,15 +217,24 @@ class NotificationContent extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: () async {
-            final orderProvider = Provider.of<OrderProvider>(context, listen: false);
-            notificationProvider.generateNotificationsFromOrders(orderProvider.orders);
+            final orderProvider = Provider.of<OrderProvider>(
+              context,
+              listen: false,
+            );
+            notificationProvider.generateNotificationsFromOrders(
+              orderProvider.orders,
+            );
           },
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: notifications.length,
             itemBuilder: (context, index) {
               final notification = notifications[index];
-              return _buildNotificationCard(context, notification, notificationProvider);
+              return _buildNotificationCard(
+                context,
+                notification,
+                notificationProvider,
+              );
             },
           ),
         );
@@ -205,7 +246,7 @@ class NotificationContent extends StatelessWidget {
     String message;
     String description;
     IconData icon;
-    
+
     switch (category) {
       case NotificationCategory.all:
         message = 'Tidak Ada Notifikasi';
@@ -236,11 +277,7 @@ class NotificationContent extends StatelessWidget {
                 color: Colors.grey[100],
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 48,
-                color: Colors.grey[400],
-              ),
+              child: Icon(icon, size: 48, color: Colors.grey[400]),
             ),
             const SizedBox(height: 16),
             Text(
@@ -255,10 +292,7 @@ class NotificationContent extends StatelessWidget {
             Text(
               description,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -283,9 +317,10 @@ class NotificationContent extends StatelessWidget {
             offset: const Offset(0, 2),
           ),
         ],
-        border: notification.isRead 
-          ? null 
-          : Border.all(color: Colors.blue[200]!, width: 1),
+        border:
+            notification.isRead
+                ? null
+                : Border.all(color: Colors.blue[200]!, width: 1),
       ),
       child: Material(
         color: Colors.transparent,
@@ -311,23 +346,24 @@ class NotificationContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.grey[200]!),
                   ),
-                  child: notification.imageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: AssetImageLoader(
-                          imagePath: notification.imageUrl!,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Icon(
-                        _getNotificationIcon(notification.type),
-                        color: _getNotificationColor(notification.type),
-                        size: 28,
-                      ),
+                  child:
+                      notification.imageUrl != null
+                          ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: AssetImageLoader(
+                              imagePath: notification.imageUrl!,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                          : Icon(
+                            _getNotificationIcon(notification.type),
+                            color: _getNotificationColor(notification.type),
+                            size: 28,
+                          ),
                 ),
-                
+
                 const SizedBox(width: 12),
-                
+
                 // Notification content
                 Expanded(
                   child: Column(
@@ -340,7 +376,10 @@ class NotificationContent extends StatelessWidget {
                               notification.title,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: notification.isRead ? FontWeight.w500 : FontWeight.w600,
+                                fontWeight:
+                                    notification.isRead
+                                        ? FontWeight.w500
+                                        : FontWeight.w600,
                                 color: Colors.black,
                               ),
                               maxLines: 1,
@@ -358,9 +397,9 @@ class NotificationContent extends StatelessWidget {
                             ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 4),
-                      
+
                       Text(
                         notification.message,
                         style: TextStyle(
@@ -371,9 +410,9 @@ class NotificationContent extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      
+
                       const SizedBox(height: 8),
-                      
+
                       Row(
                         children: [
                           Icon(
@@ -396,7 +435,9 @@ class NotificationContent extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: _getNotificationColor(notification.type).withOpacity(0.1),
+                              color: _getNotificationColor(
+                                notification.type,
+                              ).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -421,7 +462,10 @@ class NotificationContent extends StatelessWidget {
     );
   }
 
-  void _handleNotificationTap(BuildContext context, AppNotification notification) {
+  void _handleNotificationTap(
+    BuildContext context,
+    AppNotification notification,
+  ) {
     switch (notification.actionRoute) {
       case '/buying':
         Navigator.push(

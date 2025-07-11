@@ -63,11 +63,15 @@ class _AddListingScreenState extends State<AddListingScreen> {
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
 
-      final results = ShoeData.shoes.where((shoe) {
-        final lowerQuery = query.toLowerCase();
-        return shoe.name.toLowerCase().contains(lowerQuery) ||
-               shoe.brand.toLowerCase().contains(lowerQuery);
-      }).take(10).toList();
+      final results =
+          ShoeData.shoes
+              .where((shoe) {
+                final lowerQuery = query.toLowerCase();
+                return shoe.name.toLowerCase().contains(lowerQuery) ||
+                    shoe.brand.toLowerCase().contains(lowerQuery);
+              })
+              .take(10)
+              .toList();
 
       setState(() {
         _searchResults = results;
@@ -82,11 +86,13 @@ class _AddListingScreenState extends State<AddListingScreen> {
       _selectedSize = null; // Reset size selection
       _searchController.clear();
       _searchResults = [];
-      
+
       // Set suggested price (80% of original for used items)
       final priceFormat = NumberFormat.decimalPattern('id');
       if (_selectedCondition != ProductCondition.brandNew) {
-        _priceController.text = priceFormat.format((product.price * 0.8).round());
+        _priceController.text = priceFormat.format(
+          (product.price * 0.8).round(),
+        );
       } else {
         _priceController.text = priceFormat.format(product.price.round());
       }
@@ -101,11 +107,12 @@ class _AddListingScreenState extends State<AddListingScreen> {
     );
 
     if (result != null) {
-      final images = result.files
-          .where((file) => file.bytes != null)
-          .map((file) => file.bytes!)
-          .toList();
-      
+      final images =
+          result.files
+              .where((file) => file.bytes != null)
+              .map((file) => file.bytes!)
+              .toList();
+
       setState(() {
         _uploadedImages.addAll(images);
         // Limit to 5 images
@@ -124,11 +131,11 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
   bool _validatePrice() {
     if (_selectedProduct == null) return false;
-    
+
     final priceString = _priceController.text.replaceAll('.', '');
     final price = double.tryParse(priceString);
     if (price == null) return false;
-    
+
     return price <= _selectedProduct!.price;
   }
 
@@ -166,8 +173,12 @@ class _AddListingScreenState extends State<AddListingScreen> {
       condition: _selectedCondition,
       sellerPrice: double.parse(_priceController.text.replaceAll('.', '')),
       selectedSize: _selectedSize!,
-      sellerImages: _uploadedImages.map((bytes) => 'data:image/jpeg;base64,${bytes.toString()}').toList(),
-      conditionNotes: _notesController.text.isEmpty ? null : _notesController.text,
+      sellerImages:
+          _uploadedImages
+              .map((bytes) => 'data:image/jpeg;base64,${bytes.toString()}')
+              .toList(),
+      conditionNotes:
+          _notesController.text.isEmpty ? null : _notesController.text,
       listedDate: DateTime.now(),
     );
 
@@ -181,28 +192,91 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // Check if user is registered as seller
+    if (!AuthService.isRegisteredAsSeller()) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text('Add Listing'),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.store_outlined,
+                    size: 48,
+                    color: Colors.orange[600],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Seller Registration Required',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'You need to register as a seller first before you can add product listings.',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Go Back',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return ResponsiveBuilder(
       builder: (context, deviceType, width) {
         final padding = ResponsiveUtils.getResponsivePadding(width);
-        
+
         return Scaffold(
           appBar: AppBar(
             title: Text(IndonesianText.jualSepatu),
@@ -223,41 +297,55 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     if (_searchResults.isNotEmpty) _buildSearchResults(),
                   ] else
                     _buildSelectedProduct(),
-                  
-                  SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.lg)),
-                  
+
+                  SizedBox(
+                    height: ResponsiveUtils.getSpacing(width, SpacingSize.lg),
+                  ),
+
                   // Size and Category Selection
                   if (_selectedProduct != null) ...[
                     _buildSectionTitle('Kategori & Ukuran'),
                     _buildCategorySelection(),
                     const SizedBox(height: 16),
                     _buildSizeSelection(),
-                    SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.lg)),
+                    SizedBox(
+                      height: ResponsiveUtils.getSpacing(width, SpacingSize.lg),
+                    ),
                   ],
-                  
+
                   // Condition Selection
                   _buildSectionTitle(IndonesianText.kondisi),
                   _buildConditionSelection(),
-                  SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.lg)),
-                  
+                  SizedBox(
+                    height: ResponsiveUtils.getSpacing(width, SpacingSize.lg),
+                  ),
+
                   // Image Upload
                   _buildSectionTitle(IndonesianText.uploadFoto),
                   _buildImageUpload(),
-                  SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.lg)),
-                  
+                  SizedBox(
+                    height: ResponsiveUtils.getSpacing(width, SpacingSize.lg),
+                  ),
+
                   // Price Setting
                   _buildSectionTitle(IndonesianText.tentukanharga),
                   _buildPriceInput(width),
-                  SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.lg)),
-                  
+                  SizedBox(
+                    height: ResponsiveUtils.getSpacing(width, SpacingSize.lg),
+                  ),
+
                   // Condition Notes
                   _buildSectionTitle(IndonesianText.catatanKondisi),
                   _buildNotesInput(),
-                  SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.xl)),
-                  
+                  SizedBox(
+                    height: ResponsiveUtils.getSpacing(width, SpacingSize.xl),
+                  ),
+
                   // Submit Button
                   _buildSubmitButton(width),
-                  SizedBox(height: ResponsiveUtils.getSpacing(width, SpacingSize.lg)),
+                  SizedBox(
+                    height: ResponsiveUtils.getSpacing(width, SpacingSize.lg),
+                  ),
                 ],
               ),
             ),
@@ -289,9 +377,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
           decoration: InputDecoration(
             hintText: '${IndonesianText.cari} sepatu...',
             prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
             fillColor: Colors.grey[100],
           ),
@@ -327,8 +413,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                 width: 40,
                 height: 40,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(
+                errorBuilder:
+                    (context, error, stackTrace) => Container(
                       width: 40,
                       height: 40,
                       color: Colors.grey[300],
@@ -344,10 +430,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
             ),
             subtitle: Text(
               '${product.brand} • ${IndonesianUtils.formatRupiahShort(product.price)}',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
             onTap: () => _selectProduct(product),
           );
@@ -391,10 +474,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                 ),
                 Text(
                   _selectedProduct!.brand,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
                 Text(
                   'Harga Brand New: ${IndonesianUtils.formatRupiahShort(_selectedProduct!.price)}',
@@ -430,35 +510,39 @@ class _AddListingScreenState extends State<AddListingScreen> {
     return Wrap(
       spacing: 8.0,
       runSpacing: 8.0,
-      children: availableSizes.map((size) {
-        final sizeString = size.toString().endsWith('.0') ? size.toInt().toString() : size.toString();
-        final isSelected = _selectedSize == sizeString;
-        return ChoiceChip(
-          label: Text(sizeString),
-          selected: isSelected,
-          onSelected: (selected) {
-            setState(() {
-              if (selected) {
-                _selectedSize = sizeString;
-              }
-            });
-          },
-          selectedColor: Colors.black,
-          labelStyle: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
-          ),
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(
-              color: isSelected ? Colors.black : Colors.grey.shade300,
-            ),
-          ),
-        );
-      }).toList(),
+      children:
+          availableSizes.map((size) {
+            final sizeString =
+                size.toString().endsWith('.0')
+                    ? size.toInt().toString()
+                    : size.toString();
+            final isSelected = _selectedSize == sizeString;
+            return ChoiceChip(
+              label: Text(sizeString),
+              selected: isSelected,
+              onSelected: (selected) {
+                setState(() {
+                  if (selected) {
+                    _selectedSize = sizeString;
+                  }
+                });
+              },
+              selectedColor: Colors.black,
+              labelStyle: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+              ),
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isSelected ? Colors.black : Colors.grey.shade300,
+                ),
+              ),
+            );
+          }).toList(),
     );
   }
-  
+
   Widget _buildCategorySelection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -486,9 +570,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
         }
       },
       selectedColor: Colors.black,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.black,
-      ),
+      labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -501,37 +583,42 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
   Widget _buildConditionSelection() {
     return Column(
-      children: ProductCondition.values.map((condition) {
-        return RadioListTile<ProductCondition>(
-          value: condition,
-          groupValue: _selectedCondition,
-          activeColor: Colors.black,
-          onChanged: (value) => setState(() {
-            _selectedCondition = value!;
-            // Adjust suggested price based on condition
-            if (_selectedProduct != null) {
-              double suggestionMultiplier = 1.0;
-              switch (condition) {
-                case ProductCondition.brandNew:
-                  suggestionMultiplier = 1.0;
-                  break;
-                case ProductCondition.denganBox:
-                  suggestionMultiplier = 0.85;
-                  break;
-                case ProductCondition.tanpaBox:
-                  suggestionMultiplier = 0.75;
-                  break;
-                case ProductCondition.lainnya:
-                  suggestionMultiplier = 0.7;
-                  break;
-              }
-              _priceController.text = (suggestionMultiplier * _selectedProduct!.price).round().toString();
-            }
-          }),
-          title: Text(condition.label),
-          dense: true,
-        );
-      }).toList(),
+      children:
+          ProductCondition.values.map((condition) {
+            return RadioListTile<ProductCondition>(
+              value: condition,
+              groupValue: _selectedCondition,
+              activeColor: Colors.black,
+              onChanged:
+                  (value) => setState(() {
+                    _selectedCondition = value!;
+                    // Adjust suggested price based on condition
+                    if (_selectedProduct != null) {
+                      double suggestionMultiplier = 1.0;
+                      switch (condition) {
+                        case ProductCondition.brandNew:
+                          suggestionMultiplier = 1.0;
+                          break;
+                        case ProductCondition.denganBox:
+                          suggestionMultiplier = 0.85;
+                          break;
+                        case ProductCondition.tanpaBox:
+                          suggestionMultiplier = 0.75;
+                          break;
+                        case ProductCondition.lainnya:
+                          suggestionMultiplier = 0.7;
+                          break;
+                      }
+                      _priceController.text =
+                          (suggestionMultiplier * _selectedProduct!.price)
+                              .round()
+                              .toString();
+                    }
+                  }),
+              title: Text(condition.label),
+              dense: true,
+            );
+          }).toList(),
     );
   }
 
@@ -588,9 +675,11 @@ class _AddListingScreenState extends State<AddListingScreen> {
         OutlinedButton.icon(
           onPressed: _uploadedImages.length < 5 ? _pickImages : null,
           icon: const Icon(Icons.add_photo_alternate),
-          label: Text(_uploadedImages.isEmpty 
-              ? IndonesianText.uploadFoto 
-              : 'Tambah Foto (${_uploadedImages.length}/5)'),
+          label: Text(
+            _uploadedImages.isEmpty
+                ? IndonesianText.uploadFoto
+                : 'Tambah Foto (${_uploadedImages.length}/5)',
+          ),
           style: OutlinedButton.styleFrom(
             minimumSize: const Size(double.infinity, 48),
           ),
@@ -650,9 +739,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
       decoration: InputDecoration(
         labelText: 'Catatan Kondisi (Opsional)',
         hintText: 'Jelaskan kondisi detail sepatu Anda...',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         filled: true,
         fillColor: Colors.white,
       ),
@@ -668,16 +755,11 @@ class _AddListingScreenState extends State<AddListingScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Text(
           IndonesianText.jual,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -689,7 +771,9 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     // Short-circuit if the new value is empty
     if (newValue.text.isEmpty) {
       return newValue.copyWith(text: '');
@@ -717,4 +801,4 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
       selection: TextSelection.collapsed(offset: newString.length),
     );
   }
-} 
+}

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:kasut/features/home/home_search_bar.dart';
 import 'package:kasut/features/notif/notification_page.dart';
 import 'package:kasut/features/home/home_all.dart';
 import 'package:kasut/models/shoe_model.dart';
 import 'package:kasut/features/home/components/brand_header.dart';
 import 'package:kasut/features/home/components/brand_sneaker_grid.dart';
+import 'package:kasut/providers/notification_provider.dart';
 
 /// HomePage component following micro-frontend architecture
 class HomePage extends StatelessWidget {
@@ -19,10 +21,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeBody(
-      tabController: tabController,
-      brands: brands,
-    );
+    return HomeBody(tabController: tabController, brands: brands);
   }
 }
 
@@ -56,14 +55,53 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               Row(
                 children: [
                   const Expanded(child: HomeSearchBar()),
-                  IconButton(
-                    icon: const Icon(Icons.notifications_outlined, size: 25),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationPage(),
-                        ),
+                  Consumer<NotificationProvider>(
+                    builder: (context, notificationProvider, child) {
+                      return Stack(
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.notifications_outlined,
+                              size: 25,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NotificationPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          if (notificationProvider.unreadCount > 0)
+                            Positioned(
+                              right: 6,
+                              top: 6,
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 18,
+                                  minHeight: 18,
+                                ),
+                                child: Text(
+                                  notificationProvider.unreadCount > 99
+                                      ? '99+'
+                                      : notificationProvider.unreadCount
+                                          .toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
                       );
                     },
                   ),
@@ -88,7 +126,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
               return TabBar(
                 isScrollable: true,
-                tabAlignment: isDesktop ? TabAlignment.center : TabAlignment.start,
+                tabAlignment:
+                    isDesktop ? TabAlignment.center : TabAlignment.start,
                 controller: tabController,
                 labelStyle: const TextStyle(
                   fontSize: 12,
@@ -126,13 +165,14 @@ class HomeBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return TabBarView(
       controller: tabController,
-      children: brands.map((brand) {
-        if (brand == "All") {
-          return const CategoryAll();
-        } else {
-          return BrandTabContent(brand: brand);
-        }
-      }).toList(),
+      children:
+          brands.map((brand) {
+            if (brand == "All") {
+              return const CategoryAll();
+            } else {
+              return BrandTabContent(brand: brand);
+            }
+          }).toList(),
     );
   }
 }
@@ -157,10 +197,7 @@ class BrandTabContent extends StatelessWidget {
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return BrandContentWidget(brand: brand, sneakers: []);
         } else {
-          return BrandContentWidget(
-            brand: brand,
-            sneakers: snapshot.data!,
-          );
+          return BrandContentWidget(brand: brand, sneakers: snapshot.data!);
         }
       },
     );
@@ -212,10 +249,10 @@ class BrandContentWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Text(
         '$brand Sneakers',
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }
-} 
+}

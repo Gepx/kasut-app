@@ -15,9 +15,7 @@ class SellerListingService {
   /// Initialize with mock data
   static Future<void> initialize() async {
     await _loadListings();
-    if (_allListings.isEmpty) {
-      await _createMockListings();
-    }
+    // Remove mock data creation - only show real listings
   }
 
   /// Create mock seller listings for demonstration
@@ -39,19 +37,20 @@ class SellerListingService {
     for (int i = 0; i < 15; i++) {
       final shoe = shoes[random.nextInt(shoes.length)];
       final seller = mockSellers[random.nextInt(mockSellers.length)];
-      
+
       // Random condition and pricing
       final conditions = ProductCondition.values;
       final condition = conditions[random.nextInt(conditions.length)];
-      
+
       // Price is 70-95% of original price
       final discountPercent = 5 + random.nextInt(25);
       final sellerPrice = shoe.price * (100 - discountPercent) / 100;
-      
+
       // Random size from available sizes
       final availableSizes = ['38', '39', '40', '41', '42', '43', '44', '45'];
-      final selectedSize = availableSizes[random.nextInt(availableSizes.length)];
-      
+      final selectedSize =
+          availableSizes[random.nextInt(availableSizes.length)];
+
       // Random listing date (last 30 days)
       final daysAgo = random.nextInt(30);
       final listedDate = DateTime.now().subtract(Duration(days: daysAgo));
@@ -91,7 +90,10 @@ class SellerListingService {
   }
 
   /// Generate random condition notes
-  static String? _getRandomConditionNotes(ProductCondition condition, Random random) {
+  static String? _getRandomConditionNotes(
+    ProductCondition condition,
+    Random random,
+  ) {
     final notes = <String, List<String>>{
       'brandNew': [
         'Brand new in box dengan tag',
@@ -140,18 +142,23 @@ class SellerListingService {
 
   /// Get listings by seller email
   static List<SellerListing> getListingsBySeller(String sellerEmail) {
-    return _allListings.where((listing) => 
-      listing.sellerId == sellerEmail
-    ).toList()
+    return _allListings
+        .where((listing) => listing.sellerId == sellerEmail)
+        .toList()
       ..sort((a, b) => b.listedDate.compareTo(a.listedDate));
   }
 
   /// Get listings by product/shoe
   static List<SellerListing> getListingsByProduct(String productName) {
-    return _allListings.where((listing) => 
-      listing.originalProduct.name.toLowerCase().contains(productName.toLowerCase()) &&
-      listing.isActive
-    ).toList()
+    return _allListings
+        .where(
+          (listing) =>
+              listing.originalProduct.name.toLowerCase().contains(
+                productName.toLowerCase(),
+              ) &&
+              listing.isActive,
+        )
+        .toList()
       ..sort((a, b) => a.sellerPrice.compareTo(b.sellerPrice));
   }
 
@@ -181,9 +188,14 @@ class SellerListingService {
     var results = _allListings.where((listing) => listing.isActive);
 
     if (query != null && query.isNotEmpty) {
-      results = results.where((listing) =>
-        listing.originalProduct.name.toLowerCase().contains(query.toLowerCase()) ||
-        listing.originalProduct.brand.toLowerCase().contains(query.toLowerCase())
+      results = results.where(
+        (listing) =>
+            listing.originalProduct.name.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            listing.originalProduct.brand.toLowerCase().contains(
+              query.toLowerCase(),
+            ),
       );
     }
 
@@ -204,18 +216,25 @@ class SellerListingService {
     }
 
     if (brand != null) {
-      results = results.where((listing) => 
-        listing.originalProduct.brand.toLowerCase() == brand.toLowerCase()
+      results = results.where(
+        (listing) =>
+            listing.originalProduct.brand.toLowerCase() == brand.toLowerCase(),
       );
     }
 
-    return results.toList()..sort((a, b) => a.sellerPrice.compareTo(b.sellerPrice));
+    return results.toList()
+      ..sort((a, b) => a.sellerPrice.compareTo(b.sellerPrice));
   }
 
   /// Update listing status
-  static Future<bool> updateListingStatus(String listingId, bool isActive) async {
+  static Future<bool> updateListingStatus(
+    String listingId,
+    bool isActive,
+  ) async {
     try {
-      final index = _allListings.indexWhere((listing) => listing.id == listingId);
+      final index = _allListings.indexWhere(
+        (listing) => listing.id == listingId,
+      );
       if (index != -1) {
         _allListings[index] = _allListings[index].copyWith(isActive: isActive);
         await _saveListings();
@@ -229,9 +248,14 @@ class SellerListingService {
   }
 
   /// Update listing price
-  static Future<bool> updateListingPrice(String listingId, double newPrice) async {
+  static Future<bool> updateListingPrice(
+    String listingId,
+    double newPrice,
+  ) async {
     try {
-      final index = _allListings.indexWhere((listing) => listing.id == listingId);
+      final index = _allListings.indexWhere(
+        (listing) => listing.id == listingId,
+      );
       if (index != -1) {
         // Ensure price doesn't exceed original product price
         final listing = _allListings[index];
@@ -264,7 +288,9 @@ class SellerListingService {
   static Future<void> _saveListings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonString = jsonEncode(_allListings.map((listing) => listing.toJson()).toList());
+      final jsonString = jsonEncode(
+        _allListings.map((listing) => listing.toJson()).toList(),
+      );
       await prefs.setString(_storageKey, jsonString);
     } catch (e) {
       print('Error saving listings: $e');
@@ -278,7 +304,8 @@ class SellerListingService {
       final jsonString = prefs.getString(_storageKey);
       if (jsonString != null) {
         final List<dynamic> jsonList = jsonDecode(jsonString);
-        _allListings = jsonList.map((json) => SellerListing.fromJson(json)).toList();
+        _allListings =
+            jsonList.map((json) => SellerListing.fromJson(json)).toList();
       }
     } catch (e) {
       print('Error loading listings: $e');
@@ -290,15 +317,22 @@ class SellerListingService {
   static Map<String, dynamic> getSellerStats(String sellerEmail) {
     final userListings = getListingsBySeller(sellerEmail);
     final activeListings = userListings.where((l) => l.isActive).length;
-    final totalViews = userListings.fold<int>(0, (sum, listing) => sum + (listing.views ?? 0));
-    final totalValue = userListings.fold<double>(0, (sum, listing) => sum + listing.sellerPrice);
+    final totalViews = userListings.fold<int>(
+      0,
+      (sum, listing) => sum + (listing.views ?? 0),
+    );
+    final totalValue = userListings.fold<double>(
+      0,
+      (sum, listing) => sum + listing.sellerPrice,
+    );
 
     return {
       'totalListings': userListings.length,
       'activeListings': activeListings,
       'totalViews': totalViews,
       'totalValue': totalValue,
-      'averagePrice': userListings.isNotEmpty ? totalValue / userListings.length : 0,
+      'averagePrice':
+          userListings.isNotEmpty ? totalValue / userListings.length : 0,
     };
   }
 
@@ -308,4 +342,4 @@ class SellerListingService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_storageKey);
   }
-} 
+}

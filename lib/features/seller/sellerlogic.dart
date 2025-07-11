@@ -28,14 +28,19 @@ class _SellerLogicState extends State<SellerLogic> {
     final currentUser = AuthService.currentUser;
     if (currentUser != null) {
       final sellerProfile = SellerService.currentSeller;
-      final myListings = SellerListingService.getListingsBySeller(currentUser['email']);
+      final myListings = SellerListingService.getListingsBySeller(
+        currentUser['email'],
+      );
 
       if (mounted) {
         // Defer provider updates to the end of the current frame to avoid
         // "setState() or markNeedsBuild() called during build" assertions.
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
-          final sellerProvider = Provider.of<SellerProvider>(context, listen: false);
+          final sellerProvider = Provider.of<SellerProvider>(
+            context,
+            listen: false,
+          );
           if (sellerProfile != null) {
             sellerProvider.setProfile(sellerProfile);
           }
@@ -54,23 +59,26 @@ class _SellerLogicState extends State<SellerLogic> {
 
         if (sellerData == null) {
           return const Scaffold(
-            body: Center(
-              child: Text('No seller data found'),
-            ),
+            body: Center(child: Text('No seller data found')),
           );
         }
 
         return ResponsiveBuilder(
           builder: (context, deviceType, width) {
             final padding = ResponsiveUtils.getResponsivePadding(width);
-            
+
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Seller Dashboard', style: TextStyle(color: Colors.black)),
+                title: const Text(
+                  'Seller Dashboard',
+                  style: TextStyle(color: Colors.black),
+                ),
                 iconTheme: const IconThemeData(color: Colors.black),
                 backgroundColor: Colors.white,
                 elevation: 0,
-                shape: const Border(bottom: BorderSide(color: Colors.black, width: 1)),
+                shape: const Border(
+                  bottom: BorderSide(color: Colors.black, width: 1),
+                ),
               ),
               body: RefreshIndicator(
                 onRefresh: () async {
@@ -82,14 +90,14 @@ class _SellerLogicState extends State<SellerLogic> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                                // Welcome Section
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.black, width: 1),
-                ),
+                      // Welcome Section
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -113,23 +121,23 @@ class _SellerLogicState extends State<SellerLogic> {
                       // Quick Stats
                       Row(
                         children: [
-                                                  Expanded(
-                              child: _buildStatCard(
-                                'Produk Aktif',
-                                '${myListings.length}',
-                                Icons.inventory,
-                                Colors.black,
-                              ),
+                          Expanded(
+                            child: _buildStatCard(
+                              'Produk Aktif',
+                              '${myListings.length}',
+                              Icons.inventory,
+                              Colors.black,
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _buildStatCard(
-                                'Total Penjualan',
-                                'Rp ${IndonesianText.formatPriceWithoutSymbol(sellerProvider.listings.fold(0.0, (sum, item) => sum + item.sellerPrice))}',
-                                Icons.monetization_on,
-                                Colors.black,
-                              ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildStatCard(
+                              'Total Penjualan',
+                              'Rp ${IndonesianText.formatPriceWithoutSymbol(sellerProvider.totalSales)}',
+                              Icons.monetization_on,
+                              Colors.black,
                             ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 24),
@@ -137,7 +145,10 @@ class _SellerLogicState extends State<SellerLogic> {
                       // Action Buttons
                       const Text(
                         'Aksi Cepat',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       _buildActionButton(
@@ -191,7 +202,10 @@ class _SellerLogicState extends State<SellerLogic> {
                           children: [
                             const Text(
                               'Produk Terbaru',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             TextButton(
                               onPressed: () {
@@ -225,32 +239,16 @@ class _SellerLogicState extends State<SellerLogic> {
                         const SizedBox(height: 24),
                       ],
 
-                      // Seller Info Summary
+                      // Information Section
                       const Text(
                         'Informasi Akun',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      Card(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: Colors.black, width: 1),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildInfoRow('Nama Lengkap', sellerData['fullName']),
-                              _buildInfoRow('Telepon', '+62 ${sellerData['phone']??'-'}'),
-                              _buildInfoRow('Bank', sellerData['bank'] ?? '-'),
-                              _buildInfoRow('No. Rekening', sellerData['accountNumber'] ?? '-'),
-                              _buildInfoRow('Lokasi', sellerData['province'] ?? '-'),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildInfoCard(sellerData),
                     ],
                   ),
                 ),
@@ -297,10 +295,7 @@ class _SellerLogicState extends State<SellerLogic> {
             const SizedBox(height: 8),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -327,10 +322,7 @@ class _SellerLogicState extends State<SellerLogic> {
           backgroundColor: Colors.white,
           child: Icon(icon, color: Colors.black),
         ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: onTap,
@@ -351,9 +343,7 @@ class _SellerLogicState extends State<SellerLogic> {
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
-          Expanded(
-            child: Text(value?.toString() ?? '-'),
-          ),
+          Expanded(child: Text(value?.toString() ?? '-')),
         ],
       ),
     );
@@ -378,8 +368,8 @@ class _SellerLogicState extends State<SellerLogic> {
                 height: 80,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(
+                errorBuilder:
+                    (context, error, stackTrace) => Container(
                       height: 80,
                       color: Colors.grey[300],
                       child: const Icon(Icons.image_not_supported),
@@ -389,20 +379,14 @@ class _SellerLogicState extends State<SellerLogic> {
             const SizedBox(height: 8),
             Text(
               listing.originalProduct.name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
             Text(
               '${listing.conditionText} • Size ${listing.selectedSize}',
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 10, color: Colors.grey[600]),
             ),
             const SizedBox(height: 4),
             Text(
@@ -422,9 +406,170 @@ class _SellerLogicState extends State<SellerLogic> {
   void _showMyListings(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const SellingScreen(),
+      MaterialPageRoute(builder: (context) => const SellingScreen()),
+    );
+  }
+
+  Widget _buildInfoCard(Map<String, dynamic> sellerData) {
+    return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: const BorderSide(color: Colors.black, width: 1),
       ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Seller Information',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                IconButton(
+                  onPressed: () => _showEditSellerInfoDialog(sellerData),
+                  icon: const Icon(Icons.edit_outlined),
+                  style: IconButton.styleFrom(
+                    foregroundColor: Colors.blue[600],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _buildInfoRow('Nama Lengkap', sellerData['fullName']),
+            _buildInfoRow('Telepon', '+62 ${sellerData['phone'] ?? '-'}'),
+            _buildInfoRow('Bank', sellerData['bank'] ?? '-'),
+            _buildInfoRow('No. Rekening', sellerData['accountNumber'] ?? '-'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditSellerInfoDialog(Map<String, dynamic> sellerData) {
+    final nameController = TextEditingController(
+      text: sellerData['fullName'] ?? '',
+    );
+    final phoneController = TextEditingController(
+      text: sellerData['phone'] ?? '',
+    );
+    final accountController = TextEditingController(
+      text: sellerData['accountNumber'] ?? '',
+    );
+    String? selectedBank = sellerData['bank'];
+
+    final banks = [
+      'Bank BCA',
+      'Bank BNI',
+      'Bank BRI',
+      'Bank Mandiri',
+      'Bank CIMB Niaga',
+    ];
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setState) => AlertDialog(
+                  title: const Text('Edit Seller Information'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Full Name',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: phoneController,
+                          decoration: const InputDecoration(
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(),
+                            prefixText: '+62 ',
+                          ),
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: selectedBank,
+                          decoration: const InputDecoration(
+                            labelText: 'Bank',
+                            border: OutlineInputBorder(),
+                          ),
+                          items:
+                              banks
+                                  .map(
+                                    (bank) => DropdownMenuItem(
+                                      value: bank,
+                                      child: Text(bank),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged:
+                              (value) => setState(() => selectedBank = value),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: accountController,
+                          decoration: const InputDecoration(
+                            labelText: 'Account Number',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Update seller data
+                        final updatedData = {
+                          ...sellerData,
+                          'fullName': nameController.text.trim(),
+                          'phone': phoneController.text.trim(),
+                          'bank': selectedBank,
+                          'accountNumber': accountController.text.trim(),
+                        };
+
+                        SellerService.saveSeller(updatedData);
+                        final sellerProvider = Provider.of<SellerProvider>(
+                          context,
+                          listen: false,
+                        );
+                        sellerProvider.setProfile(updatedData);
+
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Seller information updated successfully',
+                            ),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Update'),
+                    ),
+                  ],
+                ),
+          ),
     );
   }
 }

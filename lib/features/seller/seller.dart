@@ -19,7 +19,8 @@ class _SellerPageState extends State<SellerPage> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _idNumberController = TextEditingController();
-  final TextEditingController _accountNumberController = TextEditingController();
+  final TextEditingController _accountNumberController =
+      TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   String? selectedBank;
@@ -29,10 +30,10 @@ class _SellerPageState extends State<SellerPage> {
 
   final List<String> banks = [
     "Bank BCA",
-    "Bank BNI", 
+    "Bank BNI",
     "Bank BRI",
     "Bank Mandiri",
-    "Bank CIMB Niaga"
+    "Bank CIMB Niaga",
   ];
 
   @override
@@ -72,7 +73,7 @@ class _SellerPageState extends State<SellerPage> {
 
   void _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     if (_idImage == null) {
       _showSnackBar('Please upload your ID card', isError: true);
       return;
@@ -91,10 +92,13 @@ class _SellerPageState extends State<SellerPage> {
         'imageBytes': _idImage,
       });
 
+      // Register user as seller in AuthService
+      AuthService.registerAsSeller();
+
       _showSnackBar('Registration successful! Welcome to our seller program.');
-      
+
       await Future.delayed(const Duration(seconds: 1));
-      
+
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -136,11 +140,8 @@ class _SellerPageState extends State<SellerPage> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
-          "Become a Seller", 
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
+          "Become a Seller",
+          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
         ),
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -227,10 +228,11 @@ class _SellerPageState extends State<SellerPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                  ),
+                  onPressed:
+                      () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                      ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
@@ -240,7 +242,10 @@ class _SellerPageState extends State<SellerPage> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text("Sign In to Continue", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    "Sign In to Continue",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
             ],
@@ -277,7 +282,10 @@ class _SellerPageState extends State<SellerPage> {
           const SizedBox(height: 8),
           Text(
             "Complete your seller profile to start listing products",
-            style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 14,
+            ),
           ),
         ],
       ),
@@ -295,8 +303,10 @@ class _SellerPageState extends State<SellerPage> {
           hint: "Enter your full name",
           icon: Icons.person,
           validator: (value) {
-            if (value == null || value.trim().isEmpty) return 'Full name is required';
-            if (value.trim().length < 3) return 'Name must be at least 3 characters';
+            if (value == null || value.trim().isEmpty)
+              return 'Full name is required';
+            if (value.trim().length < 3)
+              return 'Name must be at least 3 characters';
             return null;
           },
         ),
@@ -310,8 +320,10 @@ class _SellerPageState extends State<SellerPage> {
           icon: Icons.badge,
           keyboardType: TextInputType.text,
           validator: (value) {
-            if (value == null || value.trim().isEmpty) return 'ID number is required';
-            if (value.trim().length < 10) return 'Please enter a valid ID number';
+            if (value == null || value.trim().isEmpty)
+              return 'ID number is required';
+            if (value.trim().length < 10)
+              return 'Please enter a valid ID number';
             return null;
           },
         ),
@@ -340,8 +352,10 @@ class _SellerPageState extends State<SellerPage> {
           icon: Icons.credit_card,
           keyboardType: TextInputType.number,
           validator: (value) {
-            if (value == null || value.trim().isEmpty) return 'Account number is required';
-            if (value.trim().length < 6) return 'Please enter a valid account number';
+            if (value == null || value.trim().isEmpty)
+              return 'Account number is required';
+            if (value.trim().length < 6)
+              return 'Please enter a valid account number';
             return null;
           },
         ),
@@ -389,142 +403,158 @@ class _SellerPageState extends State<SellerPage> {
               color: _idImage == null ? Colors.grey[300]! : Colors.black,
               width: _idImage == null ? 2 : 3,
             ),
-            boxShadow: _idImage != null ? [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ] : null,
+            boxShadow:
+                _idImage != null
+                    ? [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                    : null,
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
               onTap: _pickImage,
-              child: _idImage == null
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.cloud_upload_outlined,
-                            size: 32,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Tap to upload ID card",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            "JPG, PNG • Max 10MB",
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildTip(Icons.check_circle_outline, "High quality"),
-                            const SizedBox(width: 16),
-                            _buildTip(Icons.visibility_outlined, "Clear text"),
-                            const SizedBox(width: 16),
-                            _buildTip(Icons.light_mode_outlined, "Good lighting"),
-                          ],
-                        ),
-                      ],
-                    )
-                  : Stack(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          padding: const EdgeInsets.all(8),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.memory(
-                              _idImage!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 12,
-                          right: 12,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
+              child:
+                  _idImage == null
+                      ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: Colors.grey[200],
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
                             ),
-                            child: const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 16,
+                            child: Icon(
+                              Icons.cloud_upload_outlined,
+                              size: 32,
+                              color: Colors.grey[600],
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: 12,
-                          left: 12,
-                          right: 12,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          const SizedBox(height: 16),
+                          Text(
+                            "Tap to upload ID card",
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.edit,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  "Tap to change image",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                            child: Text(
+                              "JPG, PNG • Max 10MB",
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildTip(
+                                Icons.check_circle_outline,
+                                "High quality",
+                              ),
+                              const SizedBox(width: 16),
+                              _buildTip(
+                                Icons.visibility_outlined,
+                                "Clear text",
+                              ),
+                              const SizedBox(width: 16),
+                              _buildTip(
+                                Icons.light_mode_outlined,
+                                "Good lighting",
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                      : Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            padding: const EdgeInsets.all(8),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.memory(_idImage!, fit: BoxFit.cover),
+                            ),
+                          ),
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 12,
+                            left: 12,
+                            right: 12,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    "Tap to change image",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
             ),
           ),
         ),
@@ -576,7 +606,10 @@ class _SellerPageState extends State<SellerPage> {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -672,14 +705,14 @@ class _SellerPageState extends State<SellerPage> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                     child: const Center(
-                      child: Text(
-                        "🇮🇩",
-                        style: TextStyle(fontSize: 10),
-                      ),
+                      child: Text("🇮🇩", style: TextStyle(fontSize: 10)),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Text("+62", style: TextStyle(fontWeight: FontWeight.w500)),
+                  const Text(
+                    "+62",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
                 ],
               ),
             ),
@@ -688,8 +721,10 @@ class _SellerPageState extends State<SellerPage> {
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) return 'Phone number is required';
-                  if (!RegExp(r'^[0-9]{9,13}$').hasMatch(value.trim())) return 'Enter a valid phone number';
+                  if (value == null || value.trim().isEmpty)
+                    return 'Phone number is required';
+                  if (!RegExp(r'^[0-9]{9,13}$').hasMatch(value.trim()))
+                    return 'Enter a valid phone number';
                   return null;
                 },
                 decoration: InputDecoration(
@@ -761,7 +796,12 @@ class _SellerPageState extends State<SellerPage> {
         DropdownButtonFormField<String>(
           value: value,
           hint: Text(hint),
-          items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+          items:
+              items
+                  .map(
+                    (item) => DropdownMenuItem(value: item, child: Text(item)),
+                  )
+                  .toList(),
           onChanged: onChanged,
           validator: validator,
           decoration: InputDecoration(
@@ -803,19 +843,25 @@ class _SellerPageState extends State<SellerPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           elevation: 0,
         ),
-        child: _isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-              )
-            : const Text(
-                "Complete Registration",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
+        child:
+            _isLoading
+                ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+                : const Text(
+                  "Complete Registration",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
       ),
     );
   }

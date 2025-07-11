@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../../providers/order_provider.dart';
+import '../../../providers/credit_provider.dart';
 import '../../../widgets/image_loader.dart';
 
 class BuyingScreen extends StatelessWidget {
@@ -66,7 +67,7 @@ class BuyingScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       itemCount: orders.length,
       itemBuilder: (context, index) {
-        return _buildOrderCard(orders[index]);
+        return _buildOrderCard(context, orders[index]);
       },
     );
   }
@@ -74,7 +75,7 @@ class BuyingScreen extends StatelessWidget {
   Widget _buildEmptyState(String type) {
     String message;
     IconData icon;
-    
+
     switch (type) {
       case 'active':
         message = 'No active orders found';
@@ -103,11 +104,7 @@ class BuyingScreen extends StatelessWidget {
               color: Colors.grey[100],
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              size: 48,
-              color: Colors.grey[400],
-            ),
+            child: Icon(icon, size: 48, color: Colors.grey[400]),
           ),
           const SizedBox(height: 16),
           Text(
@@ -121,17 +118,14 @@ class BuyingScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Your ${type} orders will appear here',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildOrderCard(Order order) {
+  Widget _buildOrderCard(BuildContext context, Order order) {
     final currencyFormat = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'IDR ',
@@ -181,10 +175,7 @@ class BuyingScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       dateFormat.format(order.orderDate),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -192,60 +183,52 @@ class BuyingScreen extends StatelessWidget {
               ],
             ),
           ),
-          
-          // Product Details
+
+          // Order Content
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 // Product Image
-                Container(
-                  width: 80,
-                  height: 80,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey[200]!),
-                  ),
-                  child: AssetImageLoader(
-                    imagePath: order.shoe.firstPict,
-                    fit: BoxFit.contain,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.grey[200],
+                    child: Image.asset(
+                      order.shoe.firstPict,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (context, error, stackTrace) => Icon(
+                            Icons.image_not_supported,
+                            color: Colors.grey[400],
+                          ),
+                    ),
                   ),
                 ),
-                
                 const SizedBox(width: 16),
-                
-                // Product Info
+
+                // Order Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        order.shoe.brand,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
                         order.shoe.name,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       Text(
-                        'Size: ${order.size.toString().endsWith('.0') ? order.size.toInt() : order.size}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        'Size: ${order.size.toStringAsFixed(0)}',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -253,7 +236,6 @@ class BuyingScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
                         ),
                       ),
                     ],
@@ -263,7 +245,37 @@ class BuyingScreen extends StatelessWidget {
             ),
           ),
 
-          // Order Actions/Info
+          // Order Actions for Active Orders
+          if (order.status == OrderStatus.active)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                ),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () => _showCancelOrderDialog(context, order),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(color: Colors.red),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Cancel Order',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ),
+
           if (order.status == OrderStatus.active) ...[
             Container(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -279,7 +291,11 @@ class BuyingScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.local_shipping, size: 16, color: Colors.blue[600]),
+                          Icon(
+                            Icons.local_shipping,
+                            size: 16,
+                            color: Colors.blue[600],
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -300,7 +316,8 @@ class BuyingScreen extends StatelessWidget {
             ),
           ],
 
-          if (order.status == OrderStatus.completed && order.deliveryDate != null) ...[
+          if (order.status == OrderStatus.completed &&
+              order.deliveryDate != null) ...[
             Container(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Row(
@@ -315,7 +332,11 @@ class BuyingScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.check_circle, size: 16, color: Colors.green[600]),
+                          Icon(
+                            Icons.check_circle,
+                            size: 16,
+                            color: Colors.green[600],
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -377,6 +398,64 @@ class BuyingScreen extends StatelessWidget {
           color: textColor,
         ),
       ),
+    );
+  }
+
+  void _showCancelOrderDialog(BuildContext context, Order order) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Cancel Order'),
+            content: Text(
+              'Are you sure you want to cancel your order for ${order.shoe.name}? This action cannot be undone.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Keep Order'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final orderProvider = Provider.of<OrderProvider>(
+                    context,
+                    listen: false,
+                  );
+                  final pointsProvider = Provider.of<KasutPointsProvider>(
+                    context,
+                    listen: false,
+                  );
+
+                  orderProvider.cancelOrder(
+                    order.id,
+                    onPointsDeducted: (points) {
+                      // Deduct points that were earned from this purchase
+                      pointsProvider.subtractPoints(
+                        points,
+                        description: 'Order cancelled: ${order.shoe.name}',
+                      );
+                    },
+                  );
+
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Order for ${order.shoe.name} has been cancelled',
+                      ),
+                      backgroundColor: Colors.red[600],
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  );
+                },
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Cancel Order'),
+              ),
+            ],
+          ),
     );
   }
 }

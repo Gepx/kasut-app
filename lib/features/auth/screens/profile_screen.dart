@@ -21,6 +21,7 @@ import 'package:kasut/features/profile/screens/settings_screen.dart'; // Placeho
 import 'package:kasut/features/profile/screens/faq_screen.dart'; // Placeholder
 import 'signup_screen.dart'; // Use relative import for SignupScreen
 import 'dart:io'; // Added for File
+import 'package:intl/intl.dart'; // For NumberFormat
 
 // Profile Screen now uses AuthService for state
 class ProfileScreen extends StatelessWidget {
@@ -238,8 +239,13 @@ class ProfileScreen extends StatelessWidget {
                         title: 'Kasut Credit',
                         valueWidget: Consumer<KasutCreditProvider>(
                           builder: (context, creditProvider, _) {
+                            final currencyFormat = NumberFormat.currency(
+                              locale: 'id_ID',
+                              symbol: 'Rp ',
+                              decimalDigits: 0,
+                            );
                             return Text(
-                              'IDR ${creditProvider.balance.toStringAsFixed(0)}',
+                              currencyFormat.format(creditProvider.balance),
                               style: textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -265,8 +271,13 @@ class ProfileScreen extends StatelessWidget {
                                             null
                                     ? sellerProvider.profile!['credit']
                                     : 0;
+                            final currencyFormat = NumberFormat.currency(
+                              locale: 'id_ID',
+                              symbol: 'Rp ',
+                              decimalDigits: 0,
+                            );
                             return Text(
-                              'IDR ${sellerCredit.toString()}',
+                              currencyFormat.format(sellerCredit),
                               style: textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -287,8 +298,9 @@ class ProfileScreen extends StatelessWidget {
                   title: 'Kasut Points',
                   valueWidget: Consumer<KasutPointsProvider>(
                     builder: (context, pointsProvider, _) {
+                      final pointsFormat = NumberFormat('#,###', 'id_ID');
                       return Text(
-                        'KP ${pointsProvider.points.toString()}',
+                        'KP ${pointsFormat.format(pointsProvider.points)}',
                         style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -315,6 +327,9 @@ class ProfileScreen extends StatelessWidget {
               icon: Iconsax.shop,
               title: 'Selling',
               routeName: SellingScreen.routeName,
+              restricted: !AuthService.isRegisteredAsSeller(),
+              restrictionMessage:
+                  'Please register as a seller first to access this feature',
             ),
             InkWell(
               onTap: () {
@@ -605,10 +620,27 @@ class ProfileScreen extends StatelessWidget {
     bool isLogout = false, // Flag for logout action
     bool showDivider = true, // Control divider visibility
     Color? color, // Optional color for icon and text
+    bool restricted = false, // Flag for restricted access
+    String? restrictionMessage, // Message for restricted access
   }) {
     return InkWell(
       // Use InkWell for tap feedback
       onTap: () {
+        // Handle restricted access
+        if (restricted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(restrictionMessage ?? 'Access restricted'),
+              backgroundColor: Colors.orange[600],
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+          return;
+        }
+
         // In the _buildMenuItem method where isLogout is true
         if (isLogout) {
           // Clear the wishlist first

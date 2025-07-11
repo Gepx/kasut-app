@@ -7,9 +7,11 @@ import 'package:kasut/models/seller_listing_model.dart';
 class SellerProvider extends ChangeNotifier {
   Map<String, dynamic>? _profile;
   List<SellerListing> _listings = [];
+  double _totalSales = 0.0; // Track actual sales amount
 
   Map<String, dynamic>? get profile => _profile;
   List<SellerListing> get listings => _listings;
+  double get totalSales => _totalSales;
 
   /// Sets the current seller profile data.
   void setProfile(Map<String, dynamic> data) {
@@ -46,4 +48,22 @@ class SellerProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
-} 
+
+  /// Removes a listing by ID.
+  void removeListing(String listingId) {
+    _listings.removeWhere((l) => l.id == listingId);
+    notifyListeners();
+  }
+
+  /// Records a sale for a listing
+  void recordSale(String listingId, double saleAmount) {
+    _totalSales += saleAmount;
+    // Optionally remove or mark listing as sold
+    final listing = _listings.firstWhere(
+      (l) => l.id == listingId,
+      orElse: () => throw Exception('Listing not found'),
+    );
+    removeListing(listingId); // Remove sold listing
+    notifyListeners();
+  }
+}

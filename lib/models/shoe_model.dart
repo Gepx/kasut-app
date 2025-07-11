@@ -198,6 +198,39 @@ class Shoe {
       'releaseDate': releaseDate,
     };
   }
+
+  // Create a copy with updated fields
+  Shoe copyWith({
+    String? name,
+    String? brand,
+    double? price,
+    double? discountPrice,
+    String? firstPict,
+    String? secondPict,
+    String? thirdPict,
+    Map<String, List<double>>? sizes,
+    List<String>? tags,
+    String? description,
+    String? color,
+    String? sku,
+    String? releaseDate,
+  }) {
+    return Shoe(
+      name: name ?? this.name,
+      brand: brand ?? this.brand,
+      price: price ?? this.price,
+      discountPrice: discountPrice ?? this.discountPrice,
+      firstPict: firstPict ?? this.firstPict,
+      secondPict: secondPict ?? this.secondPict,
+      thirdPict: thirdPict ?? this.thirdPict,
+      sizes: sizes ?? this.sizes,
+      tags: tags ?? this.tags,
+      description: description ?? this.description,
+      color: color ?? this.color,
+      sku: sku ?? this.sku,
+      releaseDate: releaseDate ?? this.releaseDate,
+    );
+  }
 }
 
 // ShoeData class provides methods to load shoes from JSON

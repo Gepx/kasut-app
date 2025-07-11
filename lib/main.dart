@@ -8,6 +8,7 @@ import 'package:kasut/providers/seller_provider.dart';
 import 'package:kasut/providers/credit_provider.dart';
 import 'package:kasut/providers/notification_provider.dart';
 import 'package:kasut/providers/profile_provider.dart';
+import 'package:kasut/providers/voucher_provider.dart';
 import 'package:kasut/utils/no_glow_scroll_behavior.dart';
 
 void main() {
@@ -21,6 +22,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => SellerProvider()),
         ChangeNotifierProvider(create: (context) => KasutCreditProvider()),
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        ChangeNotifierProvider(create: (context) => VoucherProvider()),
         ChangeNotifierProvider(
           create: (_) => KasutPointsProvider(),
         ), // Add this back
@@ -42,6 +44,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => SellerProvider()),
         ChangeNotifierProvider(create: (context) => KasutCreditProvider()),
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        ChangeNotifierProvider(create: (context) => VoucherProvider()),
       ],
       child: MaterialApp(
         title: 'Kasut App',
