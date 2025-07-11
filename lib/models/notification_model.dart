@@ -1,15 +1,15 @@
-enum NotificationType { 
-  purchaseConfirmed, 
-  orderShipped, 
-  orderDelivered, 
-  orderCancelled, 
-  paymentReceived, 
-  newOrder, 
-  productListed, 
-  productViewed, 
-  lowInventory, 
-  priceAlert, 
-  system 
+enum NotificationType {
+  purchaseConfirmed,
+  orderShipped,
+  orderDelivered,
+  orderCancelled,
+  paymentReceived,
+  newOrder,
+  productListed,
+  productViewed,
+  lowInventory,
+  priceAlert,
+  system,
 }
 
 enum NotificationCategory { all, purchase, seller }
@@ -77,15 +77,15 @@ class AppNotification {
   String get timeAgo {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
-    
+
     if (difference.inDays > 0) {
-      return '${difference.inDays} hari yang lalu';
+      return '${difference.inDays} days ago';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} jam yang lalu';
+      return '${difference.inHours} hours ago';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} menit yang lalu';
+      return '${difference.inMinutes} minutes ago';
     } else {
-      return 'Baru saja';
+      return 'Just now';
     }
   }
 
@@ -156,7 +156,10 @@ class AppNotification {
       productId: json['productId'],
       imageUrl: json['imageUrl'],
       actionRoute: json['actionRoute'],
-      actionData: json['actionData'] != null ? Map<String, dynamic>.from(json['actionData']) : null,
+      actionData:
+          json['actionData'] != null
+              ? Map<String, dynamic>.from(json['actionData'])
+              : null,
     );
   }
-} 
+}

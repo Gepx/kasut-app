@@ -16,6 +16,10 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  final _dateFormat = DateFormat('MMM dd, yyyy');
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +47,7 @@ class _NotificationPageState extends State<NotificationPage> {
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
           title: const Text(
-            "Notifikasi",
+            "Notifications",
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           backgroundColor: Colors.white,
@@ -54,6 +58,12 @@ class _NotificationPageState extends State<NotificationPage> {
             onPressed: () => Navigator.pop(context),
           ),
           actions: [
+            // Date filter button
+            IconButton(
+              icon: const Icon(Icons.date_range),
+              onPressed: _showDateFilterDialog,
+              tooltip: 'Filter by date',
+            ),
             Consumer<NotificationProvider>(
               builder: (context, notificationProvider, child) {
                 if (notificationProvider.unreadCount > 0) {
@@ -81,117 +91,296 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
           ],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48),
-            child: Consumer<NotificationProvider>(
-              builder: (context, notificationProvider, child) {
-                return TabBar(
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: Colors.black,
-                  indicatorWeight: 3,
-                  tabs: [
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Semua"),
-                          if (notificationProvider.unreadCount > 0) ...[
-                            const SizedBox(width: 4),
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text(
-                                notificationProvider.unreadCount.toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
+            preferredSize: const Size.fromHeight(100),
+            child: Column(
+              children: [
+                // Date filter display
+                if (_fromDate != null || _toDate != null)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Pembelian"),
-                          if (notificationProvider.unreadPurchaseCount > 0) ...[
-                            const SizedBox(width: 4),
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text(
-                                notificationProvider.unreadPurchaseCount
-                                    .toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                    color: Colors.blue[50],
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.filter_list,
+                          size: 16,
+                          color: Colors.blue[600],
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Filtered: ${_fromDate != null ? _dateFormat.format(_fromDate!) : 'Any'} - ${_toDate != null ? _dateFormat.format(_toDate!) : 'Any'}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue[600],
+                              fontWeight: FontWeight.w500,
                             ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Penjualan"),
-                          if (notificationProvider.unreadSellerCount > 0) ...[
-                            const SizedBox(width: 4),
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text(
-                                notificationProvider.unreadSellerCount
-                                    .toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: _clearDateFilter,
+                          child: Text(
+                            'Clear',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue[600],
                             ),
-                          ],
-                        ],
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                );
-              },
+                  ),
+                // Tab bar
+                Consumer<NotificationProvider>(
+                  builder: (context, notificationProvider, child) {
+                    return TabBar(
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: Colors.black,
+                      indicatorWeight: 3,
+                      tabs: [
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("All"),
+                              if (notificationProvider.unreadCount > 0) ...[
+                                const SizedBox(width: 4),
+                                Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    notificationProvider.unreadCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Purchase"),
+                              if (notificationProvider.unreadPurchaseCount >
+                                  0) ...[
+                                const SizedBox(width: 4),
+                                Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    notificationProvider.unreadPurchaseCount
+                                        .toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Sales"),
+                              if (notificationProvider.unreadSellerCount >
+                                  0) ...[
+                                const SizedBox(width: 4),
+                                Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    notificationProvider.unreadSellerCount
+                                        .toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            NotificationContent(category: NotificationCategory.all),
-            NotificationContent(category: NotificationCategory.purchase),
-            NotificationContent(category: NotificationCategory.seller),
+            NotificationContent(
+              category: NotificationCategory.all,
+              fromDate: _fromDate,
+              toDate: _toDate,
+            ),
+            NotificationContent(
+              category: NotificationCategory.purchase,
+              fromDate: _fromDate,
+              toDate: _toDate,
+            ),
+            NotificationContent(
+              category: NotificationCategory.seller,
+              fromDate: _fromDate,
+              toDate: _toDate,
+            ),
           ],
         ),
       ),
     );
   }
+
+  void _showDateFilterDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Filter by Date'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // From Date
+                ListTile(
+                  leading: const Icon(Icons.calendar_today),
+                  title: const Text('From Date'),
+                  subtitle: Text(
+                    _fromDate != null
+                        ? _dateFormat.format(_fromDate!)
+                        : 'Select start date',
+                  ),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate:
+                          _fromDate ??
+                          DateTime.now().subtract(const Duration(days: 30)),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime.now(),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: const ColorScheme.light(
+                              primary: Colors.black,
+                              onPrimary: Colors.white,
+                              surface: Colors.white,
+                              onSurface: Colors.black,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+                    if (date != null) {
+                      setState(() {
+                        _fromDate = date;
+                      });
+                      Navigator.pop(context);
+                      _showDateFilterDialog();
+                    }
+                  },
+                ),
+                // To Date
+                ListTile(
+                  leading: const Icon(Icons.event),
+                  title: const Text('To Date'),
+                  subtitle: Text(
+                    _toDate != null
+                        ? _dateFormat.format(_toDate!)
+                        : 'Select end date',
+                  ),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: _toDate ?? DateTime.now(),
+                      firstDate: _fromDate ?? DateTime(2020),
+                      lastDate: DateTime.now(),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: const ColorScheme.light(
+                              primary: Colors.black,
+                              onPrimary: Colors.white,
+                              surface: Colors.white,
+                              onSurface: Colors.black,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+                    if (date != null) {
+                      setState(() {
+                        _toDate = date;
+                      });
+                      Navigator.pop(context);
+                      _showDateFilterDialog();
+                    }
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _clearDateFilter();
+                  Navigator.pop(context);
+                },
+                child: const Text('Clear Filter'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Done'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _clearDateFilter() {
+    setState(() {
+      _fromDate = null;
+      _toDate = null;
+    });
+  }
 }
 
 class NotificationContent extends StatelessWidget {
   final NotificationCategory category;
+  final DateTime? fromDate;
+  final DateTime? toDate;
 
-  const NotificationContent({super.key, required this.category});
+  const NotificationContent({
+    super.key,
+    required this.category,
+    this.fromDate,
+    this.toDate,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -209,6 +398,25 @@ class NotificationContent extends StatelessWidget {
           case NotificationCategory.seller:
             notifications = notificationProvider.sellerNotifications;
             break;
+        }
+
+        // Apply date filtering
+        if (fromDate != null || toDate != null) {
+          notifications =
+              notifications.where((notification) {
+                final notificationDate = notification.timestamp;
+                bool passesFromDate =
+                    fromDate == null ||
+                    notificationDate.isAfter(fromDate!) ||
+                    notificationDate.isAtSameMomentAs(fromDate!);
+                bool passesToDate =
+                    toDate == null ||
+                    notificationDate.isBefore(
+                      toDate!.add(const Duration(days: 1)),
+                    ) ||
+                    notificationDate.isAtSameMomentAs(toDate!);
+                return passesFromDate && passesToDate;
+              }).toList();
         }
 
         if (notifications.isEmpty) {
@@ -249,18 +457,18 @@ class NotificationContent extends StatelessWidget {
 
     switch (category) {
       case NotificationCategory.all:
-        message = 'Tidak Ada Notifikasi';
-        description = 'Semua notifikasi kamu akan ditampilkan di sini';
+        message = 'No Notifications';
+        description = 'All your notifications will appear here';
         icon = Icons.notifications_outlined;
         break;
       case NotificationCategory.purchase:
-        message = 'Tidak Ada Notifikasi Pembelian';
-        description = 'Notifikasi pesanan dan pembayaran akan muncul di sini';
+        message = 'No Purchase Notifications';
+        description = 'Order and payment notifications will appear here';
         icon = Icons.shopping_bag_outlined;
         break;
       case NotificationCategory.seller:
-        message = 'Tidak Ada Notifikasi Penjualan';
-        description = 'Notifikasi penjualan dan produk akan muncul di sini';
+        message = 'No Sales Notifications';
+        description = 'Sales and product notifications will appear here';
         icon = Icons.store_outlined;
         break;
     }
@@ -542,27 +750,27 @@ class NotificationContent extends StatelessWidget {
   String _getNotificationTypeLabel(NotificationType type) {
     switch (type) {
       case NotificationType.purchaseConfirmed:
-        return 'Pesanan';
+        return 'Order';
       case NotificationType.orderShipped:
-        return 'Pengiriman';
+        return 'Shipping';
       case NotificationType.orderDelivered:
-        return 'Pesanan';
+        return 'Order';
       case NotificationType.orderCancelled:
-        return 'Pesanan';
+        return 'Order';
       case NotificationType.paymentReceived:
-        return 'Pembayaran';
+        return 'Payment';
       case NotificationType.newOrder:
-        return 'Pesanan Baru';
+        return 'New Order';
       case NotificationType.productListed:
-        return 'Produk';
+        return 'Product';
       case NotificationType.productViewed:
-        return 'Produk';
+        return 'Product';
       case NotificationType.lowInventory:
-        return 'Stok';
+        return 'Stock';
       case NotificationType.priceAlert:
-        return 'Harga';
+        return 'Price';
       case NotificationType.system:
-        return 'Sistem';
+        return 'System';
     }
   }
 }

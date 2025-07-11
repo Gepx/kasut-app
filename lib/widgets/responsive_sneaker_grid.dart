@@ -26,19 +26,24 @@ class ResponsiveSneakerGrid extends StatelessWidget {
     this.physics,
     this.emptyWidget,
     this.showSellerInfo = false,
-  }) : assert(shoes != null || listings != null, 'Either shoes or listings must be provided');
+  }) : assert(
+         shoes != null || listings != null,
+         'Either shoes or listings must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
-    final items = shoes ?? listings?.map((l) => l.originalProduct).toList() ?? [];
-    
+    final items =
+        shoes ?? listings?.map((l) => l.originalProduct).toList() ?? [];
+
     if (items.isEmpty) {
       return emptyWidget ?? _buildEmptyState();
     }
 
     return ResponsiveBuilder(
       builder: (context, deviceType, width) {
-        final responsivePadding = padding ?? ResponsiveUtils.getResponsivePadding(width);
+        final responsivePadding =
+            padding ?? ResponsiveUtils.getResponsivePadding(width);
         final crossAxisCount = ResponsiveUtils.getProductGridColumns(width);
         final aspectRatio = ResponsiveUtils.getProductCardAspectRatio(width);
         final spacing = ResponsiveUtils.getSpacing(width, SpacingSize.sm);
@@ -80,9 +85,7 @@ class ResponsiveSneakerGrid extends StatelessWidget {
   Widget _buildListingCard(SellerListing listing, double width) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
           // Navigate to listing detail
@@ -104,8 +107,8 @@ class ResponsiveSneakerGrid extends StatelessWidget {
                       listing.originalProduct.firstPict,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Container(
+                      errorBuilder:
+                          (context, error, stackTrace) => Container(
                             color: Colors.grey[300],
                             child: const Icon(Icons.image_not_supported),
                           ),
@@ -175,7 +178,8 @@ class ResponsiveSneakerGrid extends StatelessWidget {
                     Text(
                       listing.originalProduct.name,
                       style: TextStyle(
-                        fontSize: ResponsiveUtils.isSmallMobile(width) ? 12 : 14,
+                        fontSize:
+                            ResponsiveUtils.isSmallMobile(width) ? 12 : 14,
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 2,
@@ -185,10 +189,7 @@ class ResponsiveSneakerGrid extends StatelessWidget {
                     // Size and seller info
                     Text(
                       'Size ${listing.selectedSize}${showSellerInfo ? ' • ${listing.sellerName}' : ''}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -203,7 +204,10 @@ class ResponsiveSneakerGrid extends StatelessWidget {
                               Text(
                                 listing.shortPrice,
                                 style: TextStyle(
-                                  fontSize: ResponsiveUtils.isSmallMobile(width) ? 12 : 14,
+                                  fontSize:
+                                      ResponsiveUtils.isSmallMobile(width)
+                                          ? 12
+                                          : 14,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.green[700],
                                 ),
@@ -241,18 +245,11 @@ class ResponsiveSneakerGrid extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: Colors.grey,
-          ),
+          Icon(Icons.search_off, size: 64, color: Colors.grey),
           SizedBox(height: 16),
           Text(
             'Tidak ada produk ditemukan',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
       ),
@@ -290,18 +287,23 @@ class HorizontalSneakerList extends StatelessWidget {
     this.onViewAll,
     this.height = 280,
     this.showSellerInfo = false,
-  }) : assert(shoes != null || listings != null, 'Either shoes or listings must be provided');
+  }) : assert(
+         shoes != null || listings != null,
+         'Either shoes or listings must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
-    final items = shoes ?? listings?.map((l) => l.originalProduct).toList() ?? [];
-    
+    final items =
+        shoes ?? listings?.map((l) => l.originalProduct).toList() ?? [];
+
     if (items.isEmpty) return const SizedBox();
 
     return ResponsiveBuilder(
       builder: (context, deviceType, width) {
         final padding = ResponsiveUtils.getResponsivePadding(width);
-        final itemWidth = width * (ResponsiveUtils.isSmallMobile(width) ? 0.42 : 0.45);
+        final itemWidth =
+            width * (ResponsiveUtils.isSmallMobile(width) ? 0.42 : 0.45);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,7 +325,7 @@ class HorizontalSneakerList extends StatelessWidget {
                     if (onViewAll != null)
                       TextButton(
                         onPressed: onViewAll,
-                        child: const Text('Lihat Semua'),
+                        child: const Text('View All'),
                       ),
                   ],
                 ),
@@ -340,16 +342,17 @@ class HorizontalSneakerList extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final isFirst = index == 0;
                   final isLast = index == items.length - 1;
-                  
+
                   return Container(
                     width: itemWidth,
                     margin: EdgeInsets.only(
                       left: isFirst ? padding.horizontal / 2 : 4,
                       right: isLast ? padding.horizontal / 2 : 4,
                     ),
-                    child: listings != null
-                        ? _buildListingCard(listings![index], width)
-                        : _buildSneakerCard(items[index], width),
+                    child:
+                        listings != null
+                            ? _buildListingCard(listings![index], width)
+                            : _buildSneakerCard(items[index], width),
                   );
                 },
               ),
@@ -372,9 +375,7 @@ class HorizontalSneakerList extends StatelessWidget {
   Widget _buildListingCard(SellerListing listing, double width) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
           // Navigate to listing detail
@@ -394,8 +395,8 @@ class HorizontalSneakerList extends StatelessWidget {
                   listing.originalProduct.firstPict,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(
+                  errorBuilder:
+                      (context, error, stackTrace) => Container(
                         color: Colors.grey[300],
                         child: const Icon(Icons.image_not_supported),
                       ),
@@ -459,4 +460,4 @@ class HorizontalSneakerList extends StatelessWidget {
       ),
     );
   }
-} 
+}

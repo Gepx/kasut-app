@@ -58,10 +58,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Add your first delivery address to get started',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -201,22 +198,25 @@ class _AddressesScreenState extends State<AddressesScreen> {
                         case 'delete':
                           final confirmed = await showDialog<bool>(
                             context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Delete Address'),
-                              content: const Text(
-                                'Are you sure you want to delete this address?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, false),
-                                  child: const Text('Cancel'),
+                            builder:
+                                (context) => AlertDialog(
+                                  title: const Text('Delete Address'),
+                                  content: const Text(
+                                    'Are you sure you want to delete this address?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.pop(context, false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.pop(context, true),
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
                                 ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('Delete'),
-                                ),
-                              ],
-                            ),
                           );
                           if (confirmed == true) {
                             orderProvider.deleteAddress(address.id);
@@ -224,33 +224,37 @@ class _AddressesScreenState extends State<AddressesScreen> {
                           break;
                       }
                     },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'edit',
-                        child: ListTile(
-                          leading: Icon(Icons.edit),
-                          title: Text('Edit'),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                      if (!address.isDefault)
-                        const PopupMenuItem(
-                          value: 'default',
-                          child: ListTile(
-                            leading: Icon(Icons.star),
-                            title: Text('Set as Default'),
-                            contentPadding: EdgeInsets.zero,
+                    itemBuilder:
+                        (context) => [
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: ListTile(
+                              leading: Icon(Icons.edit),
+                              title: Text('Edit'),
+                              contentPadding: EdgeInsets.zero,
+                            ),
                           ),
-                        ),
-                      const PopupMenuItem(
-                        value: 'delete',
-                        child: ListTile(
-                          leading: Icon(Icons.delete, color: Colors.red),
-                          title: Text('Delete', style: TextStyle(color: Colors.red)),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ],
+                          if (!address.isDefault)
+                            const PopupMenuItem(
+                              value: 'default',
+                              child: ListTile(
+                                leading: Icon(Icons.star),
+                                title: Text('Set as Default'),
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: ListTile(
+                              leading: Icon(Icons.delete, color: Colors.red),
+                              title: Text(
+                                'Delete',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ],
                   ),
                 ),
               );
@@ -263,15 +267,16 @@ class _AddressesScreenState extends State<AddressesScreen> {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: const Icon(Icons.add, size: 24),
       ),
     );
   }
 
-  Future<void> _showAddressForm(BuildContext context, DeliveryAddress? existingAddress) async {
+  Future<void> _showAddressForm(
+    BuildContext context,
+    DeliveryAddress? existingAddress,
+  ) async {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -354,7 +359,9 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.existingAddress != null ? 'Edit Address' : 'Add New Address',
+                  widget.existingAddress != null
+                      ? 'Edit Address'
+                      : 'Add New Address',
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -374,7 +381,11 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
               ],
             ),
           ),
-          Container(height: 1, color: Colors.grey[200], margin: const EdgeInsets.only(top: 16)),
+          Container(
+            height: 1,
+            color: Colors.grey[200],
+            margin: const EdgeInsets.only(top: 16),
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
@@ -397,7 +408,10 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
                         filled: true,
                         fillColor: Colors.grey[50],
@@ -425,7 +439,10 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
                         filled: true,
                         fillColor: Colors.grey[50],
@@ -453,21 +470,28 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
                         filled: true,
                         fillColor: Colors.grey[50],
                       ),
-                      items: orderProvider.provinces
-                          .map((province) => DropdownMenuItem(
-                                value: province,
-                                child: Text(province),
-                              ))
-                          .toList(),
+                      items:
+                          orderProvider.provinces
+                              .map(
+                                (province) => DropdownMenuItem(
+                                  value: province,
+                                  child: Text(province),
+                                ),
+                              )
+                              .toList(),
                       onChanged: (value) {
                         setState(() {
                           _selectedProvince = value;
-                          _selectedCity = null; // Reset city when province changes
+                          _selectedCity =
+                              null; // Reset city when province changes
                         });
                       },
                       validator: (value) {
@@ -492,20 +516,26 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
                         filled: true,
                         fillColor: Colors.grey[50],
                       ),
-                      items: _selectedProvince != null
-                          ? orderProvider
-                              .getCitiesByProvince(_selectedProvince!)
-                              .map((city) => DropdownMenuItem(
-                                    value: city,
-                                    child: Text(city),
-                                  ))
-                              .toList()
-                          : [],
+                      items:
+                          _selectedProvince != null
+                              ? orderProvider
+                                  .getCitiesByProvince(_selectedProvince!)
+                                  .map(
+                                    (city) => DropdownMenuItem(
+                                      value: city,
+                                      child: Text(city),
+                                    ),
+                                  )
+                                  .toList()
+                              : [],
                       onChanged: (value) {
                         setState(() {
                           _selectedCity = value;
@@ -533,7 +563,10 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
                         filled: true,
                         fillColor: Colors.grey[50],
@@ -561,7 +594,10 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
                         filled: true,
                         fillColor: Colors.grey[50],
@@ -580,25 +616,13 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _notesController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Delivery Notes (Optional)',
-                        hintText: 'e.g., Ring the bell twice, Building B entrance',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.black, width: 2),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.note_outlined),
+                        hintText: 'Additional delivery instructions',
                       ),
-                      maxLines: 2,
+                      maxLines: 3,
                     ),
                     const SizedBox(height: 16),
                     Container(
@@ -658,7 +682,9 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
                   ),
                 ),
                 child: Text(
-                  widget.existingAddress != null ? 'Update Address' : 'Save Address',
+                  widget.existingAddress != null
+                      ? 'Update Address'
+                      : 'Save Address',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -675,13 +701,14 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
   void _saveAddress() {
     if (_formKey.currentState!.validate()) {
       final orderProvider = Provider.of<OrderProvider>(context, listen: false);
-      
+
       final address = DeliveryAddress(
         id: widget.existingAddress?.id ?? orderProvider.generateId(),
         name: _nameController.text,
-        phone: _phoneController.text.startsWith('+62') 
-            ? _phoneController.text 
-            : '+62${_phoneController.text}',
+        phone:
+            _phoneController.text.startsWith('+62')
+                ? _phoneController.text
+                : '+62${_phoneController.text}',
         address: _addressController.text,
         city: _selectedCity!,
         province: _selectedProvince!,
@@ -696,13 +723,13 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
         } else {
           orderProvider.addAddress(address);
         }
-        
+
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              widget.existingAddress != null 
-                  ? 'Address updated successfully' 
+              widget.existingAddress != null
+                  ? 'Address updated successfully'
                   : 'Address added successfully',
             ),
             backgroundColor: Colors.black,
@@ -726,4 +753,4 @@ class _AddressFormSheetState extends State<AddressFormSheet> {
       }
     }
   }
-} 
+}

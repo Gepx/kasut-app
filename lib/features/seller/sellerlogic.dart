@@ -102,7 +102,7 @@ class _SellerLogicState extends State<SellerLogic> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Selamat datang, ${sellerData['fullName']}!',
+                              'Welcome, ${sellerData['fullName']}!',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -110,7 +110,7 @@ class _SellerLogicState extends State<SellerLogic> {
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              'Akun seller Anda sudah aktif. Mulai jual sepatu Anda sekarang.',
+                              'Your seller account is already active. Start selling your shoes now.',
                               style: TextStyle(color: Colors.black87),
                             ),
                           ],
@@ -123,7 +123,7 @@ class _SellerLogicState extends State<SellerLogic> {
                         children: [
                           Expanded(
                             child: _buildStatCard(
-                              'Produk Aktif',
+                              'Active Products',
                               '${myListings.length}',
                               Icons.inventory,
                               Colors.black,
@@ -132,7 +132,7 @@ class _SellerLogicState extends State<SellerLogic> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: _buildStatCard(
-                              'Total Penjualan',
+                              'Total Sales',
                               'Rp ${IndonesianText.formatPriceWithoutSymbol(sellerProvider.totalSales)}',
                               Icons.monetization_on,
                               Colors.black,
@@ -144,7 +144,7 @@ class _SellerLogicState extends State<SellerLogic> {
 
                       // Action Buttons
                       const Text(
-                        'Aksi Cepat',
+                        'Quick Actions',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -154,7 +154,7 @@ class _SellerLogicState extends State<SellerLogic> {
                       _buildActionButton(
                         context,
                         IndonesianText.jualSepatu,
-                        'Tambahkan sepatu baru untuk dijual',
+                        'Add new shoes for sale',
                         Icons.add_box,
                         Colors.black,
                         () {
@@ -169,8 +169,8 @@ class _SellerLogicState extends State<SellerLogic> {
                       const SizedBox(height: 12),
                       _buildActionButton(
                         context,
-                        'Produk Saya',
-                        'Lihat dan kelola produk yang sedang dijual',
+                        'My Products',
+                        'View and manage your products for sale',
                         Icons.list_alt,
                         Colors.black,
                         () {
@@ -185,8 +185,8 @@ class _SellerLogicState extends State<SellerLogic> {
                       const SizedBox(height: 12),
                       _buildActionButton(
                         context,
-                        'Riwayat Penjualan',
-                        'Lihat penjualan yang sudah selesai',
+                        'Sales History',
+                        'View completed sales',
                         Icons.history,
                         Colors.black,
                         () {
@@ -201,7 +201,7 @@ class _SellerLogicState extends State<SellerLogic> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Produk Terbaru',
+                              'Latest Products',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -216,7 +216,7 @@ class _SellerLogicState extends State<SellerLogic> {
                                   ),
                                 );
                               },
-                              child: const Text('Lihat Semua'),
+                              child: const Text('View All'),
                             ),
                           ],
                         ),
@@ -241,7 +241,7 @@ class _SellerLogicState extends State<SellerLogic> {
 
                       // Information Section
                       const Text(
-                        'Informasi Akun',
+                        'Account Information',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -439,10 +439,10 @@ class _SellerLogicState extends State<SellerLogic> {
               ],
             ),
             const SizedBox(height: 12),
-            _buildInfoRow('Nama Lengkap', sellerData['fullName']),
-            _buildInfoRow('Telepon', '+62 ${sellerData['phone'] ?? '-'}'),
+            _buildInfoRow('Full Name', sellerData['fullName']),
+            _buildInfoRow('Phone', '+62 ${sellerData['phone'] ?? '-'}'),
             _buildInfoRow('Bank', sellerData['bank'] ?? '-'),
-            _buildInfoRow('No. Rekening', sellerData['accountNumber'] ?? '-'),
+            _buildInfoRow('Account Number', sellerData['accountNumber'] ?? '-'),
           ],
         ),
       ),
